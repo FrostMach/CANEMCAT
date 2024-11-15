@@ -1,0 +1,31 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Mi App{% endblock %}</title>
+</head>
+<body>
+  <header>
+    <h1>Bienvenido a la Web de Protectora de Animales</h1>
+    <nav>
+      <a href="{% url 'signup' %}">Inicio</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' user.pk %}">Perfil</a>
+        <a href="{% url 'signup' %}">Cerrar sesión</a>
+      {% else %}
+        <a href="{% url 'signup' %}">Iniciar sesión</a>
+        <a href="{% url 'signup' %}">Registrarse</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Web de Protectora de Animales</p>
+  </footer>
+</body>
+</html>
