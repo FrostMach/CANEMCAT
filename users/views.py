@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 from .forms import CustomUserCreationForm, CustomUserChangeForm, AnimalForm
-from .models import CustomUser, Animal
+from .models import CustomUser, Animal, Wishlist
 
 def landing_page(request):
     return render(request, 'landing_page.html')
@@ -50,5 +50,22 @@ class AnimalListView(generic.ListView):
 
     def get_queryset(self):
         return Animal.objects.all()
+    
+class AnimalDetailView(DetailView):
+    model = Animal
+    template_name = 'animals/details.html' 
+    context_object_name = 'animal'  
+    
 
+class AddToWishlistView(ListView):
+    
+    model = Wishlist
+    template_name = 'wish/list.html'
+    context_object_name = 'add'
+
+class RemoveFromWishlistView(ListView):
+    
+    model = Wishlist
+    template_name = 'wish/list.html'
+    context_object_name = 'remove'
 

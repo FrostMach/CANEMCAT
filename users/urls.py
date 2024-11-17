@@ -1,6 +1,7 @@
-from django.urls import path
+from django.contrib import admin
+from django.urls import path, include
+from users.views import landing_page
 from users import views
-from .views import landing_page
 from django.conf import settings
 from django.conf.urls.static import static
 
