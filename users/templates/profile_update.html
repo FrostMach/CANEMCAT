@@ -1,0 +1,12 @@
+<!-- profile_update.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Editar Perfil</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+  </form>
+  <a href="{% url 'profile' user.pk %}">Volver al perfil</a>
+{% endblock %}
