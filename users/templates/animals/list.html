@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Animales en Adopción</h2>
+<ul>
+    {% for animal in object_list %}
+    <li>
+        <img src="{{ animal.image.url }}" alt="{{ animal.name }}" width="100">
+        <strong>{{ animal.name }}</strong> ({{ animal.get_species_display }})
+        - {{ animal.get_estado_adopcion_display }}
+        <a href="{% url 'animals-update' animal.id %}">Editar</a>
+        <a href="{% url 'animals-delete' animal.id %}">Eliminar</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

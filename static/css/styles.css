@@ -1,0 +1,14 @@
+body {
+    background-image: url('{% static "images/fondo.jpg" %}');
+    background-size: cover; /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-attachment: fixed; /* Fija la imagen para que no se mueva al hacer scroll */
+    margin: 0;
+    padding: 0;
+}
+
+
+.jumbotron {
+    background-color: rgba(255, 255, 255, 0.7); /* Un fondo semi-transparente para que el texto sea legible */
+    padding: 50px;
+}
