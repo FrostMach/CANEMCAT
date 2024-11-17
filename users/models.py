@@ -11,6 +11,11 @@ class CustomUser(AbstractUser):
     
     def __str__(self):
         return self.username
+class StatusEnum(Enum):
+    PENDING = 'P', 'Pendiente'
+    APPROVED = 'A', 'Aprobada'
+    DENIED = 'D', 'Denegada'
+    
 # Animal model
 class Animal(models.Model):
     SPECIES = [
@@ -60,4 +65,15 @@ class Wishlist(models.Model):
     # Método que agrega un animal a la lista de deseos del usuario
     def add_animal(self, animal):
         self.animals.add(animal)
-
+class AdoptionApplication(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
+    center = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(
+        max_length=1,
+        choices=[(tag.value[0], tag.value[1]) for tag in StatusEnum],
+        default=StatusEnum.PENDING.value[0]
+    )
+    application_date = models.DateField()
+    def __str__(self):
+        return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
