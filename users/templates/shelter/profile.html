@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Perfil de la Protectora{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Centro de Adopción</h2>
+    <a class="btn btn-secondary" href="{% url 'edit_shelter' pk=shelter.id %}">Actualizar</a>
+    <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Dar de baja</a>
+    <ul>
+        <li><strong>Nombre: </strong> {{ shelter.name }}</li>
+        <li><strong>Dirección: </strong>{{ shelter.address }}</li>
+        <li><strong>Teléfono: </strong>{{ shelter.telephone}}</li>
+        <li><strong>Correo electrónico: </strong>{{ shelter.email }}</li>
+        <li><strong>Documento acreditativo: </strong>{{ shelter.accreditation_file }}</li>
+        <li><strong>Estado de acreditación: </strong>{{ shelter.accreditation_status }}</li>
+        <li><strong>Fecha de registro: </strong>{{ shelter.register_date|date:'d-m-Y' }}</li>
+        <li><strong>Estado: </strong>{{ shelter.status }}</li>
+    </ul>
+</div>
+{% endblock %}
