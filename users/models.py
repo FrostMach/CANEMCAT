@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# User model
 class CustomUser(AbstractUser):
     full_name = models.CharField(max_length=100, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -10,51 +11,60 @@ class CustomUser(AbstractUser):
     
     def __str__(self):
         return self.username
-from django.db import models
-
-# Create your models here.
-from users.models import CustomUser
-# Create your models here.
-from enum import Enum
-
 class StatusEnum(Enum):
     PENDING = 'P', 'Pendiente'
     APPROVED = 'A', 'Aprobada'
     DENIED = 'D', 'Denegada'
     
+# Animal model
 class Animal(models.Model):
     SPECIES = [
-        ('perro','Perro'),
-        ('gato','Gato')
+        ('perro', 'Perro'),
+        ('gato', 'Gato'),
     ]
+    
     ADOPTION_STATUS = [
-        ('disponible','Disponible'),
-        ('reservado','Reservado'),
-        ('adoptado','Adoptado')
+        ('disponible', 'Disponible'),
+        ('reservado', 'Reservado'),
+        ('adoptado', 'Adoptado'),
     ]
+    
     name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
-    species = models.CharField(max_length=10,choices=SPECIES)
+    species = models.CharField(max_length=10, choices=SPECIES)
     description = models.TextField()
     image = models.ImageField(upload_to='animals/')
-    adoption_status = models.CharField(max_length=10,choices=ADOPTION_STATUS,default='disponible')
-    
+    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='disponible')
+
     def __str__(self):
         return self.name
-    
 
-class Shelter(models.Model):
-    name = models.CharField(max_length=50, verbose_name='Nombre')
-    address = models.CharField(max_length=100, verbose_name='Dirección')
-    telephone = models.CharField(max_length=12, verbose_name='Teléfono')
-    email = models.EmailField(max_length=100, verbose_name='Correo electrónico')
-    accreditation_file = models.FileField(blank=True, null=True, upload_to='uploads/', verbose_name='Documento acreditativo')
-    accreditation_status = models.BooleanField(default=True, verbose_name='Estado de acreditación')
-    register_date = models.DateField(blank=True, null=True, verbose_name='Fecha de registro')
-    status = models.BooleanField(verbose_name='Estado', blank=True, null=True)
+# Wishlist model
+class Wishlist(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
+    animals = models.ManyToManyField(Animal, related_name='wishlists')
+    # class Meta:
+    #    db_table = 'wishlist'  # Custom table name in the database
+    #    verbose_name = 'Wishlist'
+    #    verbose_name_plural = 'Wishlists'
+    def __str__(self):
+        return f"Wishlist of {self.user.name}"
 
-    def str(self):
-        return f'{self.name}'
+    # Método que verifica si un animal está en la lista de deseos
+    def is_animal_in_wishlist(self, animal):
+        return self.animals.filter(id=animal.id).exists()
+
+    # Método que devuelve la cantidad de animales en la lista de deseos
+    def animal_count(self):
+        return self.animals.count()
+
+    # Método que elimina un animal de la lista de deseos del usuario
+    def remove_animal(self, animal):
+        self.animals.remove(animal)
+
+    # Método que agrega un animal a la lista de deseos del usuario
+    def add_animal(self, animal):
+        self.animals.add(animal)
 class AdoptionApplication(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
@@ -67,6 +77,3 @@ class AdoptionApplication(models.Model):
     application_date = models.DateField()
     def __str__(self):
         return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
-
-
-
