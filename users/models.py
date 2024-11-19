@@ -1,52 +1,70 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from shelters.models import Animal
 
-# User model
-class CustomUser(AbstractUser):
-    full_name = models.CharField(max_length=100, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(email, password, **extra_fields)
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    USER_TYPES = (
+        ('adopter', 'Adopter'),  # Persona que adopta
+        ('worker', 'Shelter Worker'),  # Trabajador de protectora
+    )
+
+    email = models.EmailField(unique=True)
+    full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    
-    def __str__(self):
-        return self.username
-class StatusEnum(Enum):
-    PENDING = 'P', 'Pendiente'
-    APPROVED = 'A', 'Aprobada'
-    DENIED = 'D', 'Denegada'
-    
-# Animal model
-class Animal(models.Model):
-    SPECIES = [
-        ('perro', 'Perro'),
-        ('gato', 'Gato'),
-    ]
-    
-    ADOPTION_STATUS = [
-        ('disponible', 'Disponible'),
-        ('reservado', 'Reservado'),
-        ('adoptado', 'Adoptado'),
-    ]
-    
-    name = models.CharField(max_length=100)
-    age = models.PositiveIntegerField()
-    species = models.CharField(max_length=10, choices=SPECIES)
-    description = models.TextField()
-    image = models.ImageField(upload_to='animals/')
-    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='disponible')
+    user_type = models.CharField(max_length=20, choices=USER_TYPES, default='adopter')
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['full_name']
 
     def __str__(self):
-        return self.name
+        return self.email
+    
+class ShelterWorkerProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='worker_profile')
+    shelter_name = models.CharField(max_length=255)
+    position = models.CharField(max_length=100, blank=True, null=True, default='Empleado')
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.shelter_name}"
+    
+class AdopterProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='adopter_profile')
+    adoption_history = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.full_name    
 
 # Wishlist model
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
     animals = models.ManyToManyField(Animal, related_name='wishlists')
-    # class Meta:
-    #    db_table = 'wishlist'  # Custom table name in the database
-    #    verbose_name = 'Wishlist'
-    #    verbose_name_plural = 'Wishlists'
+    class Meta:
+        db_table = 'wishlist'  # Custom table name in the database
+        verbose_name = 'Wishlist'
+        verbose_name_plural = 'Wishlists'
     def __str__(self):
         return f"Wishlist of {self.user.name}"
 
@@ -65,15 +83,6 @@ class Wishlist(models.Model):
     # Método que agrega un animal a la lista de deseos del usuario
     def add_animal(self, animal):
         self.animals.add(animal)
-class AdoptionApplication(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
-    center = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True)
-    status = models.CharField(
-        max_length=1,
-        choices=[(tag.value[0], tag.value[1]) for tag in StatusEnum],
-        default=StatusEnum.PENDING.value[0]
-    )
-    application_date = models.DateField()
-    def __str__(self):
-        return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
+        
+
+        

@@ -1,28 +1,25 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
-
-# Register your models here.
+from .models import CustomUser, ShelterWorkerProfile, AdopterProfile
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('username', 'email', 'full_name', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active')
-    search_fields = ('username', 'email', 'full_name')
-    ordering = ('-date_joined',)
-    
+    list_display = ('email', 'full_name', 'user_type', 'is_staff', 'is_active')
+    list_filter = ('user_type', 'is_staff', 'is_active')
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('full_name', 'email', 'phone_number', 'address', 'birth_date', 'profile_picture')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        (None, {'fields': ('email', 'password', 'full_name', 'phone_number', 'birth_date', 'profile_picture')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('User Type', {'fields': ('user_type',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2')}
+            'fields': ('email', 'password1', 'password2', 'full_name', 'user_type', 'is_staff', 'is_active')}
         ),
     )
+    search_fields = ('email', 'full_name')
+    ordering = ('email',)
 
-# Registra el modelo en el admin
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(ShelterWorkerProfile)
+admin.site.register(AdopterProfile)
