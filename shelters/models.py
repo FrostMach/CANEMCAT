@@ -22,25 +22,6 @@ class Animal(models.Model):
     def __str__(self):
         return self.name    
     
-    
-class StatusEnum(Enum):
-    PENDING = 'P', 'Pendiente'
-    APPROVED = 'A', 'Aprobada'
-    DENIED = 'D', 'Denegada'
-    
-class AdoptionApplication(models.Model):
-    user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)
-    animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
-    #shelter = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True)
-    status = models.CharField(
-        max_length=1,
-        choices=[(tag.value[0], tag.value[1]) for tag in StatusEnum],
-        default=StatusEnum.PENDING.value[0]
-    )
-    application_date = models.DateField(default=date.today)
-    def __str__(self):
-        return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
-
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
     address = models.CharField(max_length=100, verbose_name='Dirección')
@@ -52,4 +33,22 @@ class Shelter(models.Model):
     status = models.BooleanField(verbose_name='Estado', blank=True, null=True)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.name}'    
+    
+class StatusEnum(Enum):
+    PENDING = 'P', 'Pendiente'
+    APPROVED = 'A', 'Aprobada'
+    DENIED = 'D', 'Denegada'
+    
+class AdoptionApplication(models.Model):
+    user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)
+    animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
+    shelter = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(
+        max_length=1,
+        choices=[(tag.value[0], tag.value[1]) for tag in StatusEnum],
+        default=StatusEnum.PENDING.value[0]
+    )
+    application_date = models.DateField(default=date.today)
+    def __str__(self):
+        return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
