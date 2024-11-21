@@ -76,9 +76,15 @@ class RegisterShelterView(generic.CreateView):
     template_name = 'shelter/register.html'
     success_url = reverse_lazy('exit_register')
 
+class ShelterListView(generic.ListView):
+    model = Shelter
+    template_name = 'shelter/list.html'
+    context_object_name = 'shelters'
+
 class ShelterView(generic.DetailView):
     model = Shelter
     template_name = 'shelter/profile.html'
+    context_object_name = 'shelter'
 class UpdateShelterView(generic.UpdateView):
     model = Shelter
     form_class = UpdateShelterForm

@@ -25,7 +25,7 @@ class Animal(models.Model):
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
     address = models.CharField(max_length=100, verbose_name='Dirección')
-    telephone = models.CharField(max_length=12, verbose_name='Teléfono')
+    telephone = models.CharField(max_length=9, verbose_name='Teléfono')
     email = models.EmailField(max_length=100, verbose_name='Correo electrónico')
     accreditation_file = models.FileField(blank=True, null=True, upload_to='files/', verbose_name='Documento acreditativo')
     accreditation_status = models.BooleanField(default=True, verbose_name='Estado de acreditación')

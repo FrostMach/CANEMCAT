@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Protectoras</h2>
+<div class="card-deck">
+    {% for shelter in object_list %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ shelter.name }}</h5>
+            <p class="card-text"><strong>Adress:</strong> {{ shelter.address }}</p>
+            <p class="card-text"><strong>Estado de adopción:</strong> {{ shelter.telephone }}</p>
+            <div class="btn-group" role="group" aria-label="Acciones">
+                <a href="{% url 'edit_shelter' shelter.id %}" class="btn btn-primary">Editar</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

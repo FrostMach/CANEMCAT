@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h2>Animales en Adopción</h2>
-<ul>
+<div class="card-deck">
     {% for animal in object_list %}
-    <li>
-        <img src="{{ animal.image.url }}" alt="{{ animal.name }}" width="100">
-        <strong>{{ animal.name }}</strong> ({{ animal.get_species_display }})
-        - {{ animal.get_estado_adopcion_display }}
-        <a href="{% url 'animals-update' animal.id %}">Editar</a>
-        <a href="{% url 'animals-delete' animal.id %}">Eliminar</a>
-    </li>
+    <div class="card" style="width: 18rem;">
+        <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ animal.name }}</h5>
+            <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
+            <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
+            <div class="btn-group" role="group" aria-label="Acciones">
+                <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}
+

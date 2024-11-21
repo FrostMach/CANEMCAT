@@ -11,6 +11,7 @@ urlpatterns = [
     path('lista/', views.AnimalListView.as_view(), name='animals-list'),
     path('shelters/solicitud_adopcion/', views.AdoptionApplicationCreateView.as_view(), name='solicitud_adopcion_create'),
     path('shelters/confirmacion_solicitud/',views.confirm_view, name='solicitud_adopcion_confirm'),
+    path('shelter/', views.ShelterListView.as_view(), name='shelter-list'),
     path('shelter/register/', views.RegisterShelterView.as_view(), name='register_shelter'),
     path('shelter/register-exit/', TemplateView.as_view(template_name='shelter/exit_register.html'), name='exit_register'),
     path('shelter/<int:pk>/', views.ShelterView.as_view(), name='view_shelter'),
