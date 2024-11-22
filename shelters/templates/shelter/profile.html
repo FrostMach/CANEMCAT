@@ -2,7 +2,7 @@
 {% block title %}Perfil de la Protectora{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 p-4 bg-white shadow-sm rounded">
     <h2>Centro de Adopción</h2>
     <a class="btn btn-secondary" href="{% url 'edit_shelter' pk=shelter.id %}">Actualizar</a>
     <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Dar de baja</a>
