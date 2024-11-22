@@ -1,13 +1,62 @@
-    {% extends "base.html" %}
+{% extends "base.html" %}
 
-    {% block title %}Home Page{% endblock %}
+{% block title %}Home Page{% endblock %}
 
-    {% block content %}
+{% block content %}
 
-    <!-- Contenido principal -->
-    <div class="jumbotron text-center mt-4">
-        <h1 class="display-4">Bienvenido a la Mascotería, ya tú sabe</h1>
-        <p class="lead">La gestión oficial de perros y gatos</p>
+<!-- Contenido principal -->
+<div class="jumbotron text-center mt-4">
+    <h1 class="display-4">Bienvenido a la Mascotería, ya tú sabe</h1>
+    <p class="lead">La gestión oficial de perros y gatos</p>
+</div>
+<div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner" style="max-width: 80%; margin: 0 auto;">
+        <!-- Primer item del carrusel (imagen de animal 1) -->
+        <div class="carousel-item active">
+            <img src=" static/images/Perros/perro1.jpg" class="d-block w-100" alt="Animal 1">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Animal 1</h5>
+                <p>Descripción del primer animal en adopción.</p>
+            </div>
+        </div>
+        <!-- Segundo item del carrusel (imagen de animal 2) -->
+        <div class="carousel-item">
+            <img src=" static/images/Perros/perro2.jpg" class="d-block w-100" alt="Animal 2">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Animal 2</h5>
+                <p>Descripción del segundo animal en adopción.</p>
+            </div>
+        </div>
+        <!-- Tercer item del carrusel (imagen de animal 3) -->
+        <div class="carousel-item">
+            <img src="static/images/Perros/perro3.jpg" class="d-block w-100" alt="Animal 3">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Animal 3</h5>
+                <p>Descripción del tercer animal en adopción.</p>
+            </div>
+        </div>
+        <!-- cuarto item del carrusel (imagen de animal 4) -->
+        <div class="carousel-item">
+            <img src="static/images/Perros/perro4.jpg" class="d-block w-100" alt="Animal 3">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Animal 4</h5>
+                <p>Descripción del cuarto animal en adopción.</p>
+            </div>
+        </div>
     </div>
 
-    {% endblock %}
+    <!-- Controles de navegación (izquierda y derecha dentro de la imagen) -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+        data-bs-slide="prev" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); z-index: 1;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+        data-bs-slide="next"
+        style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); z-index: 1;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+{% endblock %}

@@ -9,37 +9,74 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Bootstrap JS (con dependencias de Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <link rel="icon" href="{% static 'images/Logo.png' %}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KyZXEJq6auK06Wb7t3v9siGb1a3Wrg5T6glPeF4baUjD31ysGgX1z/MkF0qJTCxJ5" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/fontello/css/fontello.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/landing.css">
+
     {% block head %}{% endblock %}
 </head>
 
-<body
-    style="opacity: 0.8; background-image: url('{% static 'images/fondo.jpg' %}'); background-size:cover; background-position:center;">
-    <div class="container mt-4">
+<body>
+    <div class="container mt-4" style="flex-grow: 1;">
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'landing_page' %}">Mascotería</a>
+                <!-- Logo -->
+                <a class="navbar-brand" href="{% url 'landing_page' %}">
+                    <img src="{% static 'images/Logo.png' %}" alt="Logo de CANEMCAT" style="width: 50px; height: auto;">
+                </a>
+
+                <!-- Botón de menú móvil -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- Menú de navegación -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
+                        <!-- Animales - Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Animales
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
+                                <li><a class="dropdown-item" href="{% url 'animals-list' %}">Lista de Animales</a></li>
+                                <li><a class="dropdown-item" href="{% url 'animals-create' %}">Añadir Animal</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Protectoras - Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
+                                <li><a class="dropdown-item" href="{% url 'shelter-list' %}">Lista de Protectoras</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
+                                        Protectoras</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Otros elementos del menú -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'animals-list' %}">Lista de Animales</a>
+                            <a class="nav-link">CanemScan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'animals-create' %}">Añadir Animal</a>
+                            <a class="nav-link">CanemTest</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'shelter-list' %}">Protectoras</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register_shelter' %}">Registrar Protectoras</a>
-                        </li>
+                    </ul>
+
+                    <!-- Alineación a la derecha u  tilizando flexbox -->
+                    <ul class="navbar-nav ms-auto d-flex"> <!-- Aquí agregamos d-flex -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'signup' %}">Registrar</a>
                         </li>
@@ -48,9 +85,16 @@
             </div>
         </nav>
 
+
+
+
         {% block content %}
         {% endblock %}
+
+
     </div>
+
+    <!-- Aquí va el footer -->
     <footer>
         <div style="text-align: center; padding: 20px; background-color: #333; color: #fff;">
             <p>Conéctate con nosotros en nuestras redes sociales:</p>
@@ -76,15 +120,12 @@
                     <i class="icon-youtube" style="font-size: 25px;"></i>
                 </a>
             </div>
-            <p>&copy; 2024 Dogs Management System | <a href="/terminos" style="color: #fff;">Términos y
-                    condiciones</a> | <a href="/privacidad" style="color: #fff;">Política de privacidad</a></p>
+            <p>&copy; 2024 Dogs Management System | <a href="/terminos" style="color: #fff;">Términos y condiciones</a>
+                | <a href="/privacidad" style="color: #fff;">Política de privacidad</a></p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 
 </html>
