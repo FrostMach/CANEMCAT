@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Verificar Acreditación de {{ shelter.name }}</h2>
+
+    <p>Dirección: {{shelter.address}}</p>
+    <p>Teléfono: {{shelter.telefono}}</p>
+    <p>Email: {{shelter.email}}</p>
+    <p>Fecha de Registro: {{shelter.register_date}}</p>
+
+    <h3>Documento de Acreditación</h3>
+    <p>
+        <a href="{{ shelter.accreditation_file.url }}">Descargar Documento</a>
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="aprobar">Aprobar</button>
+        <button type="submit" name="action" value="rechazar">Rechazar</button>
+    </form>
+
+    <!-- <table>
+        <thead>
+            <tr>
+                <th>Nombre</th><th>Email</th><th>Documento</th><th>Aprobar</th>
+            </tr>
+        </thead>
+        <tbody>
+           {% for shelter in shelters %}
+            <tr>
+                <td>{{shelter.name}}</td>
+                <td>{{ shelter.email}}</td>
+                <td>{{shelter.accreditation_file}}</td>
+                <td>
+                    <form action="{% url 'approve_file' shelter.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Aprobar</button>
+                    </form>
+                </td>
+            </tr>
+           {% endfor %}
+        </tbody>
+    </table> -->
+{% endblock %}
