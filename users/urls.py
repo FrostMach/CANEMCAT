@@ -6,6 +6,7 @@ from users.views import landing_page,email_confirmation
 
 
 
+from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('landing/', landing_page, name='landing_page'),
     path('signup/', views.signup, name='signup'),
@@ -17,5 +18,7 @@ urlpatterns = [
     path('email_confirmation/', email_confirmation, name='email_confirmation'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
+    path('logout/', views.logout_view, name='logout'),    
+    path('login/', views.login_view, name='login'),  # Ruta para iniciar sesión
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

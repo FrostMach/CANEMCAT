@@ -1,93 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <div class="bg-white p-4 shadow-sm rounded">
-          <h2 class="text-center mb-4">Regístrate</h2>
-
-          <!-- Formulario -->
-          <form method="post" enctype="multipart/form-data">
-            
-            {% csrf_token %}
-            
-            <!-- Campo de Nombre de Usuario -->
-            <div class="form-group mb-3">
-              <label for="{{ form.username.id_for_label }}" class="form-label">Nombre de usuario</label>
-              <input type="text" name="{{ form.username.name }}" value="{{ form.username.value|default_if_none:'' }}" class="form-control" id="{{ form.username.id_for_label }}" placeholder="Ingresa tu nombre de usuario" required>
-            </div>
-
-            <!-- Campo de Correo Electrónico -->
-            <div class="form-group mb-3">
-              <label for="{{ form.email.id_for_label }}" class="form-label">Correo electrónico</label>
-              <input type="email" name="{{ form.email.name }}" value="{{ form.email.value|default_if_none:'' }}" class="form-control" id="{{ form.email.id_for_label }}" placeholder="Ingresa tu correo electrónico" required>
-            </div>
-
-            <!-- Campo de Nombre Completo -->
-            <div class="form-group mb-3">
-              <label for="{{ form.full_name.id_for_label }}" class="form-label">Nombre completo</label>
-              <input type="text" name="{{ form.full_name.name }}" value="{{ form.full_name.value|default_if_none:'' }}" class="form-control" id="{{ form.full_name.id_for_label }}" placeholder="Ingresa tu nombre completo" required>
-            </div>
-
-            <!-- Campo de Número de Teléfono -->
-            <div class="form-group mb-3">
-              <label for="{{ form.phone_number.id_for_label }}" class="form-label">Número de teléfono</label>
-              <input type="tel" name="{{ form.phone_number.name }}" value="{{ form.phone_number.value|default_if_none:'' }}" class="form-control" id="{{ form.phone_number.id_for_label }}" placeholder="Ingresa tu número de teléfono" required>
-            </div>
-
-            <!-- Campo de Año de Nacimiento -->
-            <div class="form-group mb-3">
-              <label for="{{ form.birth_date.id_for_label }}" class="form-label">Año de nacimiento</label>
-              <input type="date" name="{{ form.birth_date.name }}" value="{{ form.birth_date.value|default_if_none:'' }}" class="form-control" id="{{ form.birth_date.id_for_label }}" required>
-            </div>
-
-            <!-- Campo de Imagen de Perfil -->
-            <div class="form-group mb-3">
-              <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Imagen de perfil</label>
-              <input type="file" name="{{ form.profile_picture.name }}" class="form-control-file" id="{{ form.profile_picture.id_for_label }}">
-            </div>
-
-            <!-- Campo de Tipo de Usuario (Dropdown) -->
-            <div class="form-group mb-3">
-              <label for="{{ form.user_type.id_for_label }}" class="form-label">Tipo de usuario</label>
-              <select name="{{ form.user_type.name }}" class="form-control" id="{{ form.user_type.id_for_label }}">
-                {% for value, label in form.user_type.field.choices %}
-                  <option value="{{ value }}" {% if form.user_type.value == value %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <!-- Campo de Contraseña -->
-            <div class="form-group mb-3">
-              <label for="{{ form.password1.id_for_label }}" class="form-label">Contraseña</label>
-              <input type="password" name="{{ form.password1.name }}" value="{{ form.password1.value }}" class="form-control" id="{{ form.password1.id_for_label }}" placeholder="Crea una contraseña" required>
-            </div>
-
-            <!-- Campo de Confirmar Contraseña -->
-            <div class="form-group mb-3">
-              <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmar contraseña</label>
-              <input type="password" name="{{ form.password2.name }}" value="{{ form.password2.value }}" class="form-control" id="{{ form.password2.id_for_label }}" placeholder="Confirma tu contraseña" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block mt-3">Registrarse</button>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="bg-white p-4 shadow-sm rounded">
+        <h2 class="text-center mb-4">Regístrate</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ form.as_p }}
             {% if form.errors %}
-                <div class="alert alert-danger">
-                    <ul>
-                        {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
-                </div>
+            <div class="alert alert-danger">
+              <ul>
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
             {% endif %}
-          </form>
-
-          <!-- Enlace para iniciar sesión -->
-          <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
-        </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
+        </form>
+        <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}

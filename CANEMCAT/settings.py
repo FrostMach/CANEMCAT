@@ -146,3 +146,6 @@ EMAIL_HOST_USER = mail
 EMAIL_HOST_PASS = mail_pass
 DEFAULT_FROM_EMAIL = mail
 EMAIL_SUBJECT_PREFIX="Recuperar contraseña"
+
+LOGIN_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de loguearse
+LOGOUT_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de cerrar sesión

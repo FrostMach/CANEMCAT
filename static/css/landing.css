@@ -1,6 +1,11 @@
 .carousel-item img {
     opacity: 1;  /* 70% de opacidad */
     transition: opacity 0.5s ease;  /* Transición suave */
+    height: 500px;
+    object-fit: cover;
+    border: 5px solid #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
   
 .carousel-control-prev-icon,
@@ -13,4 +18,13 @@
 .carousel-control-prev-icon:hover,
 .carousel-control-next-icon:hover {
   background-color: rgba(0, 0, 0, 0.7); /* Color más oscuro cuando se pasa el ratón */
+}
+.carousel-caption { 
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */ 
+  border-radius: 10px; 
+  padding: 10px; 
+} 
+.carousel-control-prev,
+.carousel-control-next {
+  display: none;
 }
