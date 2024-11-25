@@ -123,6 +123,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR, 'static']
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -132,3 +135,14 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+mail = os.environ("MAIL")
+mail_pass = os.environ("MAIL_PASSWORD")
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-mail.outlook.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = mail
+EMAIL_HOST_PASS = mail_pass
+DEFAULT_FROM_EMAIL = mail
+EMAIL_SUBJECT_PREFIX="Recuperar contraseña"
