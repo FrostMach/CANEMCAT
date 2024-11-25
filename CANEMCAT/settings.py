@@ -132,3 +132,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de loguearse
+LOGOUT_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de cerrar sesión

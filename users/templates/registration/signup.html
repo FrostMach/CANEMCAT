@@ -1,21 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="bg-white p-4 shadow-sm rounded">
-          <h2 class="text-center mb-4">Regístrate</h2>
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-              {{ form.as_p }}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="bg-white p-4 shadow-sm rounded">
+        <h2 class="text-center mb-4">Regístrate</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ form.as_p }}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+              <ul>
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+              </ul>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
-          </form>
-          <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'signup' %}">Inicia sesión aquí</a>.</p>
-        </div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
+        </form>
+        <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}
