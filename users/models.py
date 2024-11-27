@@ -69,6 +69,16 @@ class AdopterProfile(models.Model):
     def __str__(self):
         return self.user.full_name    
 
+class Test(models.Model):
+    name = models.CharField(max_length=100)
+    date = models.DateField(blank=True, null=True)
+
+class Questions(models.Model):
+    question_text = models.CharField(max_length=255)
+
+class Answers(models.Model):
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='questions')
+
 # Wishlist model
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
