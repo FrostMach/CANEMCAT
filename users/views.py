@@ -38,30 +38,12 @@ def signup(request):
                 'uid': uid,
                 'token': token,
             })
-            send_mail(mail_subject, message, 'no-reply@example.com', [user.email])
+            send_mail(mail_subject, message, 'pruebaconsmtp46@gmail.com', [user.email])
 
             return redirect('registration/email_confirmation.html')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
-
-def send_mailgun_email(subject, body, to_email):
-    api_key = "c62cd9774f0f4cb5a055e4b8e4c7e81f-6df690bb-ebd2b32a"
-    domain = "sandbox47fab76e50d34c02b56708c10cf6c76f.mailgun.org"
-    from_email = "pruebasconsmtp46@gmail.com"
-
-    response = requests.post(
-        f"https://api.mailgun.net/v3/{domain}/messages",
-        auth=("api", api_key),
-        data={
-            "from": from_email,
-            "to": to_email,
-            "subject": subject,
-            "text": body
-        }
-    )
-
-    return response
 
 def user_registration_view(request):
     if request.method == "POST":
@@ -70,7 +52,7 @@ def user_registration_view(request):
         body = "Gracias por registrarte. Estamos emocionados de tenerte con nosotros."
         to_email = "user@example.com"  
         
-        send_mailgun_email(subject, body, to_email)
+        send_mail(subject, body, to_email)
 
         return HttpResponse("Registro completado y correo enviado.")
     
@@ -126,7 +108,7 @@ def password_reset(request):
                     'uid': uid,
                     'token': token,
                 })
-                send_mail(mail_subject, message, 'no-reply@example.com', [email])
+                send_mail(mail_subject, message, 'pruebasconsmtp46@gmail.com', [email])
             return redirect('password_reset_confirm')
     else:
         form = PasswordResetForm()
