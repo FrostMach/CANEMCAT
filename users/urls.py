@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from .views import landing_page
 from django.contrib.auth import views as auth_views
 urlpatterns = [
-    path('landing/', landing_page, name='landing_page'),
+    path('', landing_page, name='landing_page'),
     path('signup/', views.SignUpView.as_view(), name='signup'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),

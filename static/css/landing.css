@@ -1,5 +1,4 @@
 .carousel-item img {
-    opacity: 1;  /* 70% de opacidad */
     transition: opacity 0.5s ease;  /* Transición suave */
     height: 500px;
     object-fit: cover;
@@ -28,3 +27,4 @@
 .carousel-control-next {
   display: none;
 }
+
