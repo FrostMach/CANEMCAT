@@ -16,7 +16,6 @@ import smtplib
 from django.http import HttpResponse
 import requests
 
-
 def landing_page(request):
     return render(request, 'landing_page.html')
 
@@ -38,27 +37,35 @@ class ProfileUpdateView(generic.UpdateView):
     success_url = reverse_lazy('profile')
     
 
+
 def login_view(request):
     if request.method == "POST":
         # Recibimos los datos del formulario manualmente
         email = request.POST.get('email')
         password = request.POST.get('password')
-        form = AuthenticationForm()
-        print(email)
-        print(password)
+        
+        # Intentamos obtener el usuario con el email
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            user = None
+        
         # Usamos authenticate para verificar las credenciales con email en vez de username
-        user = authenticate(request, username=email, password=password)
-
-        if user is None:
-            print("Autenticación fallida")
+        if user is not None:
+            user = authenticate(request, email=user.email, password=password)
+            if user is None:
+                print("Autenticación fallida")
+            else:
+                print(f"Usuario autenticado: {user.email}")
+                login(request, user)  # Iniciar sesión si la autenticación es exitosa
+                return redirect('landing_page')  # Redirige a la página principal o dashboard, por ejemplo
         else:
-            print(f"Usuario autenticado: {user.email}")
-            # else:
-            # # Si es GET, inicializamos el formulario vacío para renderizarlo
-            # form = AuthenticationForm()
+            print("Usuario con ese email no encontrado")
+            
+    else:
+        form = AuthenticationForm()
 
-    return render(request, 'registration/login.html', {'form': form}) 
-
+    return render(request, 'registration/login.html', {'form': form})
 
 def signup(request):
     if request.method == 'POST':
