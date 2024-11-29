@@ -6,6 +6,35 @@ from .models import CustomUser, Wishlist
 from django.contrib.auth import login, authenticate, logout
 from .forms import LoginForm
 from django.contrib.auth.forms import UserCreationForm
+from shelters.models import Shelter, Animal
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import os
+
+import joblib
+from django.conf import settings
+
+# Ruta del archivo del modelo (ajusta la ruta si es necesario)
+model_path = os.path.join(settings.BASE_DIR, 'users/templates/chatbot/chatbot_model.pkl')  # Asegúrate de que la ruta sea correcta
+
+# Cargar el modelo entrenado
+model = joblib.load(model_path)
+
+# Función que usa el modelo para predecir la respuesta
+def get_chatbot_response(user_input):
+    # Predicción: pasamos el texto del usuario al modelo
+    prediction = model.predict([user_input])
+    # Devuelves la respuesta predicha
+    return prediction[0]
+
+@csrf_exempt
+def chatbot(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message')
+        # Obtener la respuesta del chatbot
+        response = get_chatbot_response(user_message)
+        return JsonResponse({'response': response})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 def landing_page(request):
     return render(request, 'landing_page.html')

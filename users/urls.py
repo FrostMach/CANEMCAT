@@ -11,5 +11,7 @@ urlpatterns = [
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
     path('logout/', views.logout_view, name='logout'),    
     path('login/', views.login_view, name='login'),  # Ruta para iniciar sesión
+    path('chatbot/', views.chatbot, name='chatbot'),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

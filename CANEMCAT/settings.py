@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "shelters",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "CANEMCAT.wsgi.application"
+ASGI_APPLICATION = "CANEMCAT.asgi.application"
 
 
 # Database

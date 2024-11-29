@@ -1,0 +1,65 @@
+/* Estilo para el icono flotante */
+#chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#chatbot-toggle {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #0078D4;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#chatbot-conatiner {
+    position: fixed;
+    bottom: 80px; /* Mantener un poco de espacio desde el fondo */
+    right: -350px; /* Establecer inicialmente fuera de la pantalla */
+    z-index: 1000;
+    width: 350px;
+    height: 500px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transform: translateX(100%);  /* Inicialmente fuera de la pantalla */
+    transition: transform 0.3s ease-in-out;  /* Animación suave para la transición */
+}
+
+
+/* Cabecera del chat */
+.chat-header {
+    background-color: #0078D4;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Estilos para los mensajes */
+.chat-messages {
+    padding: 10px;
+    height: 370px;
+    overflow-y: auto;
+}
+
+/* Entrada de texto y botón de enviar */
+.chat-input {
+    padding: 10px;
+}
+
+.chat-input input {
+    width: 100%;
+}
+
+.chat-input button {
+    width: 100%;
+}
