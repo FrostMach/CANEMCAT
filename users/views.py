@@ -15,6 +15,7 @@ from django.contrib.sites.shortcuts import get_current_site
 import smtplib
 from django.http import HttpResponse
 import requests
+from django.utils.encoding import force_bytes
 
 def landing_page(request):
     return render(request, 'landing_page.html')
@@ -110,22 +111,29 @@ def password_reset(request):
         form = PasswordResetForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            users = CustomUser.objects.filter(email=email)
-            for user in users:
+            users = CustomUser.objects.filter(email=email)  # Aquí buscamos todos los usuarios con ese email
+            
+            # Si hay al menos un usuario con el email, tomamos el primero
+            if users.exists():
+                user = users.first()  # Tomamos el primer usuario
                 token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(str(user.pk).encode())
+                uid = urlsafe_base64_encode(force_bytes(user.pk.to_bytes()))  # Usamos force_bytes para convertir el ID a bytes
                 current_site = get_current_site(request)
-                mail_subject = 'Recupera tu contraseña'
+                mail_subject = 'Enlace para recuperar la contraseña'
                 message = render_to_string('registration/password_reset_email.html', {
                     'user': user,
                     'domain': current_site.domain,
                     'uid': uid,
                     'token': token,
                 })
-                send_mail(mail_subject, message, 'pruebasconsmtp46@gmail.com', [email])
-            return redirect('password_reset_confirm')
+                send_mail(mail_subject, message, 'from@example.com', [email])  # Reemplaza 'from@example.com' con tu correo
+                return render(request, 'registration/password_reset_done.html')  # Redirige a la página de confirmación
+            else:
+                # Si no se encuentra un usuario con ese email
+                form.add_error('email', 'No se ha encontrado ningún usuario con ese correo electrónico.')
     else:
         form = PasswordResetForm()
+
     return render(request, 'registration/password_reset.html', {'form': form})
 
 def user_registration_view(request):
