@@ -1,0 +1,16 @@
+.carousel-item img {
+    opacity: 1;  /* 70% de opacidad */
+    transition: opacity 0.5s ease;  /* Transición suave */
+}
+  
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5); /* Color de fondo de las flechas */
+  border-radius: 50%;  /* Hace las flechas redondas */
+  padding: 10px;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.7); /* Color más oscuro cuando se pasa el ratón */
+}

@@ -61,6 +61,7 @@ class AdopterProfile(models.Model):
 class Wishlist(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
     animals = models.ManyToManyField(Animal, related_name='wishlists')
+    interaction_type = models.CharField(max_length=50, choices=[('view', 'View'),('favorite', 'Favorite'), ('adopt', 'Adopt')])
     class Meta:
         db_table = 'wishlist'  # Custom table name in the database
         verbose_name = 'Wishlist'

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Encontrar protectoras cercanas</h2>
+
+    <form id="postal-code-form">
+        <label for="postal-code">Introduce el código postal: </label>
+        <input type="text" name="postal-code" id="postal-code">
+        <button type="submit">Buscar</button>
+    </form>
+    
+    <div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div> 
+    
+    <script>  
+         const map = L.map('map').setView([0, 0], 13); // Inicializar en 0,0 hasta obtener la ubicación del usuario
+
+        // Cargar tiles de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        function addMarkers(centers) {
+            // Limpiar marcadores existentes
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Añadir nuevos marcadores
+            centers.forEach(center => {
+                L.marker([center.latitude, center.longitude])
+                    .addTo(map)
+                    .bindPopup(`<b>${center.name}</b><br>${center.address}`);
+            });
+
+            // Centrar el mapa en el primer centro encontrado
+            if (centers.length > 0) {
+                const firstCenter = centers[0];
+                map.setView([firstCenter.latitude, firstCenter.longitude], 13);
+            } else {
+                alert("No se encuentran protectoras por la zona.");
+            }
+        }
+
+        // Usar geolocalización del navegador
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
+
+                // Centrar el mapa en la ubicación del usuario
+                map.setView([userLat, userLon], 13);
+
+                // Marcador para el usuario
+                // L.marker([userLat, userLon]).addTo(map).bindPopup("You are here").openPopup();
+
+                // Llamar a la API para obtener centros cercanos
+                fetch(`/api/nearby-shelters/?latitude=${userLat}&longitude=${userLon}&radius=10`)
+                    .then(response => response.json())
+                    .then(data => addMarkers(data));
+            },
+            () => {
+                alert("Geolocation failed. Please allow location access.");
+            }
+        );
+
+        document.getElementById('postal-code-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const postalCode = document.getElementById('postal-code').value;
+
+            // Buscar centros por código postal usando la API
+            fetch(`/api/shelter-postal-code/?postal_code=${postalCode}`)
+                .then(response => response.json())
+                .then(data => addMarkers(data));
+        });
+    </script> 
+    <a href="{% url 'shelter_list' %}" class="btn btn-secondary">Volver al listado</a>
+{% endblock %}
