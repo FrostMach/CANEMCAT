@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist
 from django.contrib.auth import login, authenticate, logout, get_user_model
@@ -40,18 +40,24 @@ class ProfileUpdateView(generic.UpdateView):
 
 def login_view(request):
     if request.method == "POST":
+        # Recibimos los datos del formulario manualmente
         email = request.POST.get('email')
         password = request.POST.get('password')
+        form = AuthenticationForm()
+        print(email)
+        print(password)
+        # Usamos authenticate para verificar las credenciales con email en vez de username
+        user = authenticate(request, username=email, password=password)
 
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('landing_page')  # Redirigir a la página principal o a la página de perfil
+        if user is None:
+            print("Autenticación fallida")
         else:
-            # Si el inicio de sesión es incorrecto, muestra un mensaje de error
-            return render(request, 'registration/login.html', {'error': 'Correo o contraseña incorrectos'})
+            print(f"Usuario autenticado: {user.email}")
+            # else:
+            # # Si es GET, inicializamos el formulario vacío para renderizarlo
+            # form = AuthenticationForm()
 
-    return render(request, 'registration/login.html')
+    return render(request, 'registration/login.html', {'form': form}) 
 
 
 def signup(request):
