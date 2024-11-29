@@ -40,28 +40,28 @@ class ProfileUpdateView(generic.UpdateView):
 
 def login_view(request):
     if request.method == "POST":
-        # Recibimos los datos del formulario manualmente
+        form = AuthenticationForm(request, data=request.POST)  # Necesitamos pasar `request` al form
+
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
+
         # Intentamos obtener el usuario con el email
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
             user = None
-        
-        # Usamos authenticate para verificar las credenciales con email en vez de username
+
+        # Si el usuario existe, intentamos autenticarlo
         if user is not None:
-            user = authenticate(request, email=user.email, password=password)
+            user = authenticate(request, email=user.email, password=password)  # Usamos el username para la autenticación
             if user is None:
-                print("Autenticación fallida")
+                form.add_error(None, "Email o contraseña incorrectos")  # Agregar un error general al formulario
             else:
-                print(f"Usuario autenticado: {user.email}")
                 login(request, user)  # Iniciar sesión si la autenticación es exitosa
-                return redirect('landing_page')  # Redirige a la página principal o dashboard, por ejemplo
+                return redirect('landing_page')  # Redirige a la página principal o dashboard
         else:
-            print("Usuario con ese email no encontrado")
-            
+            form.add_error(None, "Usuario con ese email no encontrado.")  # Agregar un error si no se encuentra el usuario
+        
     else:
         form = AuthenticationForm()
 

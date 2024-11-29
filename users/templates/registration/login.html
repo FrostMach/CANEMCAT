@@ -9,6 +9,15 @@
                 <form method="post">
                     {% csrf_token %}
 
+                    <!-- Mostrar errores generales -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <!-- Campo de correo electrónico -->
                     <div class="form-group">
                         <label for="email">Correo Electrónico</label>
