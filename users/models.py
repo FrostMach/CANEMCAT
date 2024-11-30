@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from shelters.models import Animal
+import re
+from django.core.exceptions import ValidationError
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -19,6 +21,16 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+def validate_phone_number(value):
+    pattern = r'^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$'
+    if not re.match(pattern, value):
+        raise ValidationError(f"El número de teléfono {value} no es válido.")
+
+def validate_email(value):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if not re.match(pattern, value):
+        raise ValidationError(f"El correo electrónico {value} no es válido.")
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     USER_TYPES = (
         ('adopter', 'Adopter'),  # Persona que adopta
@@ -27,7 +39,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=9, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='adopter')
@@ -56,6 +68,16 @@ class AdopterProfile(models.Model):
 
     def __str__(self):
         return self.user.full_name    
+
+class Test(models.Model):
+    name = models.CharField(max_length=100)
+    date = models.DateField(blank=True, null=True)
+
+class Questions(models.Model):
+    question_text = models.CharField(max_length=255)
+
+class Answers(models.Model):
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='questions')
 
 # Wishlist model
 class Wishlist(models.Model):

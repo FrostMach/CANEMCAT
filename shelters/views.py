@@ -5,6 +5,8 @@ from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, Register
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
+from math import atan2, cos, radians, sin, sqrt
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -155,3 +157,41 @@ def check_acreditation(request, shelter_id):
     shelter = get_object_or_404(Shelter, id=shelter_id)
 
     return render(request, 'shelter/profile.html', {'shelter': shelter})
+
+def nearby_shelters(request):
+    lat = request.GET.get('latitude')
+    lon = request.GET.get('longitude')
+
+    shelters = Shelter.objects.all()
+    data = [
+        {'name': shelter.name, 
+         'address': shelter.address, 
+         'latitude':shelter.latitude, 
+         'longitude':shelter.longitude} 
+         for shelter in shelters
+    ]
+
+    return JsonResponse(data, safe=False)
+
+def map_view(request):
+    return render(request, 'shelter/nearby_shelter.html')
+
+def shelters_by_postal_code(request):
+    postal_code = request.GET.get('postal_code', '').strip()
+
+    if not postal_code:
+        return JsonResponse({'error':'Postal code is required'}, status=400)
+    
+    shelters = Shelter.objects.filter(postal_code=postal_code).values(
+        'name', 'address', 'latitude', 'longitude'
+    )
+
+    return JsonResponse(list(shelters),safe=False)
+# def calculate_distance(lat1, lon1, lat2, lon2):
+#     R = 6371.0
+#     dlat = radians(lat2 - lat1)
+#     dlon = radians(lon2 - lon1)
+#     a = sin(dlat/2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
+#     c = 2 * atan2(sqrt(a), sqrt(1-a))
+    
+#     return R * c

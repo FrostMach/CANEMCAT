@@ -31,6 +31,9 @@ class Shelter(models.Model):
     accreditation_status = models.BooleanField(default=True, verbose_name='Estado de acreditación')
     register_date = models.DateField(blank=True, null=True, verbose_name='Fecha de registro')
     status = models.BooleanField(verbose_name='Estado', blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True, verbose_name='Latitud')
+    longitude = models.FloatField(blank=True, null=True, verbose_name='Longitud')
+    postal_code = models.CharField(blank=True, null=True, max_length=10, verbose_name='Código Postal')
 
     def __str__(self):
         return f'{self.name}'    
