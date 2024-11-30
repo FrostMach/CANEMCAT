@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from shelters.models import Animal, AdoptionApplication, Shelter
 from django.urls import reverse_lazy, reverse
-from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -33,9 +33,31 @@ class AnimalListView(generic.ListView):
     model = Animal
     template_name = 'animals/list.html'
     context_object_name = 'animals'
+    paginate_by = 10
 
     def get_queryset(self):
-        return Animal.objects.all()
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
+
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
+
+            if species:
+                queryset = queryset.filter(species=species)
+            if size:
+                queryset = queryset.filter(size=size)
+            if shelter:
+                queryset = queryset.filter(shelter=shelter)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
     
 class AnimalDetailView(generic.DetailView):
     model = Animal

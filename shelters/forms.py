@@ -10,10 +10,31 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species', 'description', 'image', 'adoption_status']
+        fields = [
+            'name', 'species', 'age', 'size', 'personality', 'energy', 
+            'fur', 'description', 'image', 'adoption_status', 'shelter'
+        ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
+ 
+class AnimalFilterForm(forms.Form):
+    species = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SPECIES,  # Agrega opción vacía para no filtrar
+        required=False,
+        label="Especie"
+    )
+    size = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SIZE,
+        required=False,
+        label="Tamaño"
+    )
+    shelter = forms.ModelChoiceField(
+        queryset=Shelter.objects.all(),
+        required=False,
+        label="Protectora",
+        empty_label="---"
+    )
  
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):

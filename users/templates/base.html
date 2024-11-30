@@ -47,24 +47,15 @@
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Animales</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
-                                <li><a class="dropdown-item" href="{% url 'animals-list' %}">Lista de Animales</a></li>
-                                <li><a class="dropdown-item" href="{% url 'animals-create' %}">Añadir Animal</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
                         </li>
                         {% endif %}
 
                         {% if not user.is_authenticated %}
                         <!-- Animales - Dropdown para usuarios no autenticados -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Animales</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
-                                <li><a class="dropdown-item" href="{% url 'animals-list' %}">Lista de Animales</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
                         </li>
 
                         <!-- Protectoras - Dropdown para usuarios no autenticados -->

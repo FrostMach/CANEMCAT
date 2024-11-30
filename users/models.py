@@ -36,7 +36,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('adopter', 'Adopter'),  # Persona que adopta
         ('worker', 'Shelter Worker'),  # Trabajador de protectora
     )
-
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=9, blank=True, null=True)
@@ -45,7 +44,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='adopter')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'

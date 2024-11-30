@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center text-white">Añadir Animal</h2>
-    <form method="post" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.as_p }}
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-</div>
+  <h2>Registrar Nuevo Animal</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+  </form>
+  <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver a la lista</a> <!-- Cambia 'animal-list' según sea necesario -->
 {% endblock %}
+

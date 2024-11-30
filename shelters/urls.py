@@ -9,6 +9,7 @@ urlpatterns = [
     path('editar/<int:pk>/', views.AnimalUpdateView.as_view(), name='animals-update'),
     path('eliminar/<int:pk>/', views.AnimalDeleteView.as_view(), name='animals-delete'),
     path('lista/', views.AnimalListView.as_view(), name='animals-list'),
+    path('detalles/<int:pk>/', views.AnimalDetailView.as_view(), name='animals-detail'),
     path('shelters/solicitud_adopcion/', views.AdoptionApplicationCreateView.as_view(), name='solicitud_adopcion_create'),
     path('shelters/confirmacion_solicitud/',views.confirm_view, name='solicitud_adopcion_confirm'),
     path('shelters/', views.ShelterList.as_view(), name='shelter_list'),
