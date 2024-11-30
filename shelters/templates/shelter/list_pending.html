@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Centros pendientes de Verificación</h1>
+
+    <ul>
+        {% for shelter in shelters %}
+            <li>
+                <a href="{% url 'check_pending'shelter.pk %}">{{shelter.name}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
