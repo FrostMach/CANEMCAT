@@ -1,21 +1,130 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="bg-white p-4 shadow-sm rounded">
-          <h2 class="text-center mb-4">Regístrate</h2>
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-              {{ form.as_p }}
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
-          </form>
-          <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'signup' %}">Inicia sesión aquí</a>.</p>
-        </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="bg-white p-4 shadow-sm rounded">
+        <h2 class="text-center mb-4">Regístrate</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ form.full_name.id_for_label }}">Nombre Completo</label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.full_name.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.phone_number.id_for_label }}">Número de Teléfono</label>
+            {{ form.phone_number }}
+            {% if form.phone_number.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.phone_number.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.birth_date.id_for_label }}">Fecha de Nacimiento</label>
+            <input type="date" name="birth_date" class="form-control" id="{{ form.birth_date.id_for_label }}" value="{{ form.birth_date.value|default:'' }}">
+            {% if form.birth_date.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.birth_date.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.profile_picture.id_for_label }}">Foto de Perfil</label>
+            {{ form.profile_picture }}
+            {% if form.profile_picture.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.profile_picture.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.user_type.id_for_label }}">Tipo de Usuario</label>
+            {{ form.user_type }}
+            {% if form.user_type.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.user_type.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.password1.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+              <div class="alert alert-danger">
+                <ul>
+                  {% for error in form.password2.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Registrarse</button>
+        </form>
+        
+        <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}

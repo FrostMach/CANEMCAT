@@ -3,8 +3,7 @@ body {
     background-size: cover; /* Asegura que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     background-attachment: fixed; /* Fija la imagen para que no se mueva al hacer scroll */
-    margin: 0;
-    padding: 0;
+
 }
 
 .jumbotron {
