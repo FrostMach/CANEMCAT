@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h2>Protectoras</h2>
-<div class="card-deck">
-    {% for shelter in object_list %}
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">{{ shelter.name }}</h5>
-            <p class="card-text"><strong>Adress:</strong> {{ shelter.address }}</p>
-            <p class="card-text"><strong>Estado de adopción:</strong> {{ shelter.telephone }}</p>
-            <div class="btn-group" role="group" aria-label="Acciones">
-                <a href="{% url 'edit_shelter' shelter.id %}" class="btn btn-primary">Editar</a>
-            </div>
-        </div>
-    </div>
+<table>
+    <tr>
+        <th>Nombre</th><th>Dirección</th><th>Correo</th><th>Teléfono</th><th></th>
+    </tr>
+    {% for shelter in shelters %}
+        <tr>
+            <td>{{ shelter.name }}</td>
+            <td>{{ shelter.address }}</td>
+            <td>{{ shelter.email }}</td>
+            <td>{{ shelter.telephone }}</td>
+            <td><a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-info">Ver</a></td>
+            <td><a href="{% url 'edit_shelter' pk=shelter.id %}" class="btn btn-primary">Editar</a></td>
+            <td><a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Eliminar</a></td>
+        </tr>
     {% endfor %}
-</div>
+</table>
 {% endblock %}
