@@ -16,7 +16,10 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # El backend por defecto
+    'users.backends.EmailBackend',  # Nuestro backend personalizado para email
+)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -123,6 +126,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR, 'static']
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -132,3 +138,17 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+mail = os.environ["MAIL"]
+mail_pass = os.environ["MAIL_PASSWORD"]
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Servidor SMTP de Gmail
+EMAIL_PORT = 587  # Puerto SMTP con TLS
+EMAIL_USE_TLS = True  # Habilitar TLS (seguro)
+EMAIL_HOST_USER = mail
+EMAIL_HOST_PASS = mail_pass
+DEFAULT_FROM_EMAIL = mail
+EMAIL_SUBJECT_PREFIX="Recuperar contraseña"
+
+LOGIN_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de loguearse
+LOGOUT_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de cerrar sesión
