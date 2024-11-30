@@ -66,4 +66,4 @@ class RegisterShelterForm(forms.ModelForm):
 class UpdateShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter
-        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'register_date', 'status']
+        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'register_date', 'status', 'latitude', 'longitude', 'postal_code']
