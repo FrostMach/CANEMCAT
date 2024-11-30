@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser, Wishlist
+from django.contrib.auth.decorators import login_required
 
 def landing_page(request):
     return render(request, 'landing_page.html')
@@ -39,4 +40,7 @@ class RemoveFromWishlistView(generic.ListView):
     template_name = 'wish/list.html'
     context_object_name = 'remove'
 
-
+# @login_required
+# def recommend_view(request):
+#     recommend = animal_recommend(request.user)
+#     return render(request, 'recommend/list.html', {'recommend':recommend})
