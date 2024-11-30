@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    CanemSCAN
+{% endblock %}
+
+{% block content %}
+    <!-- Contenedor con fondo verde claro -->
+    <div style="background-color: #e0f7fa; padding: 20px; border-radius: 10px;">
+        <h1>CanemSCAN</h1>
+        <p>¿Quieres escanear un gato o un perro?</p>
+        <button id="dog-button">Perro</button>
+
+        <!-- Formulario de subida de imagen -->
+        <form id="upload-form" style="display: none;" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            <label for="image">Sube una imagen de tu perro:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <button type="submit">Subir y analizar</button>
+        </form>
+        
+        <!-- Lugar donde se mostrará el resultado -->
+        <p id="result"></p>
+
+        <!-- Aquí se mostrará la imagen subida -->
+        <div id="image-preview" style="display:none;">
+            <h3>Imagen subida:</h3>
+            <img id="uploaded-image" src="" alt="Imagen subida" style="max-width: 300px;">
+        </div>
+    </div>
+
+    <script>
+        // Mostrar formulario al hacer clic en el botón
+        document.getElementById('dog-button').addEventListener('click', function() {
+            document.getElementById('upload-form').style.display = 'block';
+        });
+
+        // Enviar el formulario y manejar la respuesta
+        document.getElementById('upload-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/canemscan/upload/', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('result').textContent = `${data.breed}`;
+                
+                // Mostrar la imagen subida
+                const imageUrl = URL.createObjectURL(document.getElementById('image').files[0]);
+                document.getElementById('uploaded-image').src = imageUrl;
+                document.getElementById('image-preview').style.display = 'block';  // Mostrar la sección de imagen
+            } else {
+                document.getElementById('result').textContent = 'Ocurrió un error al analizar la imagen.';
+            }
+        });
+    </script>
+{% endblock %}
+
