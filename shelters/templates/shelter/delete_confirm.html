@@ -3,10 +3,12 @@
 {% block content %}
     <h2>Baja protectora</h2>
 
-    <p>¿Seguro qué deseas dar de baja esta protectora "{{ object }}"?</p>
+    <div class="mt-4 p-4 bg-white shadow-sm rounded">
+    <p>¿Seguro qué deseas dar de baja esta protectora <b>"{{ object }}"?</b></p>
     <form method="post">
         {% csrf_token %}
         <button class="btn btn-danger" type="submit">Confirmar</button>
         <a class="btn btn-secondary" href="{% url 'register_shelter' %}">Cancelar</a>
     </form>
+    </div>
 {% endblock %}

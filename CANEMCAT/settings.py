@@ -139,16 +139,17 @@ AUTH_USER_MODEL = 'users.CustomUser'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-mail = os.environ["MAIL"]
-mail_pass = os.environ["MAIL_PASSWORD"]
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# mail = os.environ["MAIL"]
+# mail_pass = os.environ["MAIL_PASSWORD"]
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Servidor SMTP de Gmail
 EMAIL_PORT = 587  # Puerto SMTP con TLS
 EMAIL_USE_TLS = True  # Habilitar TLS (seguro)
-EMAIL_HOST_USER = mail
-EMAIL_HOST_PASS = mail_pass
-DEFAULT_FROM_EMAIL = mail
+# EMAIL_HOST_USER = mail
+# EMAIL_HOST_PASS = mail_pass
+# DEFAULT_FROM_EMAIL = mail
 EMAIL_SUBJECT_PREFIX="Recuperar contraseña"
 
 LOGIN_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de loguearse
 LOGOUT_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de cerrar sesión
+LOGIN_URL = '/login/'

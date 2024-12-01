@@ -8,7 +8,7 @@ from .views import landing_page,email_confirmation
 
 from django.contrib.auth import views as auth_views
 urlpatterns = [
-    path('landing/', landing_page, name='landing_page'),
+    path('', landing_page, name='landing_page'),
     path('signup/', views.signup, name='signup'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('login/', views.login_view, name='login'),
