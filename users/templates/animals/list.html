@@ -1,49 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Animales en Adopción</h2>
 
 <!-- Barra de filtros -->
-<form method="get" class="filter-form mb-4">
-    <div class="form-row">
-        <div class="col">
-            {{ filter_form.species.label_tag }}
-            {{ filter_form.species }}
-        </div>
-        <div class="col">
-            {{ filter_form.size.label_tag }}
-            {{ filter_form.size }}
-        </div>
-        <div class="col">
-            {{ filter_form.shelter.label_tag }}
-            {{ filter_form.shelter }}
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
-        </div>
-    </div>
-</form>
+<div class="filter-section">
+    <h2>Animales en adopción</h2>
 
-<!-- Lista de animales -->
-<div class="card-deck">
-    {% for animal in object_list %}
-    <div class="card mb-4" style="width: 18rem;">
-        <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ animal.name }}</h5>
-            <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
-            <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
-            <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
-            <div class="btn-group" role="group" aria-label="Acciones">
-                <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
-                <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Solicitar adopción</a>
+    <!-- Barra de filtros -->
+    <form method="get" class="filter-form mb-4">
+        <div class="form-row">
+            <div class="col">
+                {{ filter_form.species.label_tag }}
+                {{ filter_form.species }}
+            </div>
+            <div class="col">
+                {{ filter_form.size.label_tag }}
+                {{ filter_form.size }}
+            </div>
+            <div class="col">
+                {{ filter_form.shelter.label_tag }}
+                {{ filter_form.shelter }}
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
             </div>
         </div>
-    </div>
+    </form>
+</div>
+
+<!-- Lista de animales -->
+<div class="row">
+    {% for animal in object_list %}
+        <div class="col-md-4 mb-4 d-flex align-items-stretch">
+            <div class="card" style="width: 100%;">
+                <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ animal.name }}</h5>
+                    <p class="card-text"><strong>Descripción:</strong> {{ animal.description }}</p>
+                    <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
+                    <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
+                    <div class="btn-group" role="group" aria-label="Acciones">
+                        <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
+                        <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Solicitar adopción</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% empty %}
-    <p>No se encontraron animales con los filtros seleccionados.</p>
+        <p>No se encontraron animales con los filtros seleccionados.</p>
     {% endfor %}
 </div>
+
 
 <!-- Paginación -->
 <div class="pagination">

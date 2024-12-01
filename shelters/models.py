@@ -24,7 +24,6 @@ class StatusEnum(Enum):
     APPROVED = 'A', 'Aprobada'
     DENIED = 'D', 'Denegada'
     
-    
 class Animal(models.Model):
     SPECIES = [
         ('perro', 'Perro'),
@@ -63,7 +62,7 @@ class Animal(models.Model):
     fur = models.CharField(max_length=10, choices=FUR)
     description = models.TextField()
     image = models.ImageField(upload_to='animals/')
-    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='disponible')
+    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='Disponible')
     shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora')
 
     def __str__(self):
@@ -74,7 +73,12 @@ class Animal(models.Model):
         Validación personalizada: Si el animal es un gato, size no debe ser obligatorio.
         """
         if self.species == 'perro' and not self.size:
-            raise ValidationError({'size': 'El tamaño es obligatorio para los perros.'})    
+            raise ValidationError({'size': 'El tamaño es obligatorio para los perros.'})
+    
+    def save(self, *args, **kwargs):
+        # Asegura que el estado de adopción tiene la primera letra en mayúscula antes de guardarlo
+        self.adoption_status = self.adoption_status.capitalize()
+        super().save(*args, **kwargs)    
     
 class AdoptionApplication(models.Model):
     user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)

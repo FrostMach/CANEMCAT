@@ -12,3 +12,42 @@ body {
     background-color: rgba(255, 255, 255, 0.7); /* Un fondo semi-transparente para que el texto sea legible */
     padding: 50px;
 }
+
+/* Nuevos estilos para las imágenes */
+.small-img {
+    width: 100%; /* Se ajusta al ancho de la tarjeta */
+    height: 200px; /* Altura fija para mantener la proporción cuadrada */
+    object-fit: contain; /* Ajusta la imagen dentro del cuadro sin recortar */
+    border-radius: 10px; /* Opcional: esquinas redondeadas */
+    background-color: #f8f9fa; /* Añade un fondo para imágenes que no llenen el cuadro */
+}
+
+.filter-section {
+    background-color: #228B22; /* Fondo verde helecho */
+    color: white; /* Texto blanco */
+    padding: 5px 10px; /* Espaciado reducido */
+    border-radius: 5px; /* Esquinas redondeadas */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.filter-form .form-row {
+    display: flex; /* Elementos en línea */
+    align-items: center; /* Alineación vertical */
+    gap: 10px; /* Espacio entre los elementos */
+    margin: 0; /* Elimina márgenes extra */
+}
+
+.filter-form .form-row .col {
+    flex: 1; /* Elementos del filtro ocupan el mismo espacio */
+    margin: 0; /* Elimina márgenes extra */
+}
+
+.filter-form button {
+    padding: 5px 10px; /* Ajuste del tamaño del botón */
+    font-size: 0.9rem; /* Tamaño del texto reducido */
+    height: auto; /* Tamaño dinámico del botón */
+    line-height: 1.5; /* Altura del texto */
+    margin-top: -3px; /* Ajusta la posición vertical del botón */
+    align-self: flex-start; /* Alinea el botón más arriba respecto a los filtros */
+}
+
