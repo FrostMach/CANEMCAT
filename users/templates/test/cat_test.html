@@ -1,7 +1,100 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Cat Test{% endblock %}
+{% block title %}Dog Test{% endblock %}
 
 {% block content %}
+
+<div class="bg-light container">
+    <h2 class="text-center text-success">Preferencias para la Adopción de un Perro</h2>
+    <form class="w-50 col-lg-6 offset-lg-3 pb-5" id="formPerro mb-5">
+        <!-- Pregunta 1 -->
+        <div class="pb-3 question" id="q1" style="opacity: 1; transition: opacity 0.5s ease-in-out;">
+            <label for="tamaño" class="form-label">¿Qué tamaño de perro prefieres?</label>
+            <select class="form-select" id="tamaño" onchange="nextQuestion(2)" required>
+                <option value="Pequeño">Pequeño (menos de 10 kg)</option>
+                <option value="Mediano">Mediano (10-25 kg)</option>
+                <option value="Grande">Grande (más de 25 kg)</option>
+                <option value="Sin preferencia">Sin preferencia</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="pb-3 question" id="q2" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="edad" class="form-label">¿Prefieres un perro joven, adulto o mayor?</label>
+            <select class="form-select" id="edad" onchange="nextQuestion(3)" required>
+                <option value="Cachorro">Cachorro</option>
+                <option value="Joven">Joven (1-3 años)</option>
+                <option value="Adulto">Adulto (3-7 años)</option>
+                <option value="Senior">Senior (más de 7 años)</option>
+                <option value="Sin preferencia">Sin preferencia</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="pb-3 question" id="q3" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="energia" class="form-label">¿Qué nivel de energía te gustaría que tuviera el perro?</label>
+            <select class="form-select" id="energia" onchange="nextQuestion(4)" required>
+                <option value="Baja">Baja (tranquilo, adecuado para hogares más relajados)</option>
+                <option value="Moderada">Moderada (juega ocasionalmente, paseos regulares)</option>
+                <option value="Alta">Alta (activo, necesita ejercicio diario intenso)</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="pb-3 question" id="q4" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="pelaje" class="form-label">¿Tienes alguna preferencia sobre el tipo de pelaje o mantenimiento?</label>
+            <select class="form-select" id="pelaje" onchange="nextQuestion(5)" required>
+                <option value="Pelo corto">Pelo corto y fácil de mantener</option>
+                <option value="Pelo largo">Pelo largo (requiere más cuidado)</option>
+                <option value="Hipoalergénico">Hipoalergénico</option>
+                <option value="Sin preferencia">Sin preferencia</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="pb-3 question" id="q5" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="caracter" class="form-label">¿Prefieres un perro con un carácter específico?</label>
+            <select class="form-select" id="caracter" onchange="nextQuestion(6)" required>
+                <option value="Sociable">Muy sociable y amigable</option>
+                <option value="Protector">Protector pero cariñoso</option>
+                <option value="Independiente">Independiente</option>
+                <option value="Sin preferencia">Sin preferencia</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 6 -->
+        <div class="pb-3 question" id="q6" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="paseo" class="form-label">¿Cuánto tiempo al día puedes dedicar a paseos o ejercicio con el perro?</label>
+            <select class="form-select" id="paseo" onchange="showSubmitButton()" required>
+                <option value="Menos de 30 minutos">Menos de 30 minutos</option>
+                <option value="Entre 30 minutos y 1 hora">Entre 30 minutos y 1 hora</option>
+                <option value="Más de 1 hora">Más de 1 hora</option>
+            </select>
+        </div>
+
+        <!-- Botón de Enviar (se muestra cuando llega a la última pregunta) -->
+        <div class="mb-3" id="submitButton" style="display:none;">
+            <button type="submit" class="btn btn-success w-100">Enviar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Función para mostrar la siguiente pregunta con una transición suave
+    function nextQuestion(questionNumber) {
+        const question = document.getElementById('q' + questionNumber);
+        // Mostrar la siguiente pregunta
+        question.style.display = 'block';
+        // Agregar un retraso en la opacidad para que se vea el efecto
+        setTimeout(function() {
+            question.style.opacity = 1;
+        }, 10); // Necesitamos un pequeño retraso para que la transición de opacidad funcione
+    }
+
+    // Función para mostrar el botón de Enviar cuando se llega a la última pregunta
+    function showSubmitButton() {
+        document.getElementById('submitButton').style.display = 'block';
+    }
+</script>
 
 {% endblock %}

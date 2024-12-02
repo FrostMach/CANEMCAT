@@ -1,7 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Dog Test{% endblock %}
-
+col-lg-6 offset-lg-3 mb-5
 {% block content %}
-
+<div class="container">
+    <h2 class="text-center text-success">Preferencias para la Adopción de un Gato</h2>
+    <form>
+      <div class="mb-3">
+        <label for="edadGato" class="form-label">¿Qué edad prefieres en un gato?</label>
+        <select class="form-select" id="edadGato" required>
+          <option value="Cachorro">Cachorro</option>
+          <option value="Joven">Joven (1-3 años)</option>
+          <option value="Adulto">Adulto (3-7 años)</option>
+          <option value="Senior">Senior (más de 7 años)</option>
+          <option value="Sin preferencia">Sin preferencia</option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label for="pelajeGato" class="form-label">¿Prefieres un gato de pelo corto o largo?</label>
+        <select class="form-select" id="pelajeGato" required>
+          <option value="Pelo corto">Pelo corto</option>
+          <option value="Pelo largo">Pelo largo</option>
+          <option value="Sin preferencia">Sin preferencia</option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label for="caracterGato" class="form-label">¿Te gustaría un gato de carácter más independiente o sociable?</label>
+        <select class="form-select" id="caracterGato" required>
+          <option value="Independiente">Muy independiente</option>
+          <option value="Sociable">Sociable, pero con momentos de independencia</option>
+          <option value="Sociable extremo">Muy sociable y apegado</option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label for="energiaGato" class="form-label">¿Qué nivel de energía te gustaría que tuviera el gato?</label>
+        <select class="form-select" id="energiaGato" required>
+          <option value="Baja">Baja (tranquilo y relajado)</option>
+          <option value="Moderada">Moderada (juega de vez en cuando)</option>
+          <option value="Alta">Alta (muy activo y juguetón)</option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label for="otrasMascotasGato" class="form-label">¿Te gustaría adoptar un gato que se lleve bien con otras mascotas?</label>
+        <select class="form-select" id="otrasMascotasGato" required>
+          <option value="Sí">Sí, con otros gatos</option>
+          <option value="Sí con perros">Sí, con perros</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+  
+      <div class="mb-3">
+        <label for="entrenamientoGato" class="form-label">¿Estás dispuesto a enseñar trucos o hábitos a tu gato?</label>
+        <select class="form-select" id="entrenamientoGato" required>
+          <option value="Sí">Sí, me gustaría enseñarle trucos</option>
+          <option value="No">No, prefiero un gato independiente</option>
+        </select>
+      </div>
+  
+      <button type="submit" class="btn btn-success w-100">Enviar</button>
+    </form>
+  </div>
 {% endblock %}

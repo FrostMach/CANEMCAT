@@ -184,10 +184,7 @@ class RemoveFromWishlistView(generic.ListView):
 
 from django.contrib.auth.decorators import login_required
 
-#CanemTEST
-class ChooseTestView(generic.ListView):
-    model = Test
-    template_name = 'test/choose.html'
+
     
 class DogTestView(generic.ListView):
     model = Test
@@ -204,9 +201,9 @@ def canemscan_view(request):
         return redirect('access_denied')  # Puedes crear una página para mostrar acceso denegado
     return render(request, 'canemscan.html')
 
-@login_required
+# @login_required
 def canemtest_view(request):
-    if request.user.user_type != 'adopter':
-        # Redirigir a una página de acceso denegado
-        return redirect('access_denied')  # O hacia la página de login
-    return render(request, 'canemtest.html')
+    # if request.user.user_type != 'adopter':
+    #     # Redirigir a una página de acceso denegado
+    #     return redirect('access_denied')  # O hacia la página de login
+    return render(request, 'test/canemtest.html')
