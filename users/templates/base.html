@@ -144,6 +144,7 @@
                                 <i class="bi bi-person-circle"></i> <!-- Icono de usuario -->
                                 {% endif %}
                                 {{ user.full_name }}
+
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
                                 <li><a class="dropdown-item" href="">Perfil</a></li>
@@ -154,6 +155,9 @@
                         <!-- Enlace de registro -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'signup' %}">Registrar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                         </li>
                         {% endif %}
 

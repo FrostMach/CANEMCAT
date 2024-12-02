@@ -18,6 +18,10 @@ urlpatterns = [
     path('email_confirmation/', email_confirmation, name='email_confirmation'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
-    path('logout/', views.logout_view, name='logout'),    
+    path('logout/', views.logout_view, name='logout'),
+    path('canem_test/', views.ChooseTestView.as_view(), name='canem_test'),
+    path('dog_test/', views.DogTestView.as_view(), name='dog_test'),    
+    path('cat_test/', views.CatTestView.as_view(), name='cat_test'),    
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

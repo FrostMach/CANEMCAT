@@ -17,8 +17,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # El backend por defecto
     'users.backends.EmailBackend',  # Nuestro backend personalizado para email
+    'django.contrib.auth.backends.ModelBackend',  # El backend por defecto
+
 )
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -54,6 +55,20 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+
+
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutos de caché, ajusta si es necesario
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Asegúrate de que estamos utilizando el backend DB para las sesiones
+SESSION_COOKIE_NAME = 'sessionid'  # Este es el nombre de la cookie de sesión
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Mantiene la sesión activa incluso después de cerrar el navegador
+SESSION_COOKIE_SECURE = False  # Asegúrate de que esto sea False si no estás usando HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Evita que la cookie sea accesible por JavaScript
+SESSION_COOKIE_SAMESITE = 'Lax'  # Si estás trabajando con múltiples dominios o peticiones cross-site
+SESSION_COOKIE_AGE = 3600  # Tiempo de duración de la cookie en segundos (1 hora)
+
 
 ROOT_URLCONF = "CANEMCAT.urls"
 

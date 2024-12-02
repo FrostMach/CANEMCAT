@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dog or Cat?{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="container text-center my-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-12"><h1 class="text-danger">¿Que prefieres?</h1></div>
+            <div class="col-md-5">
+                <a href="{% url 'dog_test' %}" class="option-card">
+                    <div class="p-5 border rounded shadow-lg bg-light">
+                        <h2 class="display-5 text-danger">Perros</h2>
+                        <p class="lead text-danger">Descripción breve de la opción 1.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-5">
+                <a href="{% url 'cat_test' %}" class="option-card">
+                    <div class="p-5 border rounded shadow-lg bg-light">
+                        <h2 class="display-5 text-danger">Gatos</h2>
+                        <p class="lead text-danger">Descripción breve de la opción 2.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

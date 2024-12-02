@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist
+from .models import CustomUser, Wishlist,Test
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
 from django.contrib.auth.forms import UserCreationForm
@@ -16,8 +16,14 @@ import smtplib
 from django.http import HttpResponse
 import requests
 from django.utils.encoding import force_bytes
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponseRedirect
 
+
+@never_cache
 def landing_page(request):
+    print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
+    print(f"Sesión en landing: {request.session.items()}")
     return render(request, 'landing_page.html')
 
 #USUARIOS
@@ -41,30 +47,18 @@ class ProfileUpdateView(generic.UpdateView):
 
 def login_view(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)  # Necesitamos pasar `request` al form
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        # Intentamos obtener el usuario con el email
-        try:
-            user = CustomUser.objects.get(email=email)
-        except CustomUser.DoesNotExist:
-            user = None
-
-        # Si el usuario existe, intentamos autenticarlo
-        if user is not None:
-            user = authenticate(request, email=user.email, password=password)  # Usamos el username para la autenticación
-            if user is None:
-                form.add_error(None, "Email o contraseña incorrectos")  # Agregar un error general al formulario
-            else:
-                login(request, user)  # Iniciar sesión si la autenticación es exitosa
-                return redirect('landing_page')  # Redirige a la página principal o dashboard
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.user
+            logout(request)  # Cerrar sesión antes de iniciar sesión
+            login(request, user)
+            print(f"Usuario autenticado en login (después de login): {request.user.is_authenticated}")
+            print(f"Sesión en login: {request.session.items()}")
+            return HttpResponseRedirect(reverse('landing_page'))  # o 'landing_page' si tienes nombre de ruta para la landing
         else:
-            form.add_error(None, "Usuario con ese email no encontrado.")  # Agregar un error si no se encuentra el usuario
-        
+            messages.error(request, "Email o contraseña incorrectos.")
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
 
     return render(request, 'registration/login.html', {'form': form})
 
@@ -189,6 +183,19 @@ class RemoveFromWishlistView(generic.ListView):
 
 
 from django.contrib.auth.decorators import login_required
+
+#CanemTEST
+class ChooseTestView(generic.ListView):
+    model = Test
+    template_name = 'test/choose.html'
+    
+class DogTestView(generic.ListView):
+    model = Test
+    template_name = 'test/dog_test.html'
+
+class CatTestView(generic.ListView):
+    model = Test
+    template_name = 'test/cat_test.html'
 
 @login_required
 def canemscan_view(request):

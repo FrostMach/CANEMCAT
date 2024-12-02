@@ -27,12 +27,21 @@ class LoginForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # Guardamos el request
+        super().__init__(*args, **kwargs)
+
     def clean(self):
         email = self.cleaned_data.get('email')
         password = self.cleaned_data.get('password')
+
+        print(f"Cleaning form: email={email}, password={password}")  # Depuración
+
         if email and password:
-            user = authenticate(email=email, password=password)
+            # Usamos authenticate, asegurándonos de pasar el 'email'
+            user = authenticate(request=self.request, username=email, password=password)  # 'username' es 'email' aquí
+            print(f"Authenticate result: {user}")  # Depuración para ver si la autenticación falla
             if user is None:
-                raise forms.ValidationError("Invalid email or password")
+                raise forms.ValidationError("Email o contraseña incorrectos.")
             self.user = user
         return self.cleaned_data
