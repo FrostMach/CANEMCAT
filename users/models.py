@@ -3,6 +3,29 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from shelters.models import Animal
 
+class Intent(models.Model):
+    name = models.CharField(max_length=100)
+    patterns = models.JSONField(null=True, blank=True)
+    responses = models.JSONField(null=True, blank=True)
+    def get_patterns(self):
+        """ Convierte los patrones en una lista de palabras claves """
+        return [pattern.strip() for pattern in self.patterns.split(',')]
+
+    def get_responses(self):
+        """ Convierte las respuestas en una lista de respuestas """
+        return [response.strip() for response in self.responses.split(',')]
+
+    def get_response(self, user_message):
+        """ Devuelve la respuesta adecuada basado en el mensaje del usuario """
+        patterns = self.get_patterns()
+
+        # Recorre todos los patrones para encontrar una coincidencia
+        for pattern in patterns:
+            if pattern.lower() in user_message.lower():
+                return self.get_responses()[0]  # O puedes elegir una respuesta aleatoria aquí
+
+        return None  # Si no hay coincidencia
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -41,7 +64,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
+
+class Interaction(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,  null=True, blank=True)
+    user_message = models.TextField()
+    bot_response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Interaction {self.user} at {self.timestamp}"
+
 class ShelterWorkerProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='worker_profile')
     shelter_name = models.CharField(max_length=255)
@@ -86,3 +119,4 @@ class Wishlist(models.Model):
         
 
         
+

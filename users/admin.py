@@ -1,6 +1,24 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, ShelterWorkerProfile, AdopterProfile
+from .models import CustomUser, ShelterWorkerProfile, AdopterProfile, Intent, Interaction
+
+import json
+from django.contrib import admin
+from django.http import HttpResponse
+from .models import Intent
+
+class IntentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'patterns', 'responses']
+    search_fields = ['name', 'patterns']
+
+
+admin.site.register(Intent, IntentAdmin)
+
+class InteractionAdmin(admin.ModelAdmin):
+    list_display = ['user', 'user_message', 'bot_response']
+    search_fields = ['user_message', 'bot_response']
+
+admin.site.register(Interaction, InteractionAdmin)
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser

@@ -1,0 +1,479 @@
+{"intents":[
+    {
+      "intent": "saludo",
+      "patterns": ["Hola","¡Hola!","Buenos días","¡Buenos días!","Buenas tardes","¡Buenas tardes!","Buenas noches","¡Buenas noches!"],
+      "responses": ["¡Hola! ¿En qué puedo ayudarte hoy?","¡Buenos días! ¿Cómo puedo asistirte hoy?","¡Hola! ¿Cómo estás?","¡Buenas tardes! ¿En qué puedo ayudarte?"]
+    },
+    {
+      "intent": "despedida",
+      "patterns": [
+        "Adiós",
+        "Hasta luego",
+        "Nos vemos",
+        "Hasta pronto",
+        "Chao"
+      ],
+      "responses": [
+        "¡Adiós! ¡Espero que tengas un buen día!",
+        "¡Hasta luego! ¡Vuelve pronto!",
+        "¡Nos vemos! Que tengas un excelente día.",
+        "¡Hasta pronto! ¡Cuídate!"
+      ]
+    },
+    {
+      "intent": "ayuda_general",
+      "patterns": [
+        "¿Cómo puedo ayudarme?",
+        "¿Qué puedo hacer aquí?",
+        "¿Qué puedo hacer?",
+        "Necesito ayuda",
+        "¿Puedes ayudarme?"
+      ],
+      "responses": [
+        "Claro, ¿en qué específicamente necesitas ayuda?",
+        "Estoy aquí para ayudarte, ¿qué necesitas hacer?",
+        "¿En qué puedo asistirte hoy?"
+      ]
+    },
+    {
+      "intent": "consultar_animales_disponibles",
+      "patterns": [
+        "¿Cuáles son los animales disponibles?",
+        "¿Tienen perros y gatos disponibles para adoptar?",
+        "¿Qué animales hay para adoptar?",
+        "¿Qué animales tengo disponibles para adoptar?",
+        "¿Me puedes mostrar los animales disponibles?"
+      ],
+      "responses": [
+        "Tenemos una variedad de perros y gatos disponibles. ¿Te gustaría verlos?",
+        "Actualmente tenemos varios animales disponibles. ¿Prefieres ver perros o gatos?",
+        "¿Quieres saber más sobre los animales disponibles para adopción? ¡Te ayudo!"
+      ]
+    },
+    {
+      "intent": "consultar_detalles_animal",
+      "patterns": [
+        "Quiero saber más sobre el perro/gato llamado {nombre}.",
+        "Dame más información sobre el animal {nombre}.",
+        "¿Qué me puedes decir sobre el animal {nombre}?",
+        "Quiero más detalles sobre {nombre}.",
+        "¿Cómo es {nombre}?"
+      ],
+      "responses": [
+        "El animal {nombre} es un {especie} de {edad} años. Tiene las siguientes características: {descripcion}.",
+        "El animal {nombre} es un/a {especie}, tiene {edad} años y su descripción es: {descripcion}.",
+        "Aquí tienes más detalles sobre {nombre}: {descripcion}. ¿Te gustaría adoptarlo?"
+      ]
+    },
+    {
+      "intent": "consultar_protectoras_registradas",
+      "patterns": [
+        "¿Cuáles son las protectoras registradas?",
+        "¿Tienen lista de protectoras?",
+        "Quiero saber qué protectoras están registradas.",
+        "¿Me puedes mostrar las protectoras disponibles?",
+        "¿Cuáles son las protectoras que puedo contactar?"
+      ],
+      "responses": [
+        "Actualmente tenemos varias protectoras registradas. ¿Te gustaría ver más detalles sobre alguna en particular?",
+        "Aquí están las protectoras registradas. ¿Te gustaría saber más sobre alguna en específico?",
+        "Puedes ver todas las protectoras registradas en nuestra plataforma. ¿Te gustaría obtener más información?"
+      ]
+    },
+    {
+        "intent": "adoptar_perro_o_gato",
+        "patterns": [
+          "¿Cómo puedo adoptar un perro?",
+          "¿Dónde puedo adoptar un gato?",
+          "Quiero adoptar un perro, ¿cómo hago?",
+          "¿Qué debo hacer para adoptar un gato?",
+          "¿Tienen información sobre adopción de perros?",
+          "¿Cómo puedo adoptar una mascota?"
+        ],
+        "responses": [
+          "Para adoptar un perro o un gato, puedes visitar nuestra sección de adopciones en el sitio web. Ahí encontrarás todas las protectoras que tienen animales disponibles para adopción.",
+          "Para adoptar un animal, simplemente regístrate en nuestra plataforma y podrás ver las protectoras que ofrecen perros y gatos para adopción.",
+          "Si estás interesado en adoptar, te recomendamos ponerte en contacto con las protectoras locales. ¿Te gustaría saber más sobre alguna protectora en particular?"
+        ]
+      },
+      
+    {
+      "intent": "canemscan",
+      "patterns": [
+        "¿Cómo funciona CanemSCAN?",
+        "¿Qué es CanemSCAN?",
+        "Quiero saber la raza de mi perro/gato.",
+        "¿Cómo puedo usar CanemSCAN?",
+        "¿Puedo usar CanemSCAN para saber la raza?"
+      ],
+      "responses": [
+        "CanemSCAN es una herramienta para identificar razas de perros y gatos a partir de una foto. Si te registras, podrás usarlo.",
+        "CanemSCAN te permite identificar la raza de tu mascota cargando una foto. ¿Te gustaría registrarte para utilizar esta función?",
+        "Si estás registrado, puedes subir una foto de tu mascota para saber su raza usando CanemSCAN."
+      ]
+    },
+    {
+      "intent": "canemtest",
+      "patterns": [
+        "¿Cómo funciona CanemTEST?",
+        "Quiero hacer un test para saber qué raza de perro/gato debo adoptar.",
+        "¿Me puedes recomendar una raza de perro o gato?",
+        "Quiero saber qué raza es mejor para mí.",
+        "¿Cómo me ayuda CanemTEST a elegir una raza?"
+      ],
+      "responses": [
+        "Para usar CanemTEST, necesitas estar registrado. El test te ayudará a encontrar la raza que más se adapta a tu estilo de vida.",
+        "CanemTEST te recomienda la raza de animal que más te conviene según tus respuestas a varias preguntas. ¿Te gustaría registrarte para hacerlo?"
+      ]
+    },
+    {
+      "intent": "gestion_animales_trabajadores",
+      "patterns": [
+        "Quiero gestionar los animales disponibles.",
+        "Añadir un nuevo animal.",
+        "¿Cómo puedo modificar la información de un animal?",
+        "Quiero actualizar los detalles de un animal.",
+        "Gestionar los animales de la protectora."
+      ],
+      "responses": [
+        "Puedes gestionar los animales desde tu panel de trabajador. ¿Quieres añadir o actualizar un animal?",
+        "Accede a la sección de administración de animales para agregar o modificar cualquier detalle de un animal."
+      ]
+    },
+    {
+      "intent": "perfil_adopcion_usuario",
+      "patterns": [
+        "¿Cómo puedo ver mi historial de adopciones?",
+        "Ver mi perfil de adopción.",
+        "¿Puedo ver los animales que ya he adoptado?",
+        "Ver mis adopciones pasadas.",
+        "¿Cuántos animales he adoptado?"
+      ],
+      "responses": [
+        "Puedes ver tu historial de adopciones directamente en tu perfil de usuario. ¿Te gustaría verlo?",
+        "Tu perfil incluye el historial de adopciones que has realizado. ¿Te gustaría revisar tu lista?"
+      ]
+    },
+    {
+      "intent": "consultar_wishlist_usuario",
+      "patterns": [
+        "¿Qué animales tengo en mi lista de deseos?",
+        "Ver mi lista de deseos.",
+        "¿Qué animales tengo guardados?",
+        "Consultar mi wishlist."
+      ],
+      "responses": [
+        "Aquí tienes los animales en tu lista de deseos. ¿Te gustaría agregar más animales?",
+        "Puedes ver los animales que has añadido a tu wishlist. ¿Te gustaría eliminar alguno?"
+      ]
+    },
+    {
+      "intent": "crear_cuenta_usuario",
+      "patterns": [
+        "¿Cómo me registro?",
+        "Quiero crear una cuenta.",
+        "¿Cómo puedo registrarme en la plataforma?",
+        "Crear cuenta para adoptar animales.",
+        "¿Puedo registrarme en su página?"
+      ],
+      "responses": [
+        "Para registrarte, solo necesitas proporcionar tu email y algunos datos personales. ¿Te gustaría empezar?",
+        "Puedes registrarte fácilmente en nuestra página web. ¿Te gustaría que te envíe el enlace?"
+      ]
+    },
+    {
+      "intent": "consultar_animales_por_especie",
+      "patterns": [
+        "¿Tienen perros disponibles?",
+        "Mostrarme los perros disponibles.",
+        "¿Tienen gatos disponibles?",
+        "Quiero ver los gatos disponibles.",
+        "¿Me puedes mostrar los perros?"
+      ],
+      "responses": [
+        "Tenemos varias opciones de perros disponibles para adopción. ¿Te gustaría ver más detalles?",
+        "Puedes ver los gatos disponibles aquí. ¿Quieres saber más sobre alguno de ellos?"
+      ]
+    },
+    {
+      "intent": "consultar_animales_por_edad",
+      "patterns": [
+        "¿Tienen cachorros disponibles?",
+        "Mostrarme perros jóvenes.",
+        "Quiero ver gatos de menos de 1 año.",
+        "¿Tienen animales jóvenes disponibles?",
+        "Ver animales menores de 2 años."
+      ],
+      "responses": [
+        "Tenemos varios cachorros disponibles. ¿Te gustaría ver los detalles de alguno de ellos?",
+        "Puedes ver los gatos y perros jóvenes disponibles para adopción. ¿Te gustaría ver más información?"
+      ]
+    },
+    {
+      "intent": "actualizar_estado_adopcion",
+      "patterns": [
+        "¿Cómo cambio el estado de adopción de un animal?",
+        "Marcar a un animal como adoptado.",
+        "¿Cómo actualizo el estado de adopción?",
+        "Cambiar estado de adopción de {animal}.",
+        "Modificar el estado de adopción."
+      ],
+      "responses": [
+        "Puedes actualizar el estado de adopción de un animal desde el panel de administración de tu cuenta.",
+        "Para cambiar el estado de adopción, accede a la sección de gestión de animales en tu cuenta de trabajador."
+      ]
+    },
+    {
+      "intent": "solicitud_adopcion_trabajadores",
+      "patterns": [
+        "¿Tengo solicitudes de adopción pendientes?",
+        "Ver solicitudes de adopción.",
+        "¿Cuántas solicitudes tengo para {animal}?",
+        "Revisar solicitudes de adopción.",
+        "Ver todas las solicitudes de adopción."
+      ],
+      "responses": [
+        "Puedes ver las solicitudes pendientes desde tu panel de trabajador. ¿Te gustaría revisar alguna?",
+        "Las solicitudes de adopción están disponibles en tu cuenta de trabajador. ¿Te gustaría verlas?"
+      ]
+    },
+    {
+      "intent": "contacto_soporte",
+      "patterns": [
+        "Necesito ayuda con mi cuenta.",
+        "¿Cómo contacto con soporte?",
+        "Tengo un problema, ¿cómo me comunico con soporte?",
+        "¿Dónde puedo pedir ayuda?",
+        "Quiero hablar con el soporte técnico."
+      ],
+      "responses": [
+        "Puedes contactar con soporte a través de la sección de ayuda en la página web o enviando un correo a soporte@canem.org.",
+        "Si necesitas asistencia, puedes acceder a nuestra página de soporte o escribirnos a soporte@canem.org."
+      ]
+    },
+    {
+      "intent": "cancelar_solicitud_adopcion",
+      "patterns": [
+        "Quiero cancelar mi solicitud de adopción.",
+        "Cancelar mi adopción.",
+        "Eliminar solicitud de adopción.",
+        "Quiero retirar mi solicitud de adopción.",
+        "Cancelar solicitud de adopción para {animal}."
+      ],
+      "responses": [
+        "Puedes cancelar tu solicitud desde la página de solicitudes de adopción en tu cuenta.",
+        "Para retirar una solicitud de adopción, solo tienes que acceder a la sección de solicitudes y eliminarla."
+      ]
+    },
+    {
+      "intent": "registrarse_como_adoptante",
+      "patterns": [
+        "¿Cómo puedo registrarme como adoptante?",
+        "Quiero crear una cuenta de adoptante.",
+        "¿Qué pasos debo seguir para registrarme como adoptante?",
+        "Quiero registrarme para adoptar.",
+        "¿Cómo me hago adoptante?"
+      ],
+      "responses": [
+        "Para registrarte como adoptante, solo tienes que proporcionar tu correo electrónico y algunos datos personales. ¿Te gustaría comenzar?",
+        "Puedes registrarte como adoptante en la página de registro. Solo necesitarás tu correo y algunos datos básicos."
+      ]
+    },
+    {
+      "intent": "registrarse_como_trabajador",
+      "patterns": [
+        "¿Cómo puedo registrarme como trabajador de una protectora?",
+        "Quiero crear una cuenta de trabajador.",
+        "¿Qué debo hacer para registrarme como trabajador?",
+        "Quiero registrarme como personal de la protectora.",
+        "¿Cómo me convierto en trabajador de una protectora?"
+      ],
+      "responses": [
+        "Para registrarte como trabajador, deberás usar el correo de tu protectora y los datos necesarios. ¿Te gustaría empezar?",
+        "Puedes registrarte como trabajador desde la sección 'Registro para trabajadores'. Solo necesitarás el correo de tu protectora."
+      ]
+    },
+    {
+      "intent": "ver_animales_en_wishlist",
+      "patterns": [
+        "Quiero ver los animales en mi lista de deseos.",
+        "¿Qué animales tengo guardados en mi wishlist?",
+        "Mostrarme mi wishlist.",
+        "¿Cuántos animales tengo en mi lista de deseos?",
+        "Ver mi lista de deseos."
+      ],
+      "responses": [
+        "Aquí están los animales en tu lista de deseos. ¿Te gustaría ver más detalles sobre alguno?",
+        "Estos son los animales que has guardado en tu wishlist. ¿Te gustaría añadir más?"
+      ]
+    },
+    {
+      "intent": "añadir_animal_a_wishlist",
+      "patterns": [
+        "Quiero añadir a {animal} a mi wishlist.",
+        "¿Cómo agrego un animal a mi lista de deseos?",
+        "Añadir {animal} a mi lista de deseos.",
+        "Guardar a {animal} en mi wishlist.",
+        "Agregar este animal a mi lista de deseos."
+      ],
+      "responses": [
+        "Has añadido a {animal} a tu lista de deseos. ¿Te gustaría hacer algo más?",
+        "El animal {animal} ha sido guardado en tu wishlist. ¿Te gustaría añadir otro?"
+      ]
+    },
+    {
+      "intent": "eliminar_animal_de_wishlist",
+      "patterns": [
+        "Quiero eliminar a {animal} de mi wishlist.",
+        "¿Cómo elimino un animal de mi lista de deseos?",
+        "Borrar {animal} de mi wishlist.",
+        "Eliminar a {animal} de mi lista de deseos.",
+        "Retirar a {animal} de mi wishlist."
+      ],
+      "responses": [
+        "El animal {animal} ha sido eliminado de tu lista de deseos.",
+        "Has retirado a {animal} de tu wishlist. ¿Te gustaría añadir otro?"
+      ]
+    },
+    {
+      "intent": "consultar_status_adopcion",
+      "patterns": [
+        "¿Cuál es el estado de la adopción de {animal}?",
+        "¿Está {animal} disponible para adopción?",
+        "¿Qué estado tiene la solicitud de adopción de {animal}?",
+        "¿Está {animal} adoptado?",
+        "Quiero saber si {animal} está adoptado o reservado."
+      ],
+      "responses": [
+        "{animal} está en estado de {estado}. ¿Te gustaría adoptar a este animal?",
+        "Actualmente, {animal} tiene el estado de {estado}. ¿Quieres proceder con la adopción?"
+      ]
+    },
+    {
+      "intent": "realizar_solicitud_adopcion",
+      "patterns": [
+        "Quiero adoptar a {animal}.",
+        "Solicitar adopción de {animal}.",
+        "Quiero hacer una solicitud para adoptar a {animal}.",
+        "¿Cómo puedo adoptar a {animal}?",
+        "Quiero enviar una solicitud de adopción para {animal}."
+      ],
+      "responses": [
+        "Puedes realizar una solicitud de adopción desde tu perfil. ¿Te gustaría que te guíe?",
+        "Para adoptar a {animal}, solo necesitas completar la solicitud de adopción en tu cuenta."
+      ]
+    },
+    {
+      "intent": "ver_solicitudes_adopcion_trabajadores",
+      "patterns": [
+        "¿Cómo veo las solicitudes de adopción?",
+        "Mostrarme las solicitudes de adopción.",
+        "¿Cuántas solicitudes de adopción hay pendientes?",
+        "Revisar solicitudes de adopción.",
+        "¿Cuántas solicitudes tengo?"
+      ],
+      "responses": [
+        "Puedes ver las solicitudes de adopción desde el panel de trabajador. ¿Te gustaría ver las solicitudes pendientes?",
+        "Las solicitudes de adopción están disponibles en tu cuenta. ¿Quieres revisar alguna?"
+      ]
+    },
+    {
+      "intent": "aceptar_solicitud_adopcion",
+      "patterns": [
+        "¿Cómo acepto una solicitud de adopción?",
+        "Aceptar solicitud de adopción de {animal}.",
+        "Confirmar adopción de {animal}.",
+        "Marcar solicitud de adopción como aprobada.",
+        "Aceptar adopción de {animal}."
+      ],
+      "responses": [
+        "Puedes aceptar la solicitud desde tu panel de trabajador, bajo la sección de solicitudes pendientes.",
+        "Para aceptar una solicitud de adopción, accede a la sección de gestión de solicitudes y marca como aprobada."
+      ]
+    },
+    {
+      "intent": "rechazar_solicitud_adopcion",
+      "patterns": [
+        "¿Cómo rechazo una solicitud de adopción?",
+        "Rechazar solicitud de adopción de {animal}.",
+        "Eliminar solicitud de adopción de {animal}.",
+        "Marcar solicitud de adopción como rechazada.",
+        "Rechazar adopción de {animal}."
+      ],
+      "responses": [
+        "Puedes rechazar una solicitud de adopción desde tu panel de trabajador. Solo selecciona 'Rechazar'.",
+        "Accede a la sección de solicitudes pendientes y marca la solicitud como rechazada."
+      ]
+    },
+    {
+      "intent": "actualizar_informacion_perfil_adoptante",
+      "patterns": [
+        "Quiero actualizar mi perfil.",
+        "¿Cómo cambio mis datos personales?",
+        "Actualizar mi correo electrónico.",
+        "Cambiar mi dirección de correo.",
+        "Actualizar mi número de teléfono."
+      ],
+      "responses": [
+        "Puedes actualizar tu perfil accediendo a la sección de 'Mi cuenta'. ¿Te gustaría que te guíe?",
+        "Accede a la configuración de tu cuenta para modificar tus datos personales."
+      ]
+    },
+    {
+      "intent": "ver_animales_reservados",
+      "patterns": [
+        "¿Cuáles son los animales reservados?",
+        "Mostrarme los animales que están reservados.",
+        "Quiero ver los animales que están reservados.",
+        "¿Qué animales están reservados?",
+        "Ver animales con estado de reserva."
+      ],
+      "responses": [
+        "Aquí tienes los animales reservados actualmente. ¿Te gustaría saber más sobre alguno de ellos?",
+        "Estos son los animales que están reservados en este momento."
+      ]
+    },
+    {
+      "intent": "consultar_protectora_registrada",
+      "patterns": [
+        "Quiero saber más sobre la protectora {nombre}.",
+        "¿Qué puedo hacer para contactar con la protectora {nombre}?",
+        "Mostrarme la información de la protectora {nombre}.",
+        "Quiero ver la dirección de la protectora {nombre}.",
+        "¿Tienen algún contacto la protectora {nombre}?"
+      ],
+      "responses": [
+        "La protectora {nombre} está registrada en nuestra plataforma. Puedes ver sus detalles de contacto y dirección en su perfil.",
+        "Aquí tienes la información sobre la protectora {nombre}: {direccion}. ¿Te gustaría contactarlos?"
+      ]
+    },
+    {
+      "intent": "ver_animales_adoptados",
+      "patterns": [
+        "¿Cuántos animales han sido adoptados?",
+        "Ver los animales que han sido adoptados.",
+        "¿Tienen un registro de adopciones?",
+        "Mostrarme los animales adoptados.",
+        "Quiero ver el historial de adopciones."
+      ],
+      "responses": [
+        "Puedes ver los animales que han sido adoptados desde la sección de historial de adopciones. ¿Te gustaría verlos?",
+        "Aquí están los animales que han sido adoptados. ¿Quieres saber más sobre alguno?"
+      ]
+    },
+    {
+      "intent": "agregar_protectora_trabajadores",
+      "patterns": [
+        "¿Cómo puedo agregar una protectora?",
+        "Agregar una nueva protectora.",
+        "¿Cómo registro una nueva protectora?",
+        "Añadir una protectora a la base de datos.",
+        "¿Cómo me registro como trabajador en una nueva protectora?"
+      ],
+      "responses": [
+        "Para agregar una protectora, necesitarás acceder a tu panel de trabajador. ¿Te gustaría saber más sobre cómo hacerlo?",
+        "Desde el panel de trabajador, podrás registrar nuevas protectoras y gestionar su información."
+      ]
+    }
+  ]
+  }

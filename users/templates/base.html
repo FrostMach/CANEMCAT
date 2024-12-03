@@ -7,6 +7,7 @@
     <title>{% block title %}CANEMCAT{% endblock %}</title>
     {% load static %}
     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Bootstrap JS (con dependencias de Popper.js) -->
@@ -202,76 +203,67 @@
     <!-- Icono flotante del chatbot -->
     <div id="chatbot-icon" class="chatbot-icon">
         <button id="chatbot-toggle" class="btn btn-primary rounded-circle">
-            <!-- Tu propio ícono personalizado -->
-            <img src="{% static 'images/Logo.png' %}" alt="Chatbot" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="{% static 'images/Logo.png' %}" alt="Chatbot"
+                style="width: 100%; height: 100%; object-fit: cover;">
         </button>
     </div>
 
-    <!-- Ventana del Chatbot -->
-    <!-- Ventana del Chatbot -->
-    <div id="chatbot-container" class="chatbot-container">
-        <div class="chat-header" style="background-color: #0078D4; color: white; padding: 10px; cursor: pointer;">
-            <h5 style="margin: 0;">CANEMCAT Chatbot</h5>
-            <button id="chatbot-close" class="btn btn-sm btn-light float-end"
-                style="border: none; background: none; color: white;">
-                <i class="bi bi-x"></i> <!-- Icono de cerrar -->
-            </button>
+    <!-- Contenedor del chatbot (inicialmente oculto) -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <span>Chatbot</span>
+            <span id="chatbot-close">&times;</span>
         </div>
-        <div id="chat-messages" class="chat-messages" style="padding: 10px; height: 370px; overflow-y: auto;">
-            <!-- Los mensajes se irán agregando aquí -->
+        <div id="chat-messages">
+            <!-- Los mensajes del chat aparecerán aquí -->
         </div>
-        <div class="chat-input" style="padding: 10px;">
-            <input type="text" id="user-message" class="form-control" placeholder="Escribe tu mensaje...">
-            <button id="send-message" class="btn btn-primary mt-2" style="width: 100%;">Enviar</button>
+        <div id="chat-input">
+            <input type="text" id="user-message" placeholder="Escribe un mensaje...">
+            <button id="send-message">Enviar</button>
         </div>
     </div>
 
-    <!-- JavaScript al final de la página -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Asegúrate de usar una versión reciente de jQuery -->
-
     <script>
         $(document).ready(function () {
-            // Cuando el usuario haga clic en el icono del chatbot, muestra la ventana del chatbot
+            // Muestra el chatbot al hacer clic en el icono
             $('#chatbot-toggle').click(function () {
-                $('#chatbot-container').css('transform', 'translateX(0)'); // Desliza la ventana desde el borde
+                $('#chatbot-container').css('transform', 'translateX(0)'); // Muestra el chatbot deslizándose desde la derecha
             });
 
-            // Cuando el usuario haga clic en el botón de cerrar, oculta la ventana del chatbot
+            // Cierra el chatbot
             $('#chatbot-close').click(function () {
-                $('#chatbot-container').css('transform', 'translateX(100%)'); // Desliza la ventana fuera de la vista
+                $('#chatbot-container').css('transform', 'translateX(100%)'); // Lo oculta deslizándose hacia la derecha
             });
-        });
 
+            // Enviar mensaje al hacer clic en el botón
+            $('#send-message').click(function () {
+                var userMessage = $('#user-message').val(); // Obtener el mensaje del usuario
+                if (userMessage.trim() !== '') {
+                    // Agregar el mensaje del usuario al chat
+                    $('#chat-messages').append('<div><strong>Tú:</strong> ' + userMessage + '</div>');
+                    $('#user-message').val(''); // Limpiar el campo de entrada
 
+                    // Enviar el mensaje al servidor
+                    $.post('/chatbot/', { message: userMessage }, function (data) {
+                        // Mostrar la respuesta del chatbot
+                        $('#chat-messages').append('<div><strong>Bot:</strong> ' + data.response + '</div>');
+                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight); // Desplazar al final
+                    }).fail(function (xhr, status, error) {
+                        console.log("Error: " + error);
+                        $('#chat-messages').append('<div><strong>Bot:</strong> Hubo un error al procesar tu solicitud.</div>');
+                    });
+                }
+            });
 
-        // Enviar mensaje
-        $('#send-message').click(function () {
-            var userMessage = $('#user-message').val();  // Obtener el mensaje del usuario
-            if (userMessage.trim() !== '') {
-                // Agregar el mensaje del usuario al chat
-                $('#chat-messages').append('<div><strong>Tú:</strong> ' + userMessage + '</div>');
-                $('#user-message').val(''); // Limpiar el campo de entrada
-
-                // Solicitar la respuesta al chatbot
-                $.post('/chatbot/', { message: userMessage }, function (data) {
-                    // Mostrar la respuesta del chatbot en el chat
-                    $('#chat-messages').append('<div><strong>Bot:</strong> ' + data.response + '</div>');
-                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight); // Desplazar al final
-                });
-            }
-        });
-
-        // Enviar mensaje al presionar Enter
-        $('#user-message').keypress(function (event) {
-            if (event.which === 13) {
-                $('#send-message').click();
-            }
+            // Enviar mensaje al presionar Enter
+            $('#user-message').keypress(function (event) {
+                if (event.which === 13) {
+                    $('#send-message').click();
+                }
+            });
         });
     </script>
-
-
-
 </body>
 
 </html>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Wishlist
+from .models import CustomUser, Wishlist, Intent
 from django.contrib.auth import login, authenticate, logout
 from .forms import LoginForm
 from django.contrib.auth.forms import UserCreationForm
@@ -13,31 +13,58 @@ import os
 
 import joblib
 from django.conf import settings
+from django.views import View
+
 
 # Ruta del archivo del modelo (ajusta la ruta si es necesario)
-model_path = os.path.join(settings.BASE_DIR, 'users/templates/chatbot/chatbot_model.pkl')  # Asegúrate de que la ruta sea correcta
+model_path = os.path.join(settings.BASE_DIR, 'users/chatbot/chatbot_model.pkl')  # Asegúrate de que la ruta sea correcta
 
 # Cargar el modelo entrenado
 model = joblib.load(model_path)
 
-# Función que usa el modelo para predecir la respuesta
-def get_chatbot_response(user_input):
-    # Predicción: pasamos el texto del usuario al modelo
-    prediction = model.predict([user_input])
-    # Devuelves la respuesta predicha
-    return prediction[0]
-
-@csrf_exempt
-def chatbot(request):
-    if request.method == 'POST':
-        user_message = request.POST.get('message')
-        # Obtener la respuesta del chatbot
-        response = get_chatbot_response(user_message)
-        return JsonResponse({'response': response})
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+# # Función que usa el modelo para predecir la respuesta
+# def get_chatbot_response(user_input):
+#     # Predicción: pasamos el texto del usuario al modelo
+#     prediction = model.predict([user_input])
+#     # Devuelves la respuesta predicha
+#     return prediction[0]
 
 def landing_page(request):
     return render(request, 'landing_page.html')
+# views.py
+from django.contrib.auth.decorators import login_required
+
+# Vista para manejar la comunicación con el chatbot
+@csrf_exempt
+def chatbot_response(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message')
+        
+        # Aquí puedes hacer una búsqueda en tu modelo `Intent` y obtener una respuesta
+        response = "No entiendo tu mensaje."  # Respuesta predeterminada
+
+        # Aquí debes agregar tu lógica para responder según el mensaje del usuario
+        intents = Intent.objects.filter(patterns__contains=user_message)
+        if intents.exists():
+            response = intents[0].responses[0]  # Tomar la primera respuesta
+
+        return JsonResponse({'response': response})
+
+    return JsonResponse({'response': 'Error en la solicitud'}, status=400)
+# @csrf_exempt  # Si no estás usando CSRF en este endpoint, puedes usar esta anotación
+# def chatbot_view(request):
+#     if request.method == 'POST':
+#         # Obtener el mensaje del usuario
+#         user_message = request.POST.get('message')
+
+#         if user_message:
+#             # Procesa la respuesta del chatbot
+#             response = get_chatbot_response(user_message)
+#             return JsonResponse({'response': response})
+
+#         return JsonResponse({'response': 'No se recibió mensaje.'}, status=400)
+
+#     return JsonResponse({'response': 'Método no permitido'}, status=405)
 
 #USUARIOS
 
