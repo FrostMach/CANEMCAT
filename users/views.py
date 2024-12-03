@@ -19,7 +19,6 @@ from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 
-
 @never_cache
 def landing_page(request):
     print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
@@ -109,13 +108,16 @@ def password_reset(request):
             
             # Si hay al menos un usuario con el email, tomamos el primero
             if users.exists():
-                user = users.first()  # Tomamos el primer usuario
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk.to_bytes()))  # Usamos force_bytes para convertir el ID a bytes
+                users.first()  # Tomamos el primer usuario
+                token = default_token_generator.make_token(users.first())
+                user_id_str = str(users.first())
+                user_id = force_bytes(user_id_str)
+                print(type(user_id))
+                uid = urlsafe_base64_encode(user_id)
                 current_site = get_current_site(request)
                 mail_subject = 'Enlace para recuperar la contraseña'
                 message = render_to_string('registration/password_reset_email.html', {
-                    'user': user,
+                    'user': users.first(),
                     'domain': current_site.domain,
                     'uid': uid,
                     'token': token,
@@ -201,9 +203,9 @@ def canemscan_view(request):
         return redirect('access_denied')  # Puedes crear una página para mostrar acceso denegado
     return render(request, 'canemscan.html')
 
-# @login_required
+@login_required
 def canemtest_view(request):
-    # if request.user.user_type != 'adopter':
-    #     # Redirigir a una página de acceso denegado
-    #     return redirect('access_denied')  # O hacia la página de login
+    if request.user.user_type != 'adopter':
+        # Redirigir a una página de acceso denegado
+        return redirect('access_denied')  # O hacia la página de login
     return render(request, 'test/canemtest.html')

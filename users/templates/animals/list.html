@@ -1,22 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Animales en Adopción</h2>
-<div class="card-deck">
-    {% for animal in object_list %}
-    <div class="card" style="width: 18rem;">
-        <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ animal.name }}</h5>
-            <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
-            <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
-            <div class="btn-group" role="group" aria-label="Acciones">
-                <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
-                <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+<div class="container bg-light mb-5 pb-5" >
+    <h2>Animales en Adopción</h2>
+    <div class="card-deck pt-3">
+        {% for animal in object_list %}
+        <div class="card" style="width: 18rem;">
+            <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ animal.name }}</h5>
+                <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
+                <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
+                <div class="btn-group" role="group" aria-label="Acciones">
+                    <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
+                    <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
 
