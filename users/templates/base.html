@@ -146,6 +146,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
                                 <li><a class="dropdown-item" href="">Perfil</a></li>
+                                <li><a href="{% url 'wishlist_list' %}" class="dropdown-item">Mis Mascotas Preferidas</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
                             </ul>
                         </li>
@@ -153,6 +154,9 @@
                         <!-- Enlace de registro -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'signup' %}">Registrar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                         </li>
                         {% endif %}
 

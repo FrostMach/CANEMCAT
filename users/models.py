@@ -81,31 +81,18 @@ class Answers(models.Model):
 
 # Wishlist model
 class Wishlist(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
-    animals = models.ManyToManyField(Animal, related_name='wishlists')
-    interaction_type = models.CharField(max_length=50, choices=[('view', 'View'),('favorite', 'Favorite'), ('adopt', 'Adopt')])
-    class Meta:
-        db_table = 'wishlist'  # Custom table name in the database
-        verbose_name = 'Wishlist'
-        verbose_name_plural = 'Wishlists'
+    INTERACTION_TYPE = [
+        ('view', 'View'), 
+        ('favorite', 'Favorite'),
+        ('adopt', 'Adoptado')
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    interaction_type = models.CharField(blank=True, null=True, max_length=50, choices=INTERACTION_TYPE)
+
     def __str__(self):
         return f"Wishlist of {self.user.name}"
 
-    # Método que verifica si un animal está en la lista de deseos
-    def is_animal_in_wishlist(self, animal):
-        return self.animals.filter(id=animal.id).exists()
-
-    # Método que devuelve la cantidad de animales en la lista de deseos
-    def animal_count(self):
-        return self.animals.count()
-
-    # Método que elimina un animal de la lista de deseos del usuario
-    def remove_animal(self, animal):
-        self.animals.remove(animal)
-
-    # Método que agrega un animal a la lista de deseos del usuario
-    def add_animal(self, animal):
-        self.animals.add(animal)
-        
-
-        
+    class Meta:
+        db_table = 'wishlist'  # Custom table name in the database

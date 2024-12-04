@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
+
+from shelters.models import Animal
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist
+from .models import AdopterProfile, CustomUser, Wishlist
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
 from django.contrib.auth.forms import UserCreationForm
@@ -13,9 +15,11 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 import smtplib
-from django.http import HttpResponse
-import requests
+from django.http import HttpResponse, JsonResponse
 from django.utils.encoding import force_bytes
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+import csv
 
 def landing_page(request):
     return render(request, 'landing_page.html')
@@ -172,23 +176,28 @@ def activate(request, uidb64, token):
 
 def logout_view(request):
     logout(request)
-    return redirect('landing_page')    
-#WISHLIST    
+    return redirect('landing_page') 
+   
+#WISHLIST
+@login_required    
+def wishlist_add(request, animal_id):
+    animal = get_object_or_404(Animal, id=animal_id)
+    Wishlist.objects.get_or_create(
+        user=request.user, animal=animal)
 
-class AddToWishlistView(generic.ListView):
+    return redirect('animals-detail', pk=animal_id)
+
+@login_required
+def wishlist_remove(request, animal_id):
+    animal = get_object_or_404(Animal, id=animal_id)
+    Wishlist.objects.filter(user=request.user, animal=animal).delete()
     
-    model = Wishlist
-    template_name = 'wish/list.html'
-    context_object_name = 'add'
+    return redirect('animals-detail', pk=animal_id)
 
-class RemoveFromWishlistView(generic.ListView):
-    
-    model = Wishlist
-    template_name = 'wish/list.html'
-    context_object_name = 'remove'
-
-
-from django.contrib.auth.decorators import login_required
+@login_required
+def wishlist_list(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    return render(request, 'wish/list.html', {'wishlist_items': wishlist_items})
 
 @login_required
 def canemscan_view(request):

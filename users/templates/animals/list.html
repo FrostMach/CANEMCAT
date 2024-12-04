@@ -3,20 +3,64 @@
 {% block content %}
 <h2>Animales en Adopción</h2>
 <div class="card-deck">
-    {% for animal in object_list %}
+    {% for animal in page_obj %}
     <div class="card" style="width: 18rem;">
         <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
         <div class="card-body">
             <h5 class="card-title">{{ animal.name }}</h5>
             <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
             <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
-            <div class="btn-group" role="group" aria-label="Acciones">
-                <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
-                <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+            <div class="btn-group d-grid gap-2 d-md-block" role="group" aria-label="Acciones">
+                <a href="{% url 'animals-detail' animal.id %}" class="btn btn-info">Ver</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
+                    <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+                {% endif %}
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        <!-- Botón de Página Anterior -->
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+        {% endif %}
+
+        <!-- Números de Página -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Botón de Página Siguiente -->
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Siguiente">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
 {% endblock %}
 

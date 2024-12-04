@@ -29,7 +29,7 @@ class Shelter(models.Model):
     email = models.EmailField(max_length=100, verbose_name='Correo electrónico')
     accreditation_file = models.FileField(blank=True, null=True, upload_to='files/', verbose_name='Documento acreditativo')
     accreditation_status = models.BooleanField(default=True, verbose_name='Estado de acreditación')
-    register_date = models.DateField(blank=True, null=True, verbose_name='Fecha de registro')
+    register_date = models.DateField(auto_now_add=True, blank=True, null=True, verbose_name='Fecha de registro')
     status = models.BooleanField(verbose_name='Estado', blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True, verbose_name='Latitud')
     longitude = models.FloatField(blank=True, null=True, verbose_name='Longitud')

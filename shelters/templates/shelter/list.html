@@ -14,8 +14,10 @@
             <td>{{ shelter.email }}</td>
             <td>{{ shelter.telephone }}</td>
             <td><a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-info">Ver</a>
-            <a href="{% url 'edit_shelter' pk=shelter.id %}" class="btn btn-primary">Editar</a>
-            <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Eliminar</a></td>
+            {% if user.is_authenticated %}
+                <a href="{% url 'edit_shelter' pk=shelter.id %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Eliminar</a></td>
+            {% endif %}
         </tr>
     {% endfor %}
 </table>

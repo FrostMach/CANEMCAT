@@ -18,6 +18,9 @@ urlpatterns = [
     path('email_confirmation/', email_confirmation, name='email_confirmation'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
-    path('logout/', views.logout_view, name='logout'),    
+    path('logout/', views.logout_view, name='logout'),  
+    path('wishlist/', views.wishlist_list, name='wishlist_list'),
+    path('<int:animal_id>/add_wishlist/', views.wishlist_add, name='wishlist_add'),
+    path('<int:animal_id>/remove_wishlist/', views.wishlist_remove, name='wishlist_remove'),  
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
