@@ -35,6 +35,12 @@
       "css": "instagram",
       "code": 62238,
       "src": "brandico"
+    },
+    {
+      "uid": "55605ca79a65def1a9c300037ff1d0d5",
+      "css": "paw",
+      "code": 61872,
+      "src": "fontawesome"
     }
   ]
 }

@@ -1,4 +1,5 @@
 
+.icon-paw:before { content: '\f1b0'; } /* '' */
 .icon-facebook-rect:before { content: '\f301'; } /* '' */
 .icon-twitter-bird:before { content: '\f303'; } /* '' */
 .icon-linkedin-rect:before { content: '\f312'; } /* '' */

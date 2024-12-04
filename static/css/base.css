@@ -6,7 +6,10 @@ body {
     display: flex; 
     flex-direction: column; 
     min-height: 100vh;
+    font-family: 'Fontello'; /* Asegúrate de que Fontello esté correctamente cargada */
+    cursor: url('/static/images/huella.png') 16 16, auto;
 }
+
 /* .container {
     background-image: url( '../images/fondo.jpg' ); 
     width: 100%;
