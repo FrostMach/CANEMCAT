@@ -1,26 +1,7 @@
 from django.db import models
 from enum import Enum
 from datetime import date
-    
-class Animal(models.Model):
-    SPECIES = [
-        ('perro', 'Perro'),
-        ('gato', 'Gato'),
-    ]
-    ADOPTION_STATUS = [
-        ('disponible', 'Disponible'),
-        ('reservado', 'Reservado'),
-        ('adoptado', 'Adoptado'),
-    ]
-    name = models.CharField(max_length=100)
-    age = models.PositiveIntegerField()
-    species = models.CharField(max_length=10, choices=SPECIES)
-    description = models.TextField()
-    image = models.ImageField(upload_to='animals/')
-    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='disponible')
-
-    def __str__(self):
-        return self.name    
+from django.core.exceptions import ValidationError
     
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
@@ -38,11 +19,74 @@ class Shelter(models.Model):
     def __str__(self):
         return f'{self.name}'    
     
+class Animal(models.Model):
+    SPECIES = [
+        ('perro', 'Perro'),
+        ('gato', 'Gato'),
+    ]
+    ADOPTION_STATUS = [
+        ('disponible', 'Disponible'),
+        ('reservado', 'Reservado'),
+        ('adoptado', 'Adoptado'),
+    ]
+    SIZE = [
+        ('grande', 'Grande'),
+        ('mediano', 'Mediano'),
+        ('pequeño', 'Pequeño'),
+    ]
+    PERSONALITY = [
+        ('sociable', 'Sociable'),
+        ('protector', 'Protector'),
+        ('independiente', 'Independiente'),
+    ]
+    ENERGY = [
+        ('activo', 'Activo'),
+        ('moderado', 'Moderado'),
+        ('tranquilo', 'Tranquilo'),
+    ]
+    FUR = [
+        ('largo', 'Largo'),
+        ('corto', 'Corto')
+    ]
+    SEX = [('macho', 'Macho'),
+            ('hembra', 'Hembra')
+    ]
+    name = models.CharField(max_length=100, verbose_name='Nombre')
+    species = models.CharField(max_length=10, choices=SPECIES)
+    sex = models.CharField(max_length=10, choices=SEX, default='Macho')
+    age = models.PositiveIntegerField()
+    size = models.CharField(max_length=10, choices=SIZE,default='Grande')
+    personality = models.CharField(max_length=15, choices=PERSONALITY, default='Sociable')
+    energy = models.CharField(max_length=10, choices=ENERGY, default='Activo')
+    fur = models.CharField(max_length=10, choices=FUR, default='Corto')
+    description = models.TextField()
+    image = models.ImageField(upload_to='animals/')
+    adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='Disponible')
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora')
+    features = models.BinaryField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+    def clean(self):
+        """
+        Validación personalizada: Si el animal es un gato, size no debe ser obligatorio.
+        """
+        if self.species == 'perro' and not self.size:
+            raise ValidationError({'size': 'El tamaño es obligatorio para los perros.'})
+    
+    def save(self, *args, **kwargs):
+        # Asegura que el estado de adopción tiene la primera letra en mayúscula antes de guardarlo
+        self.adoption_status = self.adoption_status.capitalize()
+        super().save(*args, **kwargs)
+
+    
+    
 class StatusEnum(Enum):
     PENDING = 'P', 'Pendiente'
     APPROVED = 'A', 'Aprobada'
     DENIED = 'D', 'Denegada'
-    
+
 class AdoptionApplication(models.Model):
     user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)
     animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)

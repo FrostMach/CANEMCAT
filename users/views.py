@@ -238,10 +238,9 @@ def canemscan_view(request):
         # Si no es un 'adopter', redirigimos a una página de acceso denegado o algo similar
         return redirect('access_denied')  # Puedes crear una página para mostrar acceso denegado
     return render(request, 'canemscan.html')
-
 @login_required
 def canemtest_view(request):
     if request.user.user_type != 'adopter':
         # Redirigir a una página de acceso denegado
-        return redirect('access_denied')  # O hacia la página de login
+        return redirect('login')  # O hacia la página de login
     return render(request, 'test/canemtest.html')
