@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
+from django.contrib.auth import views as auth_views
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist,Test
@@ -18,6 +19,7 @@ import requests
 from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
+from django.conf import settings
 
 @never_cache
 def landing_page(request):
@@ -87,7 +89,7 @@ def signup(request):
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-def send_mail(to, subject, body, from_mail="pruebasconsmtp46@gmail.com", password="mmxl tlnu lxpt rvjr"):
+def send_mail(to, subject, body, from_mail=settings.DEFAULT_FROM_EMAIL, password=settings.EMAIL_HOST_PASS):
     from email.mime.text import MIMEText
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -99,38 +101,72 @@ def send_mail(to, subject, body, from_mail="pruebasconsmtp46@gmail.com", passwor
     s.sendmail(from_mail, [to], msg.as_string())
     s.quit()
 
-def password_reset(request):
-    if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            users = CustomUser.objects.filter(email=email)  # Aquí buscamos todos los usuarios con ese email
-            
-            # Si hay al menos un usuario con el email, tomamos el primero
-            if users.exists():
-                users.first()  # Tomamos el primer usuario
-                token = default_token_generator.make_token(users.first())
-                user_id_str = str(users.first())
-                user_id = force_bytes(user_id_str)
-                print(type(user_id))
-                uid = urlsafe_base64_encode(user_id)
-                current_site = get_current_site(request)
-                mail_subject = 'Enlace para recuperar la contraseña'
-                message = render_to_string('registration/password_reset_email.html', {
-                    'user': users.first(),
-                    'domain': current_site.domain,
-                    'uid': uid,
-                    'token': token,
-                })
-                send_mail(mail_subject, message, 'from@example.com', [email])  # Reemplaza 'from@example.com' con tu correo
-                return render(request, 'registration/password_reset_done.html')  # Redirige a la página de confirmación
-            else:
-                # Si no se encuentra un usuario con ese email
-                form.add_error('email', 'No se ha encontrado ningún usuario con ese correo electrónico.')
-    else:
-        form = PasswordResetForm()
 
-    return render(request, 'registration/password_reset.html', {'form': form})
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'registration/password_reset.html'  # Plantilla personalizada para el formulario
+    email_template_name = 'registration/password_reset_email.html'  # Plantilla personalizada para el correo
+    subject_template_name = 'registration/password_reset_subject.txt'  # Plantilla personalizada para el asunto
+    success_url = reverse_lazy('password_reset_done')  # Redirige a la vista de "Correo Enviado"
+
+    def get_users(self, email):
+        """
+        Sobrescribe el método `get_users` para devolver el queryset de usuarios
+        que coinciden con el correo electrónico proporcionado.
+        """
+        from django.contrib.auth.models import User
+        return CustomUser.objects.filter(email=email)
+
+    def form_valid(self, form):
+        """
+        Sobrescribir el método para manejar el formulario válido y enviar el correo.
+        """
+        email = form.cleaned_data['email']
+
+        # Obtener el queryset de usuarios con el correo proporcionado usando get_users()
+        users = self.get_users(email)
+
+        # Si no hay usuarios con ese correo, no hacemos nada
+        if not users:
+            return self.render_to_response(self.get_context_data(form=form))
+
+        # Si hay usuarios, generamos el correo para cada uno
+        for user in users:
+            # Crear el token y el UID
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
+
+            # Preparar el mensaje del correo
+            subject = render_to_string(self.subject_template_name, {'user': user})
+            subject = ''.join(subject.splitlines())
+
+            message = render_to_string(self.email_template_name, {
+                'user': user,
+                'domain': get_current_site(self.request).domain,
+                'site_name': get_current_site(self.request).name,
+                'uid': uid,
+                'token': token,
+                'protocol': 'https' if self.request.is_secure() else 'http',
+            })
+
+            # Enviar el correo
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+            )
+
+        return super().form_valid(form)
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'  
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirm.html'  
+    success_url = reverse_lazy('password_reset_complete')  
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'registration/password_reset_complete.html'  # Personaliza la plantilla si lo deseas
 
 def user_registration_view(request):
     if request.method == "POST":
