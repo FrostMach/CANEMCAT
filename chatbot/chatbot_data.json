@@ -111,7 +111,6 @@
         "Si deseas ver los animales disponibles, dirígete a la sección 'Animales' y usa los filtros para encontrar perros o gatos según tus necesidades. ¿Te gustaría ayuda para filtrar la búsqueda?"
       ]
     },
-    
     {
       "tag": "consultar_protectoras_registradas",
       "patterns": [
@@ -147,8 +146,6 @@
         "Cuando accedes a los detalles de una protectora, podrás conocer su nombre, ubicación, cómo contactar con ellos y qué animales tienen para adopción. Visita la opción 'Protectoras' en el navegador para más detalles."
       ]
     },
-    
-    
     {
       "tag": "adoptar_perro_o_gato",
       "patterns": [
@@ -367,8 +364,6 @@
         "La sección de 'Detalles' te permitirá conocer toda la información relevante sobre un animal, incluyendo su especie, sexo, estado de adopción, edad, tamaño, personalidad, nivel de energía, tipo de pelaje y la protectora encargada."
       ]
     },
-    
-    
     {
       "tag": "actualizar_estado_adopcion",
       "patterns": [
@@ -388,7 +383,6 @@
         "Los trabajadores de la protectora pueden cambiar el estado de adopción de los animales desde la sección 'Gestión de animales' en el panel de administración."
       ]
     },
-    
     {
       "tag": "solicitud_adopcion_trabajadores",
       "patterns": [
@@ -436,7 +430,6 @@
         "Puedes gestionar tus solicitudes de adopción desde tu perfil. Accede a la sección 'Solicitudes de adopción' y retira la solicitud que ya no desees continuar."
       ]
     },
-    
     {
       "tag": "registrarse_como_adoptante",
       "patterns": [
@@ -465,8 +458,6 @@
         "El proceso de registro como adoptante es simple. Necesitarás proporcionar tu correo electrónico, tu nombre completo, fecha de nacimiento, y una contraseña. La foto de perfil es opcional. Si más tarde necesitas cambiar algún dato, lo podrás hacer desde tu cuenta. ¿Te gustaría saber más?"
       ]
     },
-    
-    
     {
       "tag": "registrarse_como_trabajador",
       "patterns": [
@@ -495,8 +486,6 @@
         "El registro como trabajador requiere usar el correo de tu protectora para confirmar que perteneces a ella. Si no cuentas con ese correo, no podrás completar el registro. Sin embargo, podrás cambiar tu información más adelante desde tu perfil. ¿Te gustaría más información sobre este proceso?"
       ]
     },
-    
-    
     {
       "tag": "ver_animales_en_wishlist",
       "patterns": [
@@ -510,7 +499,7 @@
         "Puedes ver los animales que tienes en tu lista de deseos directamente en tu perfil de usuario. Solo tienes que acceder a tu cuenta y consultar la sección de wishlist. ¿Te gustaría que te explique cómo hacerlo?",
         "Los animales en tu wishlist están disponibles en tu perfil de usuario. Accede allí para verlos. ¿Quieres saber más sobre cómo gestionar tu lista de deseos?"
       ]
-    }, 
+    },
     {
       "tag": "gestionar_wishlist_adoptante",
       "patterns": [
@@ -525,8 +514,6 @@
         "En tu wishlist, puedes tener todos los animales que desees. Puedes agregar más animales a medida que encuentres nuevos, o eliminar los que ya no te interesen. ¿Te gustaría saber más sobre cómo ver o gestionar tus animales guardados?"
       ]
     },
-       
-    
     {
       "tag": "añadir_animal_a_wishlist",
       "patterns": [
@@ -555,7 +542,6 @@
         "Puedes añadir tantos animales como desees a tu wishlist. Si te arrepientes de añadir un animal, puedes eliminarlo fácilmente desde su perfil. Además, en el perfil de cada animal, podrás ver su estado de adopción para saber si está disponible. ¿Te gustaría saber más sobre cómo gestionarlo?"
       ]
     },
-    
     {
       "tag": "eliminar_animal_de_wishlist",
       "patterns": [
@@ -584,7 +570,6 @@
         "La eliminación de animales de tu wishlist es sencilla: solo accede a su perfil y selecciona la opción de eliminar. Si te preguntas sobre el estado de adopción, podrás ver si un animal ha sido adoptado directamente en su perfil antes de eliminarlo. ¿Quieres saber más sobre cómo hacerlo?"
       ]
     },
-    
     {
       "tag": "consultar_status_adopcion",
       "patterns": [
@@ -613,7 +598,6 @@
         "Si un animal está 'reservado', significa que hay una solicitud pendiente de adopción, pero no ha sido adoptado oficialmente. Si está 'adoptado', ya no está disponible. Todos estos estados se muestran claramente en su perfil. ¿Te gustaría saber más sobre el proceso de adopción?"
       ]
     },
-    
     {
       "tag": "realizar_solicitud_adopcion",
       "patterns": [
@@ -642,7 +626,6 @@
         "Una vez que envíes tu solicitud de adopción, te informarán sobre el estado de tu solicitud. Si la solicitud es aceptada, te indicarán los siguientes pasos. Para hacer una solicitud, debes completar el formulario en el perfil del animal. ¿Te gustaría saber más sobre cómo realizar este proceso?"
       ]
     },
-    
     {
       "tag": "ver_solicitudes_adopcion_trabajadores",
       "patterns": [
@@ -671,122 +654,117 @@
         "Las solicitudes de adopción incluyen información importante como los datos del adoptante, el estado del animal y cualquier otra nota relevante. Puedes gestionar y revisar cada solicitud desde el panel de trabajador. Si una solicitud no es válida, tendrás opciones para rechazarla o pedir más detalles. ¿Te gustaría saber más sobre cómo gestionarlas?"
       ]
     },
-    
-  
-    [
-      {
-        "tag": "aceptar_solicitud_adopcion",
-        "patterns": [
-          "¿Cómo acepto una solicitud de adopción?",
-          "Aceptar solicitud de adopción de {animal}.",
-          "Confirmar adopción de {animal}.",
-          "Marcar solicitud de adopción como aprobada.",
-          "Aceptar adopción de {animal}."
-        ],
-        "responses": [
-          "Puedes aceptar la solicitud desde tu panel de trabajador, bajo la sección de solicitudes pendientes.",
-          "Para aceptar una solicitud de adopción, accede a la sección de gestión de solicitudes y marca como aprobada.",
-          "Recuerda que solo los trabajadores de la protectora pueden aceptar las solicitudes. ¿Te gustaría saber cómo acceder al panel de gestión?",
-          "Si no ves la opción de aceptación, asegúrate de estar en la sección de 'solicitudes pendientes'. ¿Te gustaría que te guíe por los pasos?"
-        ]
-      },
-      {
-        "tag": "rechazar_solicitud_adopcion",
-        "patterns": [
-          "¿Cómo rechazo una solicitud de adopción?",
-          "Rechazar solicitud de adopción de {animal}.",
-          "Eliminar solicitud de adopción de {animal}.",
-          "Marcar solicitud de adopción como rechazada.",
-          "Rechazar adopción de {animal}."
-        ],
-        "responses": [
-          "Puedes rechazar una solicitud de adopción desde tu panel de trabajador. Solo selecciona 'Rechazar'.",
-          "Accede a la sección de solicitudes pendientes y marca la solicitud como rechazada.",
-          "Recuerda que al rechazar una solicitud, esta quedará marcada como rechazada en el historial. ¿Te gustaría proceder?",
-          "Si decides rechazar una solicitud, esta se eliminará de la lista de pendientes. ¿Deseas confirmar esta acción?"
-        ]
-      },
-      {
-        "tag": "actualizar_informacion_perfil_adoptante",
-        "patterns": [
-          "Quiero actualizar mi perfil.",
-          "¿Cómo cambio mis datos personales?",
-          "Actualizar mi correo electrónico.",
-          "Cambiar mi dirección de correo.",
-          "Actualizar mi número de teléfono."
-        ],
-        "responses": [
-          "Puedes actualizar tu perfil accediendo a la sección de 'Mi cuenta'. ¿Te gustaría que te guíe?",
-          "Accede a la configuración de tu cuenta para modificar tus datos personales.",
-          "Recuerda que solo puedes actualizar tus datos desde tu perfil. ¿Te gustaría cambiar algún dato ahora?",
-          "Si quieres cambiar tu dirección de correo, solo accede a la opción 'Configuración' en tu cuenta. ¿Necesitas ayuda para encontrarla?"
-        ]
-      },
-      {
-        "tag": "ver_animales_reservados",
-        "patterns": [
-          "¿Cuáles son los animales reservados?",
-          "Mostrarme los animales que están reservados.",
-          "Quiero ver los animales que están reservados.",
-          "¿Qué animales están reservados?",
-          "Ver animales con estado de reserva."
-        ],
-        "responses": [
-          "Aquí tienes los animales reservados actualmente. ¿Te gustaría saber más sobre alguno de ellos?",
-          "Estos son los animales que están reservados en este momento.",
-          "Recuerda que los animales reservados aún no están disponibles para adopción. ¿Te gustaría ver los que están disponibles?",
-          "Si un animal está reservado, eso significa que alguien más ya ha mostrado interés. ¿Quieres saber cuándo estará disponible?"
-        ]
-      },
-      {
-        "tag": "consultar_protectora_registrada",
-        "patterns": [
-          "Quiero saber más sobre la protectora {nombre}.",
-          "¿Qué puedo hacer para contactar con la protectora {nombre}?",
-          "Mostrarme la información de la protectora {nombre}.",
-          "Quiero ver la dirección de la protectora {nombre}.",
-          "¿Tienen algún contacto la protectora {nombre}?"
-        ],
-        "responses": [
-          "La protectora {nombre} está registrada en nuestra plataforma. Puedes ver sus detalles de contacto y dirección en su perfil.",
-          "Aquí tienes la información sobre la protectora {nombre}: {direccion}. ¿Te gustaría contactarlos?",
-          "Si deseas más detalles sobre los servicios o animales de esta protectora, te puedo guiar. ¿Te gustaría ver más?",
-          "Para obtener más detalles sobre la protectora {nombre}, como su teléfono o email, revisa la sección de contacto en su perfil."
-        ]
-      },
-      {
-        "tag": "ver_animales_adoptados",
-        "patterns": [
-          "¿Cuántos animales han sido adoptados?",
-          "Ver los animales que han sido adoptados.",
-          "¿Tienen un registro de adopciones?",
-          "Mostrarme los animales adoptados.",
-          "Quiero ver el historial de adopciones."
-        ],
-        "responses": [
-          "Puedes ver los animales que han sido adoptados desde la sección de historial de adopciones. ¿Te gustaría verlos?",
-          "Aquí están los animales que han sido adoptados. ¿Quieres saber más sobre alguno?",
-          "Recuerda que los animales adoptados ya no están disponibles. ¿Te gustaría ver los disponibles en este momento?",
-          "Si necesitas información adicional sobre alguna adopción pasada, puedes ver los detalles en el historial de adopciones."
-        ]
-      },
-      {
-        "tag": "agregar_protectora_trabajadores",
-        "patterns": [
-          "¿Cómo puedo agregar una protectora?",
-          "Agregar una nueva protectora.",
-          "¿Cómo registro una nueva protectora?",
-          "Añadir una protectora a la base de datos.",
-          "¿Cómo me registro como trabajador en una nueva protectora?"
-        ],
-        "responses": [
-          "Para agregar una protectora, necesitarás acceder a tu panel de trabajador. ¿Te gustaría saber más sobre cómo hacerlo?",
-          "Desde el panel de trabajador, podrás registrar nuevas protectoras y gestionar su información.",
-          "Recuerda que solo los trabajadores de la protectora pueden registrar nuevas. ¿Te gustaría proceder con el registro?",
-          "Para registrar una protectora, asegúrate de tener acceso a la sección 'Gestión de protectoras' en tu cuenta de trabajador. ¿Te gustaría saber cómo encontrarla?"
-        ]
-      }
-    ]
-    
+    {
+      "tag": "aceptar_solicitud_adopcion",
+      "patterns": [
+        "¿Cómo acepto una solicitud de adopción?",
+        "Aceptar solicitud de adopción de {animal}.",
+        "Confirmar adopción de {animal}.",
+        "Marcar solicitud de adopción como aprobada.",
+        "Aceptar adopción de {animal}."
+      ],
+      "responses": [
+        "Puedes aceptar la solicitud desde tu panel de trabajador, bajo la sección de solicitudes pendientes.",
+        "Para aceptar una solicitud de adopción, accede a la sección de gestión de solicitudes y marca como aprobada.",
+        "Recuerda que solo los trabajadores de la protectora pueden aceptar las solicitudes. ¿Te gustaría saber cómo acceder al panel de gestión?",
+        "Si no ves la opción de aceptación, asegúrate de estar en la sección de 'solicitudes pendientes'. ¿Te gustaría que te guíe por los pasos?"
+      ]
+    },
+    {
+      "tag": "rechazar_solicitud_adopcion",
+      "patterns": [
+        "¿Cómo rechazo una solicitud de adopción?",
+        "Rechazar solicitud de adopción de {animal}.",
+        "Eliminar solicitud de adopción de {animal}.",
+        "Marcar solicitud de adopción como rechazada.",
+        "Rechazar adopción de {animal}."
+      ],
+      "responses": [
+        "Puedes rechazar una solicitud de adopción desde tu panel de trabajador. Solo selecciona 'Rechazar'.",
+        "Accede a la sección de solicitudes pendientes y marca la solicitud como rechazada.",
+        "Recuerda que al rechazar una solicitud, esta quedará marcada como rechazada en el historial. ¿Te gustaría proceder?",
+        "Si decides rechazar una solicitud, esta se eliminará de la lista de pendientes. ¿Deseas confirmar esta acción?"
+      ]
+    },
+    {
+      "tag": "actualizar_informacion_perfil_adoptante",
+      "patterns": [
+        "Quiero actualizar mi perfil.",
+        "¿Cómo cambio mis datos personales?",
+        "Actualizar mi correo electrónico.",
+        "Cambiar mi dirección de correo.",
+        "Actualizar mi número de teléfono."
+      ],
+      "responses": [
+        "Puedes actualizar tu perfil accediendo a la sección de 'Mi cuenta'. ¿Te gustaría que te guíe?",
+        "Accede a la configuración de tu cuenta para modificar tus datos personales.",
+        "Recuerda que solo puedes actualizar tus datos desde tu perfil. ¿Te gustaría cambiar algún dato ahora?",
+        "Si quieres cambiar tu dirección de correo, solo accede a la opción 'Configuración' en tu cuenta. ¿Necesitas ayuda para encontrarla?"
+      ]
+    },
+    {
+      "tag": "ver_animales_reservados",
+      "patterns": [
+        "¿Cuáles son los animales reservados?",
+        "Mostrarme los animales que están reservados.",
+        "Quiero ver los animales que están reservados.",
+        "¿Qué animales están reservados?",
+        "Ver animales con estado de reserva."
+      ],
+      "responses": [
+        "Aquí tienes los animales reservados actualmente. ¿Te gustaría saber más sobre alguno de ellos?",
+        "Estos son los animales que están reservados en este momento.",
+        "Recuerda que los animales reservados aún no están disponibles para adopción. ¿Te gustaría ver los que están disponibles?",
+        "Si un animal está reservado, eso significa que alguien más ya ha mostrado interés. ¿Quieres saber cuándo estará disponible?"
+      ]
+    },
+    {
+      "tag": "consultar_protectora_registrada",
+      "patterns": [
+        "Quiero saber más sobre la protectora {nombre}.",
+        "¿Qué puedo hacer para contactar con la protectora {nombre}?",
+        "Mostrarme la información de la protectora {nombre}.",
+        "Quiero ver la dirección de la protectora {nombre}.",
+        "¿Tienen algún contacto la protectora {nombre}?"
+      ],
+      "responses": [
+        "La protectora {nombre} está registrada en nuestra plataforma. Puedes ver sus detalles de contacto y dirección en su perfil.",
+        "Aquí tienes la información sobre la protectora {nombre}: {direccion}. ¿Te gustaría contactarlos?",
+        "Si deseas más detalles sobre los servicios o animales de esta protectora, te puedo guiar. ¿Te gustaría ver más?",
+        "Para obtener más detalles sobre la protectora {nombre}, como su teléfono o email, revisa la sección de contacto en su perfil."
+      ]
+    },
+    {
+      "tag": "ver_animales_adoptados",
+      "patterns": [
+        "¿Cuántos animales han sido adoptados?",
+        "Ver los animales que han sido adoptados.",
+        "¿Tienen un registro de adopciones?",
+        "Mostrarme los animales adoptados.",
+        "Quiero ver el historial de adopciones."
+      ],
+      "responses": [
+        "Puedes ver los animales que han sido adoptados desde la sección de historial de adopciones. ¿Te gustaría verlos?",
+        "Aquí están los animales que han sido adoptados. ¿Quieres saber más sobre alguno?",
+        "Recuerda que los animales adoptados ya no están disponibles. ¿Te gustaría ver los disponibles en este momento?",
+        "Si necesitas información adicional sobre alguna adopción pasada, puedes ver los detalles en el historial de adopciones."
+      ]
+    },
+    {
+      "tag": "agregar_protectora_trabajadores",
+      "patterns": [
+        "¿Cómo puedo agregar una protectora?",
+        "Agregar una nueva protectora.",
+        "¿Cómo registro una nueva protectora?",
+        "Añadir una protectora a la base de datos.",
+        "¿Cómo me registro como trabajador en una nueva protectora?"
+      ],
+      "responses": [
+        "Para agregar una protectora, necesitarás acceder a tu panel de trabajador. ¿Te gustaría saber más sobre cómo hacerlo?",
+        "Desde el panel de trabajador, podrás registrar nuevas protectoras y gestionar su información.",
+        "Recuerda que solo los trabajadores de la protectora pueden registrar nuevas. ¿Te gustaría proceder con el registro?",
+        "Para registrar una protectora, asegúrate de tener acceso a la sección 'Gestión de protectoras' en tu cuenta de trabajador. ¿Te gustaría saber cómo encontrarla?"
+      ]
+    }
   ]
 }
