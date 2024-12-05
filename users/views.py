@@ -2,12 +2,10 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth import views as auth_views
-from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
-from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist,Test,CompatibilityTest
-from django.contrib.auth import login, authenticate, logout, get_user_model
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import CustomUser, Wishlist,Test
+from django.contrib.auth import login, logout, get_user_model
 from .forms import LoginForm
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -15,11 +13,11 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 import smtplib
 from django.http import HttpResponse
-import requests
-from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from .forms import TestPerroForm, TestGatoForm
+from .utils import encontrar_animal_ideal
 
 @never_cache
 def landing_page(request):
@@ -246,55 +244,85 @@ def canemtest_view(request):
     return render(request, 'test/canemtest.html')
 
 
-def test_compatibilidad(request):
-    if request.method == "POST":
-        # Obtener las respuestas del formulario
-        respuesta = {
-            'tamaño': request.POST['tamaño'],
-            'edad': request.POST['edad'],
-            'energia': request.POST['energia'],
-            'pelaje': request.POST['pelaje'],
-            'caracter': request.POST['caracter'],
-            'paseo': request.POST['paseo'],
-            'frecuencia_casa': request.POST['frecuenciaCasa'],
-            'familia': request.POST['familia'],
-            'otras_mascotas': request.POST['otrasMascotas'],
-            'vivienda': request.POST['vivienda'],
-            'entrenamiento': request.POST['entrenamiento'],
-            'bienestar_emocional': request.POST['bienestarEmocional'],
-            'razon_adopcion': request.POST['razonAdopcion'],
-            'situaciones_imprevistas': request.POST['situacionesImprevistas'],
-            'paciencia': request.POST['paciencia'],
-            'problema_comportamiento': request.POST['problemaComportamiento'],
-            'convivencia_externa': request.POST['convivenciaExterna'],
-            'cuidados_medicos': request.POST['cuidadosMedicos'],
-            'conexion_emocional': request.POST['conexionEmocional'],
-            'actividad_cotidiana': request.POST['actividadCotidiana'],
-        }
 
-        # Guardar respuestas en el modelo CompatibilityTest
-        test = CompatibilityTest.objects.create(
-            user=request.user,  # Si deseas asociar el test a un usuario
-            **respuesta
-        )
+def test_perro(request):
+    if request.method == 'POST':
+        form = TestPerroForm(request.POST)
+        if form.is_valid():
+            respuestas = form.cleaned_data
+            # Buscamos el perro ideal
+            animal_ideal = encontrar_animal_ideal(respuestas, 'perro')
+            return render(request, 'resultado_test.html', {'animal_ideal': animal_ideal, 'especie': 'Perro'})
+    else:
+        form = TestPerroForm()
+    return render(request, 'test_perro.html', {'form': form})
 
-        # Filtrar animales según las preferencias
-        animales = "shelters.Animal".objects.filter(
-            size__icontains=respuesta['tamaño'],
-            age__gte=5,  # Por ejemplo, si la edad preferida es "joven" o "adulto"
-            energy__icontains=respuesta['energia'],
-            fur__icontains=respuesta['pelaje'],
-            personality__icontains=respuesta['caracter'],
-            adoption_status="disponible"
-        )
+def test_gato(request):
+    if request.method == 'POST':
+        form = TestGatoForm(request.POST)
+        if form.is_valid():
+            respuestas = form.cleaned_data
+            # Buscamos el gato ideal
+            animal_ideal = encontrar_animal_ideal(respuestas, 'gato')
+            return render(request, 'resultado_test.html', {'animal_ideal': animal_ideal, 'especie': 'Gato'})
+    else:
+        form = TestGatoForm()
+    return render(request, 'test_gato.html', {'form': form})
 
-        # Ajustar el filtro de animales basado en las respuestas (esto es un ejemplo básico)
-        if respuesta['actividad_cotidiana'] == 'Activa':
-            animales = animales.filter(energy="activo")
+def resultado_test(request):
+    # Obtener las respuestas del usuario desde la sesión (o el método que uses)
+    respuestas = request.session.get('respuestas_test', None)
 
-        return render(request, 'resultado_adopcion.html', {'animales': animales})
+    if not respuestas:
+        return render(request, 'error.html', {'mensaje': 'No se han encontrado respuestas para el test.'})
+    
+    especie = respuestas.get('especie', None)  # 'perro' o 'gato'
+    if especie == 'perro':
+        form = TestPerroForm(respuestas)
+    elif especie == 'gato':
+        form = TestGatoForm(respuestas)
+    else:
+        return render(request, 'error.html', {'mensaje': 'Especie no válida.'})
 
-    return render(request, 'test_adopcion.html')
+    # Filtrar los animales por especie (perro o gato)
+    animales = "shelters.Animal".objects.filter(species=especie)
 
+    # Crear una lista para almacenar la puntuación de compatibilidad de cada animal
+    puntuaciones = []
 
+    # Iterar a través de todos los animales filtrados
+    for animal in animales:
+        puntuacion = 0
 
+        # Comparar las respuestas del usuario con las características del animal
+        # Puntuación por personalidad
+        if animal.personality == respuestas.get('personalidad'):
+            puntuacion += 1  # Añadimos un punto por cada coincidencia
+
+        # Puntuación por tamaño
+        if animal.size == respuestas.get('tamano'):
+            puntuacion += 1
+
+        # Puntuación por energía
+        if animal.energy == respuestas.get('energia'):
+            puntuacion += 1
+
+        # Puedes añadir más criterios aquí según sea necesario
+
+        # Añadir el animal y su puntuación a la lista
+        puntuaciones.append({'animal': animal, 'puntuacion': puntuacion})
+
+    # Ordenar los animales por puntuación en orden descendente
+    puntuaciones = sorted(puntuaciones, key=lambda x: x['puntuacion'], reverse=True)
+
+    # Seleccionar el animal con la mayor puntuación (el más compatible)
+    if puntuaciones:
+        animal_ideal = puntuaciones[0]['animal']
+    else:
+        animal_ideal = None
+
+    # Pasar el resultado a la plantilla
+    return render(request, 'resultado_test.html', {
+        'animal_ideal': animal_ideal,
+        'especie': especie,
+    })

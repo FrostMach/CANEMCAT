@@ -22,7 +22,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('canem_test/', canemtest_view, name='canem_test'),
     path('dog_test/', views.DogTestView.as_view(), name='dog_test'),    
-    path('cat_test/', views.CatTestView.as_view(), name='cat_test'),    
+    path('cat_test/', views.CatTestView.as_view(), name='cat_test'),   
+    path('resultado/', views.resultado_test, name='resultado_test'),  # URL para los resultados
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -1,26 +1,14 @@
-{% extends 'base.html' %}
+<h1>Resultado del Test de {{ especie }}</h1>
 
-{% block title %}Resultados del Test{% endblock %}
-
-{% block content %}
-    <h2>Animales recomendados para ti</h2>
-
-    {% if animales %}
-        <ul>
-            {% for animal in animales %}
-                <li>
-                    <h3>{{ animal.name }}</h3>
-                    <p><strong>Especie:</strong> {{ animal.species }}</p>
-                    <p><strong>Edad:</strong> {{ animal.age }} años</p>
-                    <p><strong>Tamaño:</strong> {{ animal.size }}</p>
-                    <p><strong>Carácter:</strong> {{ animal.personality }}</p>
-                    <p><strong>Energía:</strong> {{ animal.energy }}</p>
-                    <p><strong>Pelaje:</strong> {{ animal.fur }}</p>
-                    <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 200px; height: auto;">
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No se encontraron animales compatibles con tus preferencias.</p>
-    {% endif %}
-{% endblock %}
+{% if animal_ideal %}
+    <h2>El animal ideal para ti es:</h2>
+    <h3>{{ animal_ideal.name }}</h3>
+    <p><strong>Especie:</strong> {{ animal_ideal.species }}</p>
+    <p><strong>Edad:</strong> {{ animal_ideal.age }} años</p>
+    <p><strong>Tamaño:</strong> {{ animal_ideal.size }}</p>
+    <p><strong>Personalidad:</strong> {{ animal_ideal.personality }}</p>
+    <p><strong>Descripción:</strong> {{ animal_ideal.description }}</p>
+    <img src="{{ animal_ideal.image.url }}" alt="{{ animal_ideal.name }}">
+{% else %}
+    <p>No se encontró un animal ideal. Intenta de nuevo.</p>
+{% endif %}
