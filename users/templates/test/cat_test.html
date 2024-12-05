@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Dog Test{% endblock %}
+{% block title %}Cat Test{% endblock %}
 
 {% block content %}
 
 <div class="bg-light container">
     <h2 class="text-center text-success">Preferencias personales sobre el gato</h2>
-    <form class="w-50 col-lg-6 offset-lg-3 pb-5" id="formPerro mb-5">
+    <form method="POST" action="{% url 'test_compatibilidad' %}">
         <!-- Pregunta 1 -->
         <div class="pb-3 question" id="q1" style="opacity: 1; transition: opacity 0.5s ease-in-out;">
             <label for="tamaño" class="form-label">¿Qué edad prefieres en un gato?</label>

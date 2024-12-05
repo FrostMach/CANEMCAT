@@ -10,7 +10,7 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species', 'description', 'image', 'adoption_status']
+        fields = ['name', 'age', 'species','sex','size','personality','energy','fur', 'description', 'image', 'adoption_status', 'shelter']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }

@@ -2,7 +2,7 @@ from django.db import models
 from enum import Enum
 from datetime import date
 from django.core.exceptions import ValidationError
-    
+
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
     address = models.CharField(max_length=100, verbose_name='Dirección')
@@ -55,14 +55,14 @@ class Animal(models.Model):
     species = models.CharField(max_length=10, choices=SPECIES)
     sex = models.CharField(max_length=10, choices=SEX, default='Macho')
     age = models.PositiveIntegerField()
-    size = models.CharField(max_length=10, choices=SIZE,default='Grande')
-    personality = models.CharField(max_length=15, choices=PERSONALITY, default='Sociable')
-    energy = models.CharField(max_length=10, choices=ENERGY, default='Activo')
-    fur = models.CharField(max_length=10, choices=FUR, default='Corto')
+    size = models.CharField(max_length=10, choices=SIZE)
+    personality = models.CharField(max_length=15, choices=PERSONALITY)
+    energy = models.CharField(max_length=10, choices=ENERGY)
+    fur = models.CharField(max_length=10, choices=FUR)
     description = models.TextField()
     image = models.ImageField(upload_to='animals/')
     adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='Disponible')
-    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora')
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora',null=True)
     features = models.BinaryField(blank=True, null=True)
 
     def __str__(self):
@@ -80,7 +80,6 @@ class Animal(models.Model):
         self.adoption_status = self.adoption_status.capitalize()
         super().save(*args, **kwargs)
 
-    
     
 class StatusEnum(Enum):
     PENDING = 'P', 'Pendiente'

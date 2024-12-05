@@ -4,7 +4,7 @@ from django.views import generic
 from django.contrib.auth import views as auth_views
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist,Test
+from .models import CustomUser, Wishlist,Test,CompatibilityTest
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
 from django.contrib.auth.forms import UserCreationForm
@@ -244,3 +244,57 @@ def canemtest_view(request):
         # Redirigir a una página de acceso denegado
         return redirect('login')  # O hacia la página de login
     return render(request, 'test/canemtest.html')
+
+
+def test_compatibilidad(request):
+    if request.method == "POST":
+        # Obtener las respuestas del formulario
+        respuesta = {
+            'tamaño': request.POST['tamaño'],
+            'edad': request.POST['edad'],
+            'energia': request.POST['energia'],
+            'pelaje': request.POST['pelaje'],
+            'caracter': request.POST['caracter'],
+            'paseo': request.POST['paseo'],
+            'frecuencia_casa': request.POST['frecuenciaCasa'],
+            'familia': request.POST['familia'],
+            'otras_mascotas': request.POST['otrasMascotas'],
+            'vivienda': request.POST['vivienda'],
+            'entrenamiento': request.POST['entrenamiento'],
+            'bienestar_emocional': request.POST['bienestarEmocional'],
+            'razon_adopcion': request.POST['razonAdopcion'],
+            'situaciones_imprevistas': request.POST['situacionesImprevistas'],
+            'paciencia': request.POST['paciencia'],
+            'problema_comportamiento': request.POST['problemaComportamiento'],
+            'convivencia_externa': request.POST['convivenciaExterna'],
+            'cuidados_medicos': request.POST['cuidadosMedicos'],
+            'conexion_emocional': request.POST['conexionEmocional'],
+            'actividad_cotidiana': request.POST['actividadCotidiana'],
+        }
+
+        # Guardar respuestas en el modelo CompatibilityTest
+        test = CompatibilityTest.objects.create(
+            user=request.user,  # Si deseas asociar el test a un usuario
+            **respuesta
+        )
+
+        # Filtrar animales según las preferencias
+        animales = "shelters.Animal".objects.filter(
+            size__icontains=respuesta['tamaño'],
+            age__gte=5,  # Por ejemplo, si la edad preferida es "joven" o "adulto"
+            energy__icontains=respuesta['energia'],
+            fur__icontains=respuesta['pelaje'],
+            personality__icontains=respuesta['caracter'],
+            adoption_status="disponible"
+        )
+
+        # Ajustar el filtro de animales basado en las respuestas (esto es un ejemplo básico)
+        if respuesta['actividad_cotidiana'] == 'Activa':
+            animales = animales.filter(energy="activo")
+
+        return render(request, 'resultado_adopcion.html', {'animales': animales})
+
+    return render(request, 'test_adopcion.html')
+
+
+

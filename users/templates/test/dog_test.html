@@ -3,10 +3,9 @@
 {% block title %}Dog Test{% endblock %}
 
 {% block content %}
-
 <div class="bg-light container">
     <h2 class="text-center text-success">Preferencias para la Adopción de un Perro</h2>
-    <form class="w-50 col-lg-6 offset-lg-3 pb-5" id="formPerro mb-5">
+    <form method="POST" action="{% url 'test_compatibilidad' %}">
         <!-- Pregunta 1 -->
         <div class="pb-3 question" id="q1" style="opacity: 1; transition: opacity 0.5s ease-in-out;">
             <label for="tamaño" class="form-label">¿Qué tamaño de perro prefieres?</label>
