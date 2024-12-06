@@ -3,13 +3,26 @@
 <h1>Recomendaciones de Animales</h1>
 
 <table>
-    <tr>
-        <th>Nombre</th><th>Edad</th><th>Especie</th><th>Descripción</th><th>Imagen</th>
-    </tr>
-    <tr>
-        <td>
-            
-        </td>
-    </tr>
+    {% for animal in recommendations %}
+        <tr>
+            <th>Nombre</th><th>Edad</th><th>Especie</th><th>Descripción</th><th>Imagen</th>
+        </tr>
+        <tr>           
+            <td>{{ animal.name }}</td>
+            <td>{{ animal.age }}</td>
+            <td>{{ animal.species }}</td>
+            <td>{{ animal.description }}</td>
+            <td>
+                {% if animal.image %}
+                    <img src="{{ animal.image }}" alt="{{ animal.name }}" style="width: 150px; height: auto;"></td>
+                {% endif%}
+        </tr>
+    {% empty %}
+        <tr>
+            No hay recomendaciones disponibles en este momento
+        </tr>
+    {% endfor %}
 </table>
+
+<a href="{% url 'landing_page' %}" class="btn btn-secondary">Acceder al Inicio</a>
 {% endblock %}

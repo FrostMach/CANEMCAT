@@ -54,6 +54,7 @@ class AnimalDetailView(generic.DetailView):
 
         if user.is_authenticated:
             is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
+            Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
         
         context['is_in_wishlist'] = is_in_wishlist
 

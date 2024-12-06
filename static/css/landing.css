@@ -1,5 +1,5 @@
 .carousel-item img {
-    transition: opacity 0.5s ease;  /* Transición suave */
+    transition: 0.5s ease;  /* Transición suave */
     height: 500px;
     object-fit: cover;
     border: 5px solid #ffffff;

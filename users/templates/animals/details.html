@@ -10,16 +10,10 @@
     <p><strong>Imagen: </strong><img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}"></p>
     <p><strong>Estado de adopción: </strong> {{ animal.adoption_status }}</p>
     {% if user.is_authenticated %}
-        {% if is_in_wishlist %}
-            <p>Este animal ya está en favoritos.</p>
-            <form action="{% url 'wishlist_remove' animal.pk %}" method="post">
+        {% if not is_in_wishlist %}
+            <form action="{% url 'wishlist_add' animal.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit">Eliminar de Favoritos</button>
-            </form>
-        {% else %}
-            <form action="{% url 'wishlist_add' animal.pk %}" method="post">
-                {% csrf_token %}
-                <button type="submit"><i class="icofont-heart"></i>Añadir a Favoritos</button>
+                <button type="submit" onclick="recordInteraction({{ animal.id }}, 'favorite')" class="btn btn-success">Añadir a Favoritos</button>
             </form>
         {% endif %}
     {% else %}
@@ -27,4 +21,22 @@
     {% endif %}
     <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
 </div>
+
+<script>
+    function recordInteraction(animal_id, interaction_type){
+        fetch(`/animals/${animal_id}/interact/${interaction_type}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken':'{{ csrf_token }}',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || 'Interacción registrada')
+        })
+        .catch(error => {
+            console.error('Error registrando la interacción: ', error)
+        });
+    }
+</script>
 {% endblock %}

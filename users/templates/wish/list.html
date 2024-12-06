@@ -6,12 +6,18 @@
     <ul class="list-group">
         {% for item in wishlist_items %}
             <li class="list-group-item list-group-item-info">
-               <label for="name">Nombre: </label> {{ item.animal.name }}<p>
-               <label for="species">Especie: </label> {{item.animal.species}}<p>
-               <label for="age">Edad: </label> {{item.animal.age}}</p>
-               <label for="img">Foto: </label><img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="img-fluid">
-            <a href="{% url 'wishlist_remove' item.id %}" class="btn btn-danger">Eliminar</a>
+                <label for="name">Nombre: </label> {{ item.animal.name }}<p>
+                <label for="species">Especie: </label> {{item.animal.species}}<p>
+                <label for="age">Edad: </label> {{item.animal.age}}</p>
+                <label for="img">Foto: </label><img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="img-fluid">
+                <label for="interaction">{{ item.interaction_type }}</label>
+                <form action="{% url 'wishlist_remove' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
             </li>
+        {% empty %}
+            <li>No hay mascotas favoritas en la lista</li>
         {% endfor %}
     </ul>
 

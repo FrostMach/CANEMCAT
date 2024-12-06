@@ -84,7 +84,6 @@ class Wishlist(models.Model):
     INTERACTION_TYPE = [
         ('view', 'View'), 
         ('favorite', 'Favorite'),
-        ('adopt', 'Adoptado')
     ]
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -92,7 +91,13 @@ class Wishlist(models.Model):
     interaction_type = models.CharField(blank=True, null=True, max_length=50, choices=INTERACTION_TYPE)
 
     def __str__(self):
-        return f"Wishlist of {self.user.name}"
+        return f"{self.user.name} - {self.animal.name}"
 
     class Meta:
         db_table = 'wishlist'  # Custom table name in the database
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'animal', 'interaction_type'],
+                name='unique_user_animal_interaction'
+            )
+        ]
