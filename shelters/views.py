@@ -33,7 +33,7 @@ class AnimalListView(generic.ListView):
     model = Animal
     template_name = 'animals/list.html'
     context_object_name = 'animals'
-    paginate_by = 10
+    paginate_by = 9
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -42,11 +42,14 @@ class AnimalListView(generic.ListView):
         if form.is_valid():
             # Filtros según los valores del formulario
             species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
             size = form.cleaned_data.get("size")
             shelter = form.cleaned_data.get("shelter")
 
             if species:
                 queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
             if size:
                 queryset = queryset.filter(size=size)
             if shelter:
@@ -217,3 +220,6 @@ def shelters_by_postal_code(request):
 #     c = 2 * atan2(sqrt(a), sqrt(1-a))
     
 #     return R * c
+
+def landing_page2(request):
+    return render(request, 'shelter/landing_page2.html')

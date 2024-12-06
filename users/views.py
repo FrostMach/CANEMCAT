@@ -19,6 +19,9 @@ import smtplib
 from django.http import HttpResponse
 import requests
 from django.utils.encoding import force_bytes
+from django.http import JsonResponse
+from shelters.models import Animal
+import numpy as np
 
 def landing_page(request):
     return render(request, 'landing_page.html')
@@ -64,6 +67,9 @@ def upload_image(request):
             predicted_index = predictions.argmax()  # Índice de la probabilidad más alta
             predicted_breed = BREEDS[predicted_index]  # Obtener la raza correspondiente
 
+            # Guardar la raza detectada en la sesión
+            request.session['detected_breed'] = predicted_breed
+
             image_url = f"/media/uploaded/{uploaded_file.name}"
 
             # Devolver la predicción como JSON
@@ -74,6 +80,7 @@ def upload_image(request):
             return JsonResponse({'error': f'Ocurrió un error al procesar la imagen: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Método no permitido o archivo no recibido'}, status=400)
+
 
 
 #USUARIOS

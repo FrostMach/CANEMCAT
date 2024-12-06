@@ -5,56 +5,168 @@
 {% endblock %}
 
 {% block content %}
-    <!-- Contenedor con fondo verde claro -->
-    <div style="background-color: #e0f7fa; padding: 20px; border-radius: 10px;">
-        <h1>CanemSCAN</h1>
-        <p>¿Quieres escanear un gato o un perro?</p>
-        <button id="dog-button">Perro</button>
+<div class="container my-5 text-center" style="max-width: 600px; animation: fadeIn 1s;">
+    <div class="p-4 rounded shadow" style="background-color: white;">
+        <h1 class="mb-4" style="color: #004d40; font-weight: bold;">CanemSCAN</h1>
+        <p style="font-size: 1.2rem; color: #00695c;">¿Quieres analizar un gato o un perro?</p>
+    </div>
 
-        <!-- Formulario de subida de imagen -->
-        <form id="upload-form" style="display: none;" enctype="multipart/form-data" method="POST">
+    <!-- Botones elegantes -->
+    <div class="d-flex justify-content-center gap-4 mt-4">
+        <button id="dog-button" class="btn btn-lg btn-primary shadow btn-animated">Perro</button>
+        <button id="cat-button" class="btn btn-lg btn-primary shadow btn-animated">Gato</button>
+    </div>
+
+    <!-- Formulario -->
+    <div class="p-4 rounded shadow mt-5" id="form-container" style="display: none; opacity: 0;">
+        <form id="upload-form" style="visibility: hidden; height: 0; margin: 0; padding: 0;">
             {% csrf_token %}
-            <label for="image">Sube una imagen de tu perro:</label>
-            <input type="file" id="image" name="image" accept="image/*" required>
-            <button type="submit">Subir y analizar</button>
+            <label for="image" class="form-label" style="font-size: 1.1rem; color: #004d40;">Sube una imagen:</label>
+            <input type="file" id="image" name="image" accept="image/*" required class="form-control mb-3">
+            <button type="submit" class="btn btn-success btn-block shadow">Subir y analizar</button>
         </form>
-        
-        <!-- Lugar donde se mostrará el resultado -->
-        <p id="result"></p>
+    </div>
 
-        <!-- Aquí se mostrará la imagen subida -->
-        <div id="image-preview" style="display:none;">
-            <h3>Imagen subida:</h3>
-            <img id="uploaded-image" src="" alt="Imagen subida" style="max-width: 300px;">
+    <!-- Cargando -->
+    <div id="loading-container" class="mt-4" style="display: none;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #004d40; font-weight: bold;">Analizando imagen...</p>
+            <img src="/static/images/loading-dog2.gif" alt="Cargando" class="img-fluid" style="max-width: 100px;">
         </div>
     </div>
 
-    <script>
-        // Mostrar formulario al hacer clic en el botón
-        document.getElementById('dog-button').addEventListener('click', function() {
-            document.getElementById('upload-form').style.display = 'block';
-        });
+    <!-- Resultado -->
+    <div id="image-preview" class="mt-4" style="display:none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <h3 class="mt-3" style="color: #004d40;">Imagen subida:</h3>
+        </div>
+        <img id="uploaded-image" src="" alt="Imagen subida" class="rounded shadow w-50 img-fluid my-3">
+        <div class="p-4 rounded shadow d-flex align-items-center justify-content-center" style="background-color: white; min-height: 100px;">
+            <p id="result" style="font-size: 1.2rem; font-weight: bold; color: #00695c; margin: 0;"></p>
+        </div>
+    </div>
 
-        // Enviar el formulario y manejar la respuesta
-        document.getElementById('upload-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const response = await fetch('/canemscan/upload/', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await response.json();
-            if (response.ok) {
-                document.getElementById('result').textContent = `${data.breed}`;
-                
-                // Mostrar la imagen subida
-                const imageUrl = URL.createObjectURL(document.getElementById('image').files[0]);
-                document.getElementById('uploaded-image').src = imageUrl;
-                document.getElementById('image-preview').style.display = 'block';  // Mostrar la sección de imagen
-            } else {
-                document.getElementById('result').textContent = 'Ocurrió un error al analizar la imagen.';
-            }
+    <!-- Mensaje de comparación -->
+    <div id="compare-container" class="mt-4" style="display: none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #00695c; font-weight: bold;">¿Te gustaría ver perros o gatos parecidos disponibles en las protectoras?</p>
+            <button id="compare-button" class="btn btn-primary shadow btn-animated">Comparar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #e0f7fa;
+        color: #004d40;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-animated {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .btn-animated:hover {
+        transform: scale(1.1);
+        background-color: #00897b !important;
+        color: white;
+    }
+
+    .p-4 {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    document.getElementById('dog-button').addEventListener('click', function () {
+        showUploadForm("Sube una imagen de tu perro:");
+    });
+
+    document.getElementById('cat-button').addEventListener('click', function () {
+        showUploadForm("Sube una imagen de tu gato:");
+    });
+
+    function showUploadForm(labelText) {
+        const uploadForm = document.getElementById('upload-form');
+        const formContainer = document.getElementById('form-container');
+        const label = uploadForm.querySelector('label');
+
+        label.textContent = labelText;
+
+        // Mostrar el contenedor del formulario con animación
+        formContainer.style.display = 'block';
+        formContainer.style.animation = 'fadeIn 1s';
+        formContainer.style.opacity = 1; // Asegura visibilidad tras animación
+
+        // Configurar formulario interno
+        uploadForm.style.visibility = 'visible';
+        uploadForm.style.height = 'auto';
+    }
+
+    document.getElementById('upload-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        // Mostrar el contenedor de carga
+        document.getElementById('loading-container').style.display = 'block';
+        document.getElementById('form-container').style.display = 'none';
+
+        const formData = new FormData(this);
+
+        // Simular una pausa para mostrar el estado de carga (3 segundos)
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        const response = await fetch('/canemscan/upload/', {
+            method: 'POST',
+            body: formData,
         });
-    </script>
+        const data = await response.json();
+
+        // Ocultar el contenedor de carga
+        document.getElementById('loading-container').style.display = 'none';
+
+        if (response.ok) {
+            const breedMessage = data.breed.includes("La raza detectada es:") 
+                ? data.breed 
+                : `La raza detectada es: ${data.breed}`;
+            
+            document.getElementById('result').textContent = breedMessage;
+
+            const imageUrl = URL.createObjectURL(document.getElementById('image').files[0]);
+            document.getElementById('uploaded-image').src = imageUrl;
+            document.getElementById('image-preview').style.display = 'block';
+
+            // Mostrar el mensaje de comparación después de 2 segundos
+            setTimeout(() => {
+                document.getElementById('compare-container').style.display = 'block';
+            }, 2000);
+        } else {
+            document.getElementById('result').textContent = 'Ocurrió un error al analizar la imagen.';
+        }
+    });
+</script>
 {% endblock %}
+
+
+
+
+
+
+
 

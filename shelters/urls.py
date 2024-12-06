@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/nearby-shelters/', views.nearby_shelters, name='nearby_shelters'),
     path('api/shelter-postal-code/', views.shelters_by_postal_code, name='shelter_postal_center'),
     path('shelter/nearby/', views.map_view, name='map'),
+    path('lab/', views.landing_page2, name='landing_page2'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -53,8 +53,12 @@ class Animal(models.Model):
         ('largo', 'Largo'),
         ('corto', 'Corto')
     ]
+    SEX = [('macho', 'Macho'),
+            ('hembra', 'Hembra')
+    ]
     name = models.CharField(max_length=100, verbose_name='Nombre')
     species = models.CharField(max_length=10, choices=SPECIES)
+    sex = models.CharField(max_length=10, choices=SEX, default='Macho')
     age = models.PositiveIntegerField()
     size = models.CharField(max_length=10, choices=SIZE)
     personality = models.CharField(max_length=15, choices=PERSONALITY)
@@ -64,6 +68,7 @@ class Animal(models.Model):
     image = models.ImageField(upload_to='animals/')
     adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='Disponible')
     shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora')
+    features = models.BinaryField(blank=True, null=True)
 
     def __str__(self):
         return self.name

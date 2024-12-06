@@ -24,10 +24,20 @@ class AnimalFilterForm(forms.Form):
         required=False,
         label="Especie"
     )
+    sex = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SEX,
+        required=False,
+        label="Sexo"
+    )
     size = forms.ChoiceField(
         choices=[('', '---')] + Animal.SIZE,
         required=False,
         label="Tamaño"
+    )
+    adoption_status = forms.ChoiceField(
+        choices=[('', '---')] + Animal.ADOPTION_STATUS,
+        required=False,
+        label="Estado de adopción"
     )
     shelter = forms.ModelChoiceField(
         queryset=Shelter.objects.all(),

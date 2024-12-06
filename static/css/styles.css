@@ -51,3 +51,20 @@ body {
     align-self: flex-start; /* Alinea el botón más arriba respecto a los filtros */
 }
 
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+    padding: 0.5em 0.75em;
+    border-radius: 0.25rem;
+}
+
+.filter-form .form-group {
+    display: flex;
+    flex-direction: column; /* Coloca la etiqueta arriba */
+    margin-bottom: 15px; /* Espaciado entre campos */
+}
+
+.filter-form label {
+    margin-bottom: 5px; /* Espaciado entre etiqueta y campo */
+    font-weight: bold; /* Opcional: negrita para la etiqueta */
+}

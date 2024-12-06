@@ -1,26 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ animal.name }}</h1>
-    <p><strong>Especie:</strong> {{ animal.get_species_display }}</p>
-    <p><strong>Edad:</strong> {{ animal.age }} años</p>
-
-    {% if user.is_authenticated %}
-        {% with wishlist=user.wishlists.first %}
-            {% if wishlist and wishlist.is_animal_in_wishlist(animal) %}
-                <p>Este animal ya está en tu lista de deseos.</p>
-                <form action="{% url 'animales:remove_from_wishlist' animal.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Eliminar de mi lista de deseos</button>
-                </form>
-            {% else %}
-                <form action="{% url 'animales:add_to_wishlist' animal.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Agregar a mi lista de deseos</button>
-                </form>
-            {% endif %}
-        {% endwith %}
-    {% else %}
-        <p>Debes iniciar sesión para agregar este animal a tu lista de deseos.</p>
-    {% endif %}
+<div class="animal-detail-section py-5">
+    <div class="container my-5 bg-white rounded shadow p-4">
+        <!-- Imagen destacada -->
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" class="img-fluid rounded shadow">
+            </div>
+            <!-- Información principal -->
+            <div class="col-md-6">
+                <h2 class="display-4">{{ animal.name }}</h2>
+                <p><strong>Especie:</strong> {{ animal.get_species_display }}</p>
+                <p><strong>Sexo:</strong> {{ animal.get_sex_display }}</p>
+                <p><strong>Estado de adopción:</strong> <span class="badge badge-info">{{ animal.adoption_status }}</span></p>
+                <p><strong>Edad:</strong> {{ animal.age }} {{ animal.age|pluralize:"año,años" }}</p>
+                <p><strong>Tamaño:</strong> {{ animal.get_size_display }}</p>
+                <p><strong>Personalidad:</strong> {{ animal.get_personality_display }}</p>
+                <p><strong>Nivel de energía:</strong> {{ animal.get_energy_display }}</p>
+                <p><strong>Tipo de pelaje:</strong> {{ animal.get_fur_display }}</p>
+                <p><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
+                <a href="#" class="btn btn-primary mt-3">Solicitar Adopción</a>
+            </div>
+        </div>
+        
+        <!-- Descripción -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3>Descripción</h3>
+                <p>{{ animal.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

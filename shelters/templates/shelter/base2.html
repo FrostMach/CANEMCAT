@@ -23,6 +23,16 @@
     <link rel="stylesheet" href="/static/css/landing.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            background-image: url("{% static 'images/fondo_lab2.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
+
     {% block head %}{% endblock %}
 </head>
 
@@ -48,22 +58,22 @@
                         <!-- Animales - Dropdown -->
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
+                            <a class="nav-link" href="{% url 'animals-list' %}">Gestión de animales</a>
                         </li>
                         {% endif %}
 
                         {% if not user.is_authenticated %}
                         <!-- Animales - Dropdown para usuarios no autenticados -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
+                            <a class="nav-link" href="{% url 'animals-list' %}">Gestión de animales</a>
                         </li>
 
                         <!-- Protectoras - Dropdown para usuarios no autenticados -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
+                                data-bs-toggle="dropdown" aria-expanded="false">Planificación</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
-                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
+                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Calendario</a>
                                 </li>
                             </ul>
                         </li>
@@ -73,29 +83,35 @@
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
+                                data-bs-toggle="dropdown" aria-expanded="false">Planificación</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
-                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
+                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Calendario</a>
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar Protectoras</a></li>
+                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Calendario</a></li>
                             </ul>
                         </li>
                         {% endif %}
                         <!-- CanemScan y CanemTest solo para adoptantes -->
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'canemscan' %}">CanemSCAN</a>
+                            <a class="nav-link" href="">Inventario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">CanemTEST</a>
+                            <a class="nav-link" href="">Datos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Solicitudes</a>
                         </li>
                         {% endif %}
                         {% if not user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'canemscan' %}">CanemSCAN</a>
+                         <li class="nav-item">
+                            <a class="nav-link" href="">Inventario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">CanemTEST</a>
+                            <a class="nav-link" href="">Datos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Solicitudes</a>
                         </li>
                         {% endif %}
                         <!-- Opciones específicas para los trabajadores -->
@@ -158,37 +174,3 @@
         {% block content %}
         {% endblock %}
     </div>
-
-    <!-- Aquí va el footer -->
-    <footer>
-        <div style="text-align: center; padding: 20px; background-color: #333; color: #fff;">
-            <p>Conéctate con nosotros en nuestras redes sociales:</p>
-            <div>
-                <a href="https://facebook.com/TuMarca" target="_blank"
-                    style="margin: 0 10px; color: #fff; text-decoration: none;">
-                    <i class="icon-facebook-rect" style="font-size: 25px;"></i>
-                </a>
-                <a href="https://instagram.com/TuMarca" target="_blank"
-                    style="margin: 0 10px; color: #fff; text-decoration: none;">
-                    <i class="icon-instagram" style="font-size: 25px;"></i>
-                </a>
-                <a href="https://twitter.com/TuMarca" target="_blank"
-                    style="margin: 0 10px; color: #fff; text-decoration: none;">
-                    <i class="icon-twitter-bird" style="font-size: 25px;"></i>
-                </a>
-                <a href="https://linkedin.com/company/TuMarca" target="_blank"
-                    style="margin: 0 10px; color: #fff; text-decoration: none;">
-                    <i class="icon-linkedin-rect" style="font-size: 25px;"></i>
-                </a>
-                <a href="https://youtube.com/c/TuMarca" target="_blank"
-                    style="margin: 0 10px; color: #fff; text-decoration: none;">
-                    <i class="icon-youtube" style="font-size: 25px;"></i>
-                </a>
-            </div>
-            <p>&copy; 2024 CanemCAT | <a href="/terminos" style="color: #fff;">Términos y condiciones</a>
-                | <a href="/privacidad" style="color: #fff;">Política de privacidad</a></p>
-        </div>
-    </footer>
-</body>
-
-</html>
