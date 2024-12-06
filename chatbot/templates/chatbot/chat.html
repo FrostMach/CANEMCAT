@@ -1,0 +1,29 @@
+<!-- chatbot/chat.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    
+    <!-- Incluir la librería jQuery desde un CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Incluir el archivo JS externo -->
+    <script src="{% static 'js/chatbot.js' %}"></script>
+</head>
+<body>
+
+<h2>Chatbot</h2>
+
+<div id="chatbox">
+    <!-- Aquí se mostrarán los mensajes -->
+</div>
+
+<input type="text" id="user_input" placeholder="Escribe tu mensaje...">
+<button onclick="sendMessage()">Enviar</button>
+
+</body>
+</html>

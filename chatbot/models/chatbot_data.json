@@ -279,7 +279,8 @@
         "Crear cuenta para adoptar animales.",
         "¿Puedo registrarme en su página?",
         "¿Dónde puedo registrarme?",
-        "¿Cómo puedo crear una cuenta de usuario?"
+        "¿Cómo puedo crear una cuenta de usuario?",
+        "Quiero registrarme"
       ],
       "responses": [
         "Para crear una cuenta, solo debes hacer clic en la opción de registro que se encuentra en la parte superior derecha de la página. Te pediremos algunos datos como tu correo electrónico, nombre completo, fecha de nacimiento, una foto de perfil (opcional), contraseña, y si eres trabajador o adoptante.",

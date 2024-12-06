@@ -1,0 +1,66 @@
+/* Estilo para el icono del chat flotante */
+#chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #5cb85c;
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+/* Estilo para el modal de chat */
+#chatModal .modal-content {
+    width: 400px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+#chatbox {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#user_input {
+    width: calc(100% - 100px);
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#sendMessageButton {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#sendMessageButton:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para los mensajes dentro del chat */
+#chatbox div {
+    margin-bottom: 10px;
+}
+
+#chatbox div b {
+    color: #007bff;
+}
+
+#chatbox div:last-child {
+    margin-bottom: 0;
+}
