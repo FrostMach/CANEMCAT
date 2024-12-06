@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 urlpatterns = [   
     path('crear/', views.AnimalCreateView.as_view(), name='animals-create'),
     path('editar/<int:pk>/', views.AnimalUpdateView.as_view(), name='animals-update'),
+    path('<int:pk>/', views.AnimalDetailView.as_view(), name='animals-detail'),
     path('eliminar/<int:pk>/', views.AnimalDeleteView.as_view(), name='animals-delete'),
     path('lista/', views.AnimalListView.as_view(), name='animals-list'),
     path('detalles/<int:pk>/', views.AnimalDetailView.as_view(), name='animals-detail'),

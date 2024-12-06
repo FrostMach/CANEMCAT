@@ -3,19 +3,23 @@
 {% block content %}
     <h1>Mi Lista de Deseos</h1>
 
-    {% if wish_list and wish_list.animal_count > 0 %}
-        <ul>
-            {% for animal in wish_list.animals.all %}
-                <li>
-                    <a href="{% url 'animales:detalle' animal.id %}">{{ animal.name }} - {{ animal.get_species_display }}</a>
-                    <form action="{% url 'animales:remove_from_wishlist' animal.id %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit">Eliminar</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No tienes animales en tu lista de deseos.</p>
-    {% endif %}
+    <ul class="list-group">
+        {% for item in wishlist_items %}
+            <li class="list-group-item list-group-item-info">
+                <label for="name">Nombre: </label> {{ item.animal.name }}<p>
+                <label for="species">Especie: </label> {{item.animal.species}}<p>
+                <label for="age">Edad: </label> {{item.animal.age}}</p>
+                <label for="img">Foto: </label><img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="img-fluid">
+                <label for="interaction">{{ item.interaction_type }}</label>
+                <form action="{% url 'wishlist_remove' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>No hay mascotas favoritas en la lista</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
 {% endblock %}

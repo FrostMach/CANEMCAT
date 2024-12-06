@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from shelters.models import Animal, AdoptionApplication, Shelter
 from django.urls import reverse_lazy, reverse
 from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
-from django.views import generic
+from django.views import View, generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
+
+from users.models import Wishlist
 
 # Create your views here.
 
@@ -66,7 +68,21 @@ class AnimalDetailView(generic.DetailView):
     model = Animal
     template_name = 'animals/details.html' 
     context_object_name = 'animal'  
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        animal = self.object
+
+        is_in_wishlist = False
+
+        if user.is_authenticated:
+            is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
+            Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
+        
+        context['is_in_wishlist'] = is_in_wishlist
+
+        return context
     
 #SOLICITUD DE ADOPCIÓN    
     

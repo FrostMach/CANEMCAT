@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Editar Animal</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Actualizar</button>
-</form>
+
+<div class="container mt-5">
+    <h2 class="text-center text-white">Editar Animal</h2>
+    <form method="post" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit">Actualizar</button>
+    </form>
+</div>
 {% endblock %}
