@@ -65,7 +65,7 @@ def login_view(request):
                 form.add_error(None, "Email o contraseña incorrectos")  # Agregar un error general al formulario
             else:
                 login(request, user)  # Iniciar sesión si la autenticación es exitosa
-                return redirect('dashboard')  # Redirige a la página principal o dashboard
+                return redirect('landing_page')  # Redirige a la página principal o dashboard
         else:
             form.add_error(None, "Usuario con ese email no encontrado.")  # Agregar un error si no se encuentra el usuario
         
