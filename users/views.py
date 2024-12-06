@@ -1,32 +1,41 @@
-from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views import generic
-
+from django.contrib.auth import views as auth_views
 from shelters.models import Animal
 # from sys_recommend.sys_recommend import recommend_pets
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
-from .models import AdopterProfile, CustomUser, Wishlist
+from .models import CustomUser, Wishlist, Test, AdopterProfile
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.core.files.storage import default_storage
 import tensorflow as tf
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 import smtplib
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
+import requests
 from django.utils.encoding import force_bytes
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponseRedirect, JsonResponse
+from django.conf import settings
+from .forms import TestPerroForm, TestGatoForm
+from .utils import encontrar_animal_ideal
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
 
+@never_cache
+
 def landing_page(request):
+    print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
+    print(f"Sesión en landing: {request.session.items()}")
     return render(request, 'landing_page.html')
 
 #CANEMSCAN
@@ -107,30 +116,18 @@ class ProfileUpdateView(generic.UpdateView):
 
 def login_view(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)  # Necesitamos pasar `request` al form
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        # Intentamos obtener el usuario con el email
-        try:
-            user = CustomUser.objects.get(email=email)
-        except CustomUser.DoesNotExist:
-            user = None
-
-        # Si el usuario existe, intentamos autenticarlo
-        if user is not None:
-            user = authenticate(request, email=user.email, password=password)  # Usamos el username para la autenticación
-            if user is None:
-                form.add_error(None, "Email o contraseña incorrectos")  # Agregar un error general al formulario
-            else:
-                login(request, user)  # Iniciar sesión si la autenticación es exitosa
-                return redirect('landing_page')  # Redirige a la página principal o dashboard
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.user
+            logout(request)  # Cerrar sesión antes de iniciar sesión
+            login(request, user)
+            print(f"Usuario autenticado en login (después de login): {request.user.is_authenticated}")
+            print(f"Sesión en login: {request.session.items()}")
+            return HttpResponseRedirect(reverse('landing_page'))  # o 'landing_page' si tienes nombre de ruta para la landing
         else:
-            form.add_error(None, "Usuario con ese email no encontrado.")  # Agregar un error si no se encuentra el usuario
-        
+            messages.error(request, "Email o contraseña incorrectos.")
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
 
     return render(request, 'registration/login.html', {'form': form})
 
@@ -160,7 +157,7 @@ def signup(request):
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-def send_mail(to, subject, body, from_mail="pruebasconsmtp46@gmail.com", password="mmxl tlnu lxpt rvjr"):
+def send_mail(to, subject, body, from_mail=settings.DEFAULT_FROM_EMAIL, password=settings.EMAIL_HOST_PASS):
     from email.mime.text import MIMEText
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -172,35 +169,72 @@ def send_mail(to, subject, body, from_mail="pruebasconsmtp46@gmail.com", passwor
     s.sendmail(from_mail, [to], msg.as_string())
     s.quit()
 
-def password_reset(request):
-    if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            users = CustomUser.objects.filter(email=email)  # Aquí buscamos todos los usuarios con ese email
-            
-            # Si hay al menos un usuario con el email, tomamos el primero
-            if users.exists():
-                user = users.first()  # Tomamos el primer usuario
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk.to_bytes()))  # Usamos force_bytes para convertir el ID a bytes
-                current_site = get_current_site(request)
-                mail_subject = 'Enlace para recuperar la contraseña'
-                message = render_to_string('registration/password_reset_email.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid': uid,
-                    'token': token,
-                })
-                send_mail(mail_subject, message, 'from@example.com', [email])  # Reemplaza 'from@example.com' con tu correo
-                return render(request, 'registration/password_reset_done.html')  # Redirige a la página de confirmación
-            else:
-                # Si no se encuentra un usuario con ese email
-                form.add_error('email', 'No se ha encontrado ningún usuario con ese correo electrónico.')
-    else:
-        form = PasswordResetForm()
 
-    return render(request, 'registration/password_reset.html', {'form': form})
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'registration/password_reset.html'  # Plantilla personalizada para el formulario
+    email_template_name = 'registration/password_reset_email.html'  # Plantilla personalizada para el correo
+    subject_template_name = 'registration/password_reset_subject.txt'  # Plantilla personalizada para el asunto
+    success_url = reverse_lazy('password_reset_done')  # Redirige a la vista de "Correo Enviado"
+
+    def get_users(self, email):
+        """
+        Sobrescribe el método `get_users` para devolver el queryset de usuarios
+        que coinciden con el correo electrónico proporcionado.
+        """
+        from django.contrib.auth.models import User
+        return CustomUser.objects.filter(email=email)
+
+    def form_valid(self, form):
+        """
+        Sobrescribir el método para manejar el formulario válido y enviar el correo.
+        """
+        email = form.cleaned_data['email']
+
+        # Obtener el queryset de usuarios con el correo proporcionado usando get_users()
+        users = self.get_users(email)
+
+        # Si no hay usuarios con ese correo, no hacemos nada
+        if not users:
+            return self.render_to_response(self.get_context_data(form=form))
+
+        # Si hay usuarios, generamos el correo para cada uno
+        for user in users:
+            # Crear el token y el UID
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
+
+            # Preparar el mensaje del correo
+            subject = render_to_string(self.subject_template_name, {'user': user})
+            subject = ''.join(subject.splitlines())
+
+            message = render_to_string(self.email_template_name, {
+                'user': user,
+                'domain': get_current_site(self.request).domain,
+                'site_name': get_current_site(self.request).name,
+                'uid': uid,
+                'token': token,
+                'protocol': 'https' if self.request.is_secure() else 'http',
+            })
+
+            # Enviar el correo
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+            )
+
+        return super().form_valid(form)
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'  
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirm.html'  
+    success_url = reverse_lazy('password_reset_complete')  
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'registration/password_reset_complete.html'  # Personaliza la plantilla si lo deseas
 
 def user_registration_view(request):
     if request.method == "POST":
@@ -261,13 +295,22 @@ def wishlist_list(request):
     wishlist_items = Wishlist.objects.filter(user=request.user)
     return render(request, 'wish/list.html', {'wishlist_items': wishlist_items})
 
+
+    
+class DogTestView(generic.ListView):
+    model = Test
+    template_name = 'test/dog_test.html'
+
+class CatTestView(generic.ListView):
+    model = Test
+    template_name = 'test/cat_test.html'
+
 @login_required
 def canemscan_view(request):
     if request.user.user_type != 'adopter':
         # Si no es un 'adopter', redirigimos a una página de acceso denegado o algo similar
         return redirect('access_denied')  # Puedes crear una página para mostrar acceso denegado
     return render(request, 'canemscan.html')
-
 @login_required
 def canemtest_view(request):
     if request.user.user_type != 'adopter':
@@ -275,6 +318,88 @@ def canemtest_view(request):
         return redirect('access_denied')  # O hacia la página de login
     return render(request, 'canemtest.html')
 
+def test_perro(request):
+    if request.method == 'POST':
+        form = TestPerroForm(request.POST)
+        if form.is_valid():
+            respuestas = form.cleaned_data
+            # Buscamos el perro ideal
+            animal_ideal = encontrar_animal_ideal(respuestas, 'perro')
+            return render(request, 'resultado_test.html', {'animal_ideal': animal_ideal, 'especie': 'Perro'})
+    else:
+        form = TestPerroForm()
+    return render(request, 'test_perro.html', {'form': form})
+
+def test_gato(request):
+    if request.method == 'POST':
+        form = TestGatoForm(request.POST)
+        if form.is_valid():
+            respuestas = form.cleaned_data
+            # Buscamos el gato ideal
+            animal_ideal = encontrar_animal_ideal(respuestas, 'gato')
+            return render(request, 'resultado_test.html', {'animal_ideal': animal_ideal, 'especie': 'Gato'})
+    else:
+        form = TestGatoForm()
+    return render(request, 'test_gato.html', {'form': form})
+
+def resultado_test(request):
+    # Obtener las respuestas del usuario desde la sesión (o el método que uses)
+    respuestas = request.session.get('respuestas_test', None)
+
+    if not respuestas:
+        return render(request, 'error.html', {'mensaje': 'No se han encontrado respuestas para el test.'})
+    
+    especie = respuestas.get('especie', None)  # 'perro' o 'gato'
+    if especie == 'perro':
+        form = TestPerroForm(respuestas)
+    elif especie == 'gato':
+        form = TestGatoForm(respuestas)
+    else:
+        return render(request, 'error.html', {'mensaje': 'Especie no válida.'})
+
+    # Filtrar los animales por especie (perro o gato)
+    animales = "shelters.Animal".objects.filter(species=especie)
+
+    # Crear una lista para almacenar la puntuación de compatibilidad de cada animal
+    puntuaciones = []
+
+    # Iterar a través de todos los animales filtrados
+    for animal in animales:
+        puntuacion = 0
+
+        # Comparar las respuestas del usuario con las características del animal
+        # Puntuación por personalidad
+        if animal.personality == respuestas.get('personalidad'):
+            puntuacion += 1  # Añadimos un punto por cada coincidencia
+
+        # Puntuación por tamaño
+        if animal.size == respuestas.get('tamano'):
+            puntuacion += 1
+
+        # Puntuación por energía
+        if animal.energy == respuestas.get('energia'):
+            puntuacion += 1
+
+        # Puedes añadir más criterios aquí según sea necesario
+
+        # Añadir el animal y su puntuación a la lista
+        puntuaciones.append({'animal': animal, 'puntuacion': puntuacion})
+
+    # Ordenar los animales por puntuación en orden descendente
+    puntuaciones = sorted(puntuaciones, key=lambda x: x['puntuacion'], reverse=True)
+
+    # Seleccionar el animal con la mayor puntuación (el más compatible)
+    if puntuaciones:
+        animal_ideal = puntuaciones[0]['animal']
+    else:
+        animal_ideal = None
+
+    # Pasar el resultado a la plantilla
+    return render(request, 'resultado_test.html', {
+        'animal_ideal': animal_ideal,
+        'especie': especie,
+    })
+    
 def admin_only(user):
     return user.is_authenticated and user.is_staff
 
@@ -330,4 +455,4 @@ def export_interactions_csv(request):
     
 #     return JsonResponse({
 #         'error': 'Método no permitido'
-#     }, status=405)
+#     }, status=405)    

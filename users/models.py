@@ -77,6 +77,33 @@ class Questions(models.Model):
 class Answers(models.Model):
     question = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='questions')
 
+class CompatibilityTest(models.Model):
+    PET_CHOICES = [
+        ('dog', 'Perro'),
+        ('cat', 'Gato')
+    ]
+    
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
+    pet_type = models.CharField(max_length=3, choices=PET_CHOICES)
+    
+    # Preguntas relacionadas con el perro
+    dog_age_preference = models.CharField(max_length=20)
+    dog_coat_type = models.CharField(max_length=20)
+    dog_character = models.CharField(max_length=20)
+    dog_energy_level = models.CharField(max_length=20)
+    dog_other_pets = models.CharField(max_length=20)
+    
+    # Preguntas relacionadas con el gato
+    cat_age_preference = models.CharField(max_length=20)
+    cat_coat_type = models.CharField(max_length=20)
+    cat_character = models.CharField(max_length=20)
+    cat_energy_level = models.CharField(max_length=20)
+    cat_other_pets = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'Test de compatibilidad de {self.user.username} con {self.pet_type}'
+
+
 # Wishlist model
 class Wishlist(models.Model):
     INTERACTION_TYPE = [
