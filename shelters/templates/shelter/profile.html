@@ -5,8 +5,10 @@
 <div class="container mt-5 p-4 bg-white shadow-sm rounded">
     <h2>Centro de Adopción</h2>
     <a href="{% url 'shelter_list' %}" class="btn btn-secondary">Volver al listado</a>
-    <a class="btn btn-primary" href="{% url 'edit_shelter' pk=shelter.id %}">Actualizar</a>
-    <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Dar de baja</a>
+    {% if user.is_authenticated %}
+        <a class="btn btn-primary" href="{% url 'edit_shelter' pk=shelter.id %}">Actualizar</a>
+        <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Dar de baja</a>
+    {% endif %}
     <ul>
         <li><strong>Nombre: </strong> {{ shelter.name }}</li>
         <li><strong>Dirección: </strong>{{ shelter.address }}</li>
@@ -16,6 +18,8 @@
         <li><strong>Estado de acreditación: </strong>{{ shelter.accreditation_status }}</li>
         <li><strong>Fecha de registro: </strong>{{ shelter.register_date|date:'d-m-Y' }}</li>
         <li><strong>Estado: </strong>{{ shelter.status }}</li>
+        <li><strong>Latitud: </strong>{{ shelter.latitude}}</li>
+        <li><strong>Longitud: </strong>{{ shelter.longitude }}</li>
     </ul>
 </div>
 {% endblock %}

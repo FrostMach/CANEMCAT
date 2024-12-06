@@ -4,9 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import landing_page,email_confirmation
 
-
-
-from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', landing_page, name='landing_page'),
     path('signup/', views.signup, name='signup'),
@@ -18,6 +15,10 @@ urlpatterns = [
     path('email_confirmation/', email_confirmation, name='email_confirmation'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
-    path('logout/', views.logout_view, name='logout'),    
+    path('logout/', views.logout_view, name='logout'),  
+    path('wishlist/', views.wishlist_list, name='wishlist_list'),
+    path('<int:animal_id>/add_wishlist/', views.wishlist_add, name='wishlist_add'),
+    path('<int:wishlist_id>/remove_wishlist/', views.wishlist_remove, name='wishlist_remove'),  
+    # path('dashboard/', views.dashboard_recommendations, name='dashboard'),
+    # path('animals/<int:animal_id>/interact/<str:interaction_type>/', views.record_interaction, name='record_interaction'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
