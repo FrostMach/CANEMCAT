@@ -192,14 +192,15 @@
     {
       "tag": "canemtest",
       "patterns": [
-        "¿Cómo funciona CanemTEST?",
+        "¿Cómo funciona canemtest?",
         "Quiero hacer un test para saber qué raza de perro/gato debo adoptar.",
         "¿Me puedes recomendar una raza de perro o gato?",
         "Quiero saber qué raza es mejor para mí.",
         "¿Cómo me ayuda CanemTEST a elegir una raza?",
         "¿Qué raza de perro o gato es la mejor para mi estilo de vida?",
         "¿Cómo funciona el test de compatibilidad CanemTEST?",
-        "¿Puedo hacer un test para elegir la raza ideal para mi hogar?"
+        "¿Puedo hacer un test para elegir la raza ideal para mi hogar?",
+        "que es canemtest"
       ],
       "responses": [
         "CanemTEST es una herramienta que te ayuda a encontrar la raza de perro o gato que mejor se adapta a tu estilo de vida. Solo necesitas registrarte y responder algunas preguntas para recibir recomendaciones personalizadas.",
