@@ -5,14 +5,27 @@
 
 <table class="table table-responsive-sm table-responsive-md table-responsive-lg table-bordered bg-white">
     <tr>
-        <th scope="col">Nombre</th><th scope="col">Dirección</th><th scope="col">Correo</th><th scope="col">Teléfono</th><th></th>
+        <th scope="col">Nombre</th><th scope="col">Dirección</th><th scope="col">Correo</th><th scope="col">Acreditación</th><th scope="col">Acciones</th>
     </tr>
     {% for shelter in shelters %}
         <tr>
             <td>{{ shelter.name }}</td>
             <td>{{ shelter.address }}</td>
             <td>{{ shelter.email }}</td>
-            <td>{{ shelter.telephone }}</td>
+            <td>
+                {% if shelter.status %}
+                    Aprobada
+                {% else %}
+                    Pendiente
+                {% endif %}
+            </td>
+            <td>
+                {% if not shelter.status %}
+                    <a href="{% url 'shelter_approval' shelter.id %}">Aprobar Acreditación</a>
+                {% else %}
+                    Acreditación Aprobada
+                {% endif %}
+            </td>
             <td><a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-info">Ver</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'edit_shelter' pk=shelter.id %}" class="btn btn-primary">Editar</a>

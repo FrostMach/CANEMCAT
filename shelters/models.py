@@ -51,10 +51,11 @@ class Animal(models.Model):
     ]
     FUR = [
         ('largo', 'Largo'),
-        ('corto', 'Corto')
+        ('corto', 'Corto'),
     ]
-    SEX = [('macho', 'Macho'),
-            ('hembra', 'Hembra')
+    SEX = [
+        ('macho', 'Macho'),
+        ('hembra', 'Hembra'),
     ]
     name = models.CharField(max_length=100, verbose_name='Nombre')
     species = models.CharField(max_length=10, choices=SPECIES, verbose_name='Especie')
@@ -67,7 +68,7 @@ class Animal(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='animals/')
     adoption_status = models.CharField(max_length=10, choices=ADOPTION_STATUS, default='Disponible')
-    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora')
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='animals', verbose_name='Protectora',null=True)
     features = models.BinaryField(blank=True, null=True)
 
     def __str__(self):
@@ -84,6 +85,11 @@ class Animal(models.Model):
         # Asegura que el estado de adopción tiene la primera letra en mayúscula antes de guardarlo
         self.adoption_status = self.adoption_status.capitalize()
         super().save(*args, **kwargs)    
+
+class StatusEnum(Enum):
+    PENDING = 'P', 'Pendiente'
+    APPROVED = 'A', 'Aprobada'
+    DENIED = 'D', 'Denegada'
     
 class AdoptionApplication(models.Model):
     user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)
