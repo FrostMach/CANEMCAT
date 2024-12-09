@@ -270,7 +270,7 @@ def user_dashboard(request):
 
     recommendations = get_user_recommendations(user)
 
-    return render(request, 'recommend/list.html', {'recommended_animals':recommendations})
+    return render(request, 'recommend/list.html', {'recommended_animals': recommendations})
 
 # @login_required
 # def get_recommendations(request):

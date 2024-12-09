@@ -2,14 +2,14 @@
 {% block content %}
     <h2>Encontrar protectoras cercanas</h2>
 
-    <form id="postal-code-form">
+    <form id="postal-code-form" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
         <label for="postal-code">Introduce el código postal: </label>
         <input type="text" name="postal-code" id="postal-code">
-        <button type="submit">Buscar</button>
+        <button type="submit" class="btn btn-info">Buscar</button>
     </form>
     
     <div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div> 
-    
+    <p/>
     <script>  
          const map = L.map('map').setView([0, 0], 13); // Inicializar en 0,0 hasta obtener la ubicación del usuario
 
@@ -73,6 +73,6 @@
                 .then(response => response.json())
                 .then(data => addMarkers(data));
         });
-    </script> 
+    </script>
     <a href="{% url 'shelter_list' %}" class="btn btn-secondary">Volver al listado</a>
 {% endblock %}

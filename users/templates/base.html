@@ -97,6 +97,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="">CanemTEST</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard' %}" class="nav-link">CanemRECOMMEND</a>
+                        </li>
                         {% endif %}
                         {% if not user.is_authenticated %}
                         <li class="nav-item">

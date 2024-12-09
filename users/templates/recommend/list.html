@@ -30,7 +30,7 @@
 <script>
     document.getElementById('refresh-recommendations')
         .addEventListener('click', function() {
-            fetch('/dashboard/recommendations/')
+            fetch('/dashboard/')
                 .then(response =>  response.json())
                 .then(data => {
                     const recommendationsList = document.getElementById('recommendations-list');

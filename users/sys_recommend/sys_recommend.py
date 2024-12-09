@@ -115,53 +115,88 @@ def calculate_animal_similarities():
     ))
 
     categorical_features = ['species', 'size', 'personality', 'energy', 'fur']
-    encoder = OneHotEncoder()
-    encoded_features = encoder.fit_transform(animal_data[categorical_features]).toarray()
+    data_encoded = pd.get_dummies(animal_data, columns=categorical_features, drop_first=True)
+
+    # encoder = OneHotEncoder()
+    # encoded_features = encoder.fit_transform(animal_data[categorical_features]).toarray()
 
     scaler = StandardScaler()
-    normalized_age = scaler.fit_transform(animal_data['age'])
+    numeric_columns = ['age']
+    data_encoded[numeric_columns] = scaler.fit_transform(data_encoded[numeric_columns])
 
-    feature_matrix = pd.concat([pd.DataFrame(encoded_features), pd.DataFrame(normalized_age, columns=['age_normalized'])], axis=1)
-    similarity_matrix = cosine_similarity(feature_matrix)
+    similarity_matrix = cosine_similarity(data_encoded.drop(columns=['id']))
+
+    # normalized_age = scaler.fit_transform(animal_data[['age']])
+
+    # feature_matrix = pd.concat([pd.DataFrame(encoded_features), pd.DataFrame(normalized_age, columns=['age_normalized'])], axis=1)
+    # similarity_matrix = cosine_similarity(feature_matrix)
 
     similarity_df = pd.DataFrame(similarity_matrix, index=animal_data['id'], columns=animal_data['id'])
 
     return similarity_df
 
 def get_user_recommendations(user):
+    user_interactions = Wishlist.objects.filter(user=user)
+    if not user_interactions.exists():
+        return []
+
+    # Obtener IDs de los animales con interacciones del usuario
+    user_animal_ids = user_interactions.values_list('animal_id', flat=True)
+
+    # Obtener matriz de similitudes
     similarity_df = calculate_animal_similarities()
-
     if similarity_df.empty:
-        return Animal.objects.none()
-    
-    interactions = Wishlist.objects.filter(user=user).values('animal_id', 'interaction_type')
+        return []
 
-    if not interactions.exists():
-        return Animal.objects.none()
-    
-    weights = {
-        'favorite': 1,
-        'view': 0.2
-    }
-    weighted_scores = {}
-
-    for interaction in interactions:
-        animal_id = interaction['animal_id']
-        interaction_type = interaction['interaction_type']
-
+    # Calcular puntuaciones para animales no interactuados
+    scores = pd.Series(0, index=similarity_df.columns)
+    for animal_id in user_animal_ids:
         if animal_id in similarity_df.index:
-            weigth = weights.get(interaction_type, 0)
-            similarity_scores = similarity_df.loc[animal_id] * weigth
+            scores += similarity_df[animal_id]
 
-            for related_id, score in similarity_scores.items():
-                weighted_scores[related_id] = weighted_scores.get(related_id, 0) + score
+    # Filtrar animales ya interactuados
+    scores = scores.drop(labels=user_animal_ids, errors='ignore')
 
-    recommended_animal_ids = sorted(weighted_scores, key=weighted_scores.get, reverse=True)
+    # Obtener los IDs de animales mejor puntuados
+    recommended_ids = scores.nlargest(10).index
+
+    # Obtener los objetos de animales recomendados
+    recommendations = Animal.objects.filter(id__in=recommended_ids)
+
+    return recommendations
+    # similarity_df = calculate_animal_similarities()
+
+    # if similarity_df.empty:
+    #     return Animal.objects.none()
     
-    user_animal_ids = [interaction['animal_id'] for interaction in interactions]
-    recommended_animal_ids = [aid for aid in recommended_animal_ids if aid not in user_animal_ids][:5]
+    # interactions = Wishlist.objects.filter(user=user).values('animal_id', 'interaction_type')
 
-    return Animal.objects.filter(id__in=recommended_animal_ids, adoption_status='disponible')
+    # if not interactions.exists():
+    #     return Animal.objects.none()
+    
+    # weights = {
+    #     'favorite': 1,
+    #     'view': 0.2
+    # }
+    # weighted_scores = {}
+
+    # for interaction in interactions:
+    #     animal_id = interaction['animal_id']
+    #     interaction_type = interaction['interaction_type']
+
+    #     if animal_id in similarity_df.index:
+    #         weigth = weights.get(interaction_type, 0)
+    #         similarity_scores = similarity_df.loc[animal_id] * weigth
+
+    #         for related_id, score in similarity_scores.items():
+    #             weighted_scores[related_id] = weighted_scores.get(related_id, 0) + score
+
+    # recommended_animal_ids = sorted(weighted_scores, key=weighted_scores.get, reverse=True)
+    
+    # user_animal_ids = [interaction['animal_id'] for interaction in interactions]
+    # recommended_animal_ids = [aid for aid in recommended_animal_ids if aid not in user_animal_ids][:5]
+
+    # return Animal.objects.filter(id__in=recommended_animal_ids, adoption_status='disponible')
 
     # interactions = Wishlist.objects.values('user_id', 'animal_id', 'interaction_type')
     
