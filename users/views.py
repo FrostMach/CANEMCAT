@@ -41,16 +41,67 @@ def landing_page(request):
 #CANEMSCAN
 from django.http import JsonResponse
 from django.conf import settings
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model, Model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import os
+import numpy as np
 
 # Ruta al modelo entrenado
-MODEL_PATH = os.path.join(settings.BASE_DIR, 'Users', 'IA', 'CanemSCAN2000.h5')
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'Users', 'IA', 'CanemSCAN2200.h5')
 model = load_model(MODEL_PATH)
 
 # Lista de razas en el orden del modelo
-BREEDS = ['Affenpinscher', 'American Staffordshire Terrier', 'Basenji', 'Basset Hound', 'Beagle', 'Bedlington Terrier', 'Bichón maltés', 'Black and Tan Coonhound', 'Bluetick Coonhound', 'Bobtail', 'Border Collie', 'Border Terrier', 'Borzoi', 'Boston Terrier', 'Boxer', 'Boyer de Entlebuch', 'Boyero de Appenzell', 'Boyero de Berna', 'Boyero de Flandes', 'Braco alemán de pelo corto', 'Braco de Weimar', 'Bulldog francés', 'Bullmastiff', 'Cairn Terrier', 'Caniche enano', 'Cavalier King Charles Spaniel', 'Cazador de alces noruego', 'Chihuahua', 'Chin japonés', 'Chow Chow', 'Clumber Spaniel', 'Cobrador de pelo liso', 'Cocker inglés', 'Collie', 'Corgi galés de Cardigan', 'Corgi galés de Pembroke', 'Cuon alpinus', 'Dachshund', 'Dandie Dinmont Terrier', 'Dingo', 'Doberman', 'Dogo del Tíbet', 'Dálmata', 'Esquimal americano', 'Fox Terrier de pelo duro', 'Foxhound inglés', 'Galgo italiano', 'Golden Retriever', 'Gordon Setter', 'Gran boyer suizo', 'Gran danés', 'Husky siberiano', 'Keeshond', 'Kelpie australiano', 'Kerry Blue Terrier', 'Komondor', 'Kuvasz húngaro', 'Labrador Retriever', 'Lakeland Terrier', 'Lebrel afgano', 'Lebrel escocés', 'Leonberger', 'Lhasa Apso', 'Lobero irlandés', 'Malamute de Alaska', 'Otterhound', 'Papillón', 'Pastor alemán', 'Pastor belga Groenendael', 'Pastor belga Malinois', 'Pastor de Brie', 'Pastor de islas Shetland', 'Pekinés', 'Perro crestado rodesiano', 'Perro de agua irlandés', 'Perro de montaña de los Pirineos', 'Perro de San Huberto', 'Perro salvaje africano', 'Petit Brabançon', 'Pinscher miniatura', 'Podenco ibicenco', 'Pomeranian', 'Poodle estándar', 'Poodle Toy', 'Pug', 'Redbone Coonhound', 'Retriever de Chesapeake', 'Retriever de pelo rizado', 'Rottweiler', 'Saluki', 'Samoyedo', 'San Bernardo', 'Schipperke', 'Schnauzer estándar', 'Schnauzer gigante', 'Schnauzer miniatura', 'Sealyham Terrier', 'Setter inglés', 'Setter irlandés', 'Shiba Inu', 'Shih Tzu', 'Silky Terrier australiano', 'Soft Coated Wheaten Terrier', 'Spaniel Bretón', 'Springer spaniel galés', 'Springer Spaniel inglés', 'Staffordshire Bull Terrier', 'Sussex Spaniel', 'Terranova', 'Terrier de Airedale', 'Terrier de Australia', 'Terrier de Norfolk', 'Terrier de Norwich', 'Terrier escocés', 'Terrier irlandés', 'Terrier tibetano', 'Toy Terrier inglés', 'Treeing Walker Coonhound', 'Vizsla', 'West Highland White Terrier', 'Whippet', 'Xoloitzcuintle', 'Yorkshire Terrier']  # Actualiza según tu entrenamiento
+BREEDS = ['Affenpinscher', 'American Staffordshire Terrier', 'Basenji', 'Basset Hound', 'Beagle', 'Bedlington Terrier', 'Bichón maltés', 'Black and Tan Coonhound', 'Bluetick Coonhound', 'Bobtail', 'Border Collie', 'Border Terrier', 'Borzoi', 'Boston Terrier', 'Boxer', 'Boyer de Entlebuch', 'Boyero de Appenzell', 'Boyero de Berna', 'Boyero de Flandes', 'Braco alemán de pelo corto', 'Braco de Weimar', 'Bull Terrier', 'Bulldog francés', 'Bullmastiff','Cairn Terrier', 'Caniche enano', 'Cavalier King Charles Spaniel', 'Cazador de alces noruego', 'Chihuahua', 'Chin japonés', 'Chow Chow', 'Clumber Spaniel', 'Cobrador de pelo liso', 'Cocker inglés', 'Collie', 'Corgi galés de Cardigan', 'Corgi galés de Pembroke', 'Cuon alpinus', 'Dachshund', 'Dandie Dinmont Terrier', 'Dingo', 'Doberman', 'Dogo del Tíbet', 'Dálmata', 'Esquimal americano', 'Fox Terrier de pelo duro', 'Foxhound inglés', 'Galgo italiano', 'Golden Retriever', 'Gordon Setter', 'Gran boyer suizo', 'Gran danés', 'Husky siberiano', 'Keeshond', 'Kelpie australiano', 'Kerry Blue Terrier', 'Komondor', 'Kuvasz húngaro', 'Labrador Retriever', 'Lakeland Terrier', 'Lebrel afgano', 'Lebrel escocés', 'Leonberger', 'Lhasa Apso', 'Lobero irlandés', 'Malamute de Alaska', 'Otterhound', 'Papillón', 'Pastor alemán', 'Pastor belga Groenendael', 'Pastor belga Malinois', 'Pastor de Brie', 'Pastor de islas Shetland', 'Pekinés', 'Perro crestado rodesiano', 'Perro de agua irlandés', 'Perro de montaña de los Pirineos', 'Perro de San Huberto', 'Perro salvaje africano', 'Petit Brabançon', 'Pinscher miniatura', 'Podenco ibicenco', 'Pomeranian', 'Poodle estándar', 'Poodle Toy', 'Pug', 'Redbone Coonhound', 'Retriever de Chesapeake', 'Retriever de pelo rizado', 'Rottweiler', 'Saluki', 'Samoyedo', 'San Bernardo', 'Schipperke', 'Schnauzer estándar', 'Schnauzer gigante', 'Schnauzer miniatura', 'Sealyham Terrier', 'Setter inglés', 'Setter irlandés', 'Shiba Inu', 'Shih Tzu', 'Silky Terrier australiano', 'Soft Coated Wheaten Terrier', 'Spaniel Bretón', 'Springer spaniel galés', 'Springer Spaniel inglés', 'Staffordshire Bull Terrier', 'Sussex Spaniel', 'Terranova', 'Terrier de Airedale', 'Terrier de Australia', 'Terrier de Norfolk', 'Terrier de Norwich', 'Terrier escocés', 'Terrier irlandés', 'Terrier tibetano', 'Toy Terrier inglés', 'Treeing Walker Coonhound', 'Vizsla', 'West Highland White Terrier', 'Whippet', 'Xoloitzcuintle', 'Yorkshire Terrier']  # Actualiza según tu entrenamiento
+
+#EXTRACTOR DE VECTORES DE IMÁGENES
+feature_extractor = Model(inputs=model.input, outputs=model.layers[-2].output)
+
+def extract_features(image_path):
+    """
+    Extrae un vector de características de una imagen usando el modelo preentrenado.
+    """
+    img = load_img(image_path, target_size=(224, 224))  # Redimensionar la imagen
+    img_array = img_to_array(img) / 255.0  # Normalizar
+    img_array = img_array.reshape((1, 224, 224, 3))  # Añadir dimensión batch
+    features = feature_extractor.predict(img_array)  # Extraer características
+    return features.flatten()  # Devolver como un vector 1D
+
+#OBTENER IMÁGENES Y CARACTERÍSTICAS DE LA BASE DE DATOS
+
+def get_animal_images_and_features():
+    """
+    Recupera las rutas de las imágenes de los perros en la base de datos
+    y extrae sus características.
+    """
+    animals = Animal.objects.filter(species='perro')  # Filtrar solo perros
+    images_and_features = []
+    
+    for animal in animals:
+        image_path = animal.image.path  # Ruta de la imagen
+        if os.path.exists(image_path):  # Comprobar que la imagen existe
+            features = extract_features(image_path)  # Extraer características
+            images_and_features.append((animal, features))
+    
+    return images_and_features  # Lista de tuplas (animal, características)
+
+
+#COMPARADOR DE IMÁGENES
+from scipy.spatial.distance import cosine
+
+def find_similar_images(uploaded_image_path, animal_features, top_n=4):
+    """
+    Encuentra las imágenes más similares a la imagen cargada.
+    """
+    uploaded_features = extract_features(uploaded_image_path)  # Extraer características de la imagen subida
+    similarities = []
+
+    for animal, features in animal_features:
+        similarity = 1 - cosine(uploaded_features, features)  # Similitud basada en el coseno
+        similarities.append((animal, similarity))
+    
+    # Ordenar por similitud descendente
+    similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+    return similarities[:top_n]  # Devolver las N más similares
 
 def canem_scan(request):
     return render(request, 'canemscan.html')
@@ -78,20 +129,63 @@ def upload_image(request):
             predictions = model.predict(img_array)  # Devuelve probabilidades
             predicted_index = predictions.argmax()  # Índice de la probabilidad más alta
             predicted_breed = BREEDS[predicted_index]  # Obtener la raza correspondiente
+            
+            image_id = uploaded_file.name
 
             # Guardar la raza detectada en la sesión
             request.session['detected_breed'] = predicted_breed
-
             image_url = f"/media/uploaded/{uploaded_file.name}"
 
             # Devolver la predicción como JSON
-            return JsonResponse({'image_url': image_url, 'breed': f"La raza detectada es: {predicted_breed}"})
+            return JsonResponse({'image_url': image_url, 'breed': f"La raza detectada es: {predicted_breed}", 'image_id': image_id})
 
         except Exception as e:
             os.remove(saved_path) 
             return JsonResponse({'error': f'Ocurrió un error al procesar la imagen: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Método no permitido o archivo no recibido'}, status=400)
+
+from django.urls import reverse
+
+def compare_images(request):
+    """
+    Compara la imagen subida previamente con las de la base de datos.
+    """
+    # Recuperar el nombre del archivo subido desde la solicitud GET
+    image_id = request.GET.get('uploaded_image_id', None)
+    if not image_id:
+        return JsonResponse({"error": "No se proporcionó el ID de la imagen."}, status=400)
+
+    # Ruta a la imagen subida por el usuario
+    uploaded_image_path = os.path.join(settings.MEDIA_ROOT, 'uploaded', image_id)
+    if not os.path.exists(uploaded_image_path):
+        return JsonResponse({'error': 'La imagen subida no se encuentra.'}, status=404)
+
+    try:
+        # Obtener características de las imágenes en la base de datos
+        animal_features = get_animal_images_and_features()
+        if not animal_features:
+            return JsonResponse({"error": "No hay imágenes de animales en la base de datos para comparar."}, status=404)
+
+        # Encontrar las imágenes más similares
+        similar_images = find_similar_images(uploaded_image_path, animal_features)
+
+        # Construir la respuesta con las imágenes más similares
+        similar_results = [
+            {
+                'name': animal.name,
+                'image_url': animal.image.url,
+                'similarity': f'{similarity * 100:.2f}%',  # Convertir la similitud en porcentaje
+                'detail_url': reverse('animals-detail', args=[animal.pk])  # Generar la URL de detalle
+            }
+            for animal, similarity in similar_images
+        ]
+
+        return JsonResponse({'similar_images': similar_results})
+
+    except Exception as e:
+        return JsonResponse({'error': f'Ocurrió un error al comparar las imágenes: {str(e)}'}, status=500)
+
 
 
 

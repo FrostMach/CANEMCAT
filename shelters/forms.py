@@ -10,9 +10,24 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species','sex','size','personality','energy','fur', 'description', 'image', 'adoption_status', 'shelter']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+        fields = [
+            'name', 'species', 'sex', 'age', 'size', 
+            'personality', 'energy', 'fur', 'description', 
+            'image', 'adoption_status', 'shelter'
+        ]
+        labels = {
+            'name': 'Nombre',
+            'species': 'Especie',
+            'sex': 'Sexo',
+            'age': 'Edad',
+            'size': 'Tamaño',
+            'personality': 'Personalidad',
+            'energy': 'Nivel de energía',
+            'fur': 'Pelaje',
+            'description': 'Descripción',
+            'image': 'Imagen',
+            'adoption_status': 'Estado de adopción',
+            'shelter': 'Protectora',
         }
  
 class AnimalFilterForm(forms.Form):

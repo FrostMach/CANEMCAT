@@ -22,6 +22,14 @@
     <link rel="stylesheet" href="/static/css/landing.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        body {
+        cursor: url("{% static 'images/cursorcat.png' %}"), auto;
+        }
+        a:hover {
+            cursor: url("{% static 'images/cursorcat2.png' %}"), pointer;
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
 
@@ -34,7 +42,7 @@
                 <a class="navbar-brand" href="{% url 'landing_page' %}">
                     <img src="{% static 'images/Logo.png' %}" alt="Logo de CANEMCAT" style="width: 50px; height: auto;">
                 </a>
-
+                <img src="{% static 'images/logo_final.png' %}" alt="Logo adicional de CANEMCAT" style="width: 150px; height: auto;">
                 <!-- Botón de menú móvil -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

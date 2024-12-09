@@ -65,6 +65,37 @@ class AnimalListView(generic.ListView):
         context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
         return context
     
+class AnimalShelterListView(generic.ListView):
+    model = Animal
+    template_name = 'shelter/animal_list.html'
+    context_object_name = 'animal_list'
+    paginate_by = 9
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
+
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
+
+            if species:
+                queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
+            if size:
+                queryset = queryset.filter(size=size)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
+    
 class AnimalDetailView(generic.DetailView):
     model = Animal
     template_name = 'animals/details.html' 
@@ -80,10 +111,10 @@ class AnimalDetailView(generic.DetailView):
         if user.is_authenticated:
             is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
             Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
-        
-        context['is_in_wishlist'] = is_in_wishlist
 
+        context['is_in_wishlist'] = is_in_wishlist
         return context
+
     
 #SOLICITUD DE ADOPCIÓN    
     

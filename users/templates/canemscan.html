@@ -53,6 +53,22 @@
             <button id="compare-button" class="btn btn-primary shadow btn-animated">Comparar</button>
         </div>
     </div>
+
+     <!-- Cargando para Comparar -->
+     <div id="loading-compare" class="mt-4" style="display: none;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #004d40; font-weight: bold;">Buscando animales similares...</p>
+            <img src="/static/images/Loadingcat.gif" alt="Cargando" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </div>
+
+    <!-- Resultados de comparación -->
+    <div id="similar-images-container" class="mt-4" style="display: none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <h3 style="color: #004d40;">Animales similares encontrados:</h3>
+        </div>
+        <div id="similar-images" class="d-flex flex-wrap justify-content-center gap-4"></div>
+    </div>
 </div>
 
 <style>
@@ -95,6 +111,8 @@
 </style>
 
 <script>
+    let uploadedImageId = null;
+
     document.getElementById('dog-button').addEventListener('click', function () {
         showUploadForm("Sube una imagen de tu perro:");
     });
@@ -110,12 +128,10 @@
 
         label.textContent = labelText;
 
-        // Mostrar el contenedor del formulario con animación
         formContainer.style.display = 'block';
         formContainer.style.animation = 'fadeIn 1s';
-        formContainer.style.opacity = 1; // Asegura visibilidad tras animación
+        formContainer.style.opacity = 1;
 
-        // Configurar formulario interno
         uploadForm.style.visibility = 'visible';
         uploadForm.style.height = 'auto';
     }
@@ -123,45 +139,100 @@
     document.getElementById('upload-form').addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        // Mostrar el contenedor de carga
         document.getElementById('loading-container').style.display = 'block';
         document.getElementById('form-container').style.display = 'none';
 
         const formData = new FormData(this);
 
-        // Simular una pausa para mostrar el estado de carga (3 segundos)
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
 
         const response = await fetch('/canemscan/upload/', {
             method: 'POST',
             body: formData,
         });
         const data = await response.json();
-
-        // Ocultar el contenedor de carga
+        uploadedImageId = data.image_id;
         document.getElementById('loading-container').style.display = 'none';
 
         if (response.ok) {
+            uploadedImageId = data.image_id;
             const breedMessage = data.breed.includes("La raza detectada es:") 
                 ? data.breed 
                 : `La raza detectada es: ${data.breed}`;
-            
+    
             document.getElementById('result').textContent = breedMessage;
 
             const imageUrl = URL.createObjectURL(document.getElementById('image').files[0]);
             document.getElementById('uploaded-image').src = imageUrl;
             document.getElementById('image-preview').style.display = 'block';
 
-            // Mostrar el mensaje de comparación después de 2 segundos
+            // Esperar 3 segundos antes de mostrar el contenedor de comparación
             setTimeout(() => {
                 document.getElementById('compare-container').style.display = 'block';
-            }, 2000);
+            }, 3000);
         } else {
             document.getElementById('result').textContent = 'Ocurrió un error al analizar la imagen.';
+        }
+
+    });
+
+    document.getElementById('compare-button').addEventListener('click', async function () {
+        if (!uploadedImageId) {
+            alert('Primero sube una imagen para comparar.');
+            return;
+        }
+
+        const compareUrl = `/canemscan/compare/?uploaded_image_id=${uploadedImageId}`;
+
+        document.getElementById('loading-compare').style.display = 'block';
+        document.getElementById('compare-container').style.display = 'none';
+
+        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
+
+        const response = await fetch(compareUrl);
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('loading-compare').style.display = 'none';
+            const similarImagesContainer = document.getElementById('similar-images-container');
+            const similarImages = document.getElementById('similar-images');
+            
+            similarImages.innerHTML = '';
+
+            data.similar_images.forEach(image => {
+                const imageCard = document.createElement('div');
+                imageCard.classList.add('card');
+                imageCard.style.width = '200px';
+                imageCard.innerHTML = `
+                    <!-- Imagen clicable -->
+                    <a href="${image.detail_url}" target="_blank" style="text-decoration: none;">
+                        <img src="${image.image_url}" class="card-img-top rounded shadow" alt="Imagen similar">
+                    </a>
+                    <div class="card-body text-center">
+                        <!-- Nombre clicable sin subrayado -->
+                        <a href="${image.detail_url}" target="_blank" style="text-decoration: none; color: inherit;">
+                            <h5 class="card-title" style="color: #004d40; cursor: pointer;">${image.name}</h5>
+                        </a>
+                        <!-- Similitud no clicable -->
+                        <p class="card-text" style="color: #00695c;">Similitud: ${image.similarity}</p>
+                    </div>
+                `;
+                similarImages.appendChild(imageCard);
+            });
+
+            similarImagesContainer.style.display = 'block';
+        } else {
+            const error = await response.json();
+            console.error('Error:', error.error);
+            alert(`Ocurrió un error al realizar la comparación: ${error.error}`);
         }
     });
 </script>
 {% endblock %}
+
+
+
+
 
 
 

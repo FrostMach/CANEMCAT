@@ -3,12 +3,6 @@
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
-<!-- Contenido principal -->
-<div class="jumbotron text-center mt-4">
-    <h1 class="display-4">Bienvenido a CanemLAB</h1>
-    <p class="lead">Gestiona tus protectoras, observa estadísticas y encuentra nuevos hogares para tus animales.</p>
-</div>
-
 <!-- Panel de Control -->
 <div class="container mt-5">
     <div class="row">
@@ -41,7 +35,6 @@
 
     <!-- Gráficos -->
     <div class="row">
-
         <!-- Gráfico de tendencias de adopción -->
         <div class="col-lg-6 mb-4">
             <div class="p-3 bg-white shadow rounded">
@@ -73,14 +66,24 @@
             </div>
         </div>
     </div>
-</div>
-    <!-- Gráfico de distribución de animales -->
-    <div class="col-lg-6 mb-4">
-        <div class="p-3 bg-white shadow rounded">
-            <h5 class="text-center py-2 bg-light rounded">Distribución de animales</h5>
-            <canvas id="animalDistributionChart"></canvas>
+    <div class="row">
+        <!-- Gráfico de distribución de animales -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Distribución de animales</h5>
+                <canvas id="animalDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de evolución de adopciones por especie -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Evolución de adopciones por especie</h5>
+                <canvas id="adoptionEvolutionChart"></canvas>
+            </div>
         </div>
     </div>
+</div>
 
 <!-- Script para Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -145,7 +148,7 @@
             labels: ['Perros', 'Gatos', 'Otros'],
             datasets: [{
                 label: 'Días promedio',
-                data: [30, 45, 20], // Datos de ejemplo
+                data: [30, 45, 20],
                 backgroundColor: ['#007bff', '#28a745', '#ffc107']
             }]
         },
@@ -218,6 +221,48 @@
             },
             plugins: {
                 legend: { position: 'top' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de evolución de adopciones por especie
+    new Chart(document.getElementById('adoptionEvolutionChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [
+                {
+                    label: 'Perros',
+                    data: [5, 10, 15, 20, 25],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    fill: true
+                },
+                {
+                    label: 'Gatos',
+                    data: [3, 5, 8, 10, 12],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Número de Adopciones'
+                    },
+                    ticks: {
+                        stepSize: 5
+                    }
+                }
             }
         },
         plugins: [whiteBackgroundPlugin]

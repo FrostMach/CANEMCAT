@@ -3,6 +3,15 @@
 {% block content %}
 <div class="animal-detail-section py-5">
     <div class="container my-5 bg-white rounded shadow p-4">
+        <!-- Botón de regreso a CanemSCAN -->
+        {% if show_back_to_results %}
+        <div class="mb-4">
+            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">
+                &larr; Volver a los resultados de CanemSCAN
+            </a>
+        </div>
+        {% endif %}
+        
         <!-- Imagen destacada -->
         <div class="row">
             <div class="col-md-6">
