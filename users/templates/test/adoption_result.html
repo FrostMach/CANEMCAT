@@ -1,14 +1,18 @@
-<h1>Resultado del Test de {{ especie }}</h1>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cat Test{% endblock %}
 
-{% if animal_ideal %}
-    <h2>El animal ideal para ti es:</h2>
-    <h3>{{ animal_ideal.name }}</h3>
-    <p><strong>Especie:</strong> {{ animal_ideal.species }}</p>
-    <p><strong>Edad:</strong> {{ animal_ideal.age }} años</p>
-    <p><strong>Tamaño:</strong> {{ animal_ideal.size }}</p>
-    <p><strong>Personalidad:</strong> {{ animal_ideal.personality }}</p>
-    <p><strong>Descripción:</strong> {{ animal_ideal.description }}</p>
-    <img src="{{ animal_ideal.image.url }}" alt="{{ animal_ideal.name }}">
-{% else %}
-    <p>No se encontró un animal ideal. Intenta de nuevo.</p>
-{% endif %}
+{% block content %}
+
+<div class="container bg-light pb-3">
+    <h1>Resultado del Test</h1>
+
+    {% if animal_ideal %}
+        <h2>El animal ideal para ti es:</h2>
+        <h3>{{ animal_ideal.name }}</h3>
+        <img class="w-25" src="{{ animal_ideal.image.url }}" alt="{{ animal_ideal.name }}">
+    {% else %}
+        <p>No se encontró un animal ideal. Intenta de nuevo.</p>
+    {% endif %}
+</div>
+{% endblock %}

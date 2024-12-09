@@ -3,13 +3,18 @@
 {% block title %}Dog Test{% endblock %}
 
 {% block content %}
+{% csrf_token %}
+
 <div class="bg-light container">
     <h2 class="text-center text-success">Preferencias para la Adopción de un Perro</h2>
-    <form method="POST" action="{% url 'test_compatibilidad' %}">
+    <form method="POST" action="{% url 'resultado_test' %}">
         <!-- Pregunta 1 -->
+        {% csrf_token %}
+        <input type="hidden" name="especie" value="perro">
         <div class="pb-3 question" id="q1" style="opacity: 1; transition: opacity 0.5s ease-in-out;">
             <label for="tamaño" class="form-label">¿Qué tamaño de perro prefieres?</label>
-            <select class="form-select" id="tamaño" onchange="nextQuestion(2)" required>
+            <select class="form-select" id="tamaño" name="tamaño" onchange="nextQuestion(2)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Pequeño">Pequeño (menos de 10 kg)</option>
                 <option value="Mediano">Mediano (10-25 kg)</option>
                 <option value="Grande">Grande (más de 25 kg)</option>
@@ -20,7 +25,8 @@
         <!-- Pregunta 2 -->
         <div class="pb-3 question" id="q2" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="edad" class="form-label">¿Prefieres un perro joven, adulto o mayor?</label>
-            <select class="form-select" id="edad" onchange="nextQuestion(3)" required>
+            <select class="form-select" id="edad" name="edad" onchange="nextQuestion(3)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Cachorro">Cachorro</option>
                 <option value="Joven">Joven (1-3 años)</option>
                 <option value="Adulto">Adulto (3-7 años)</option>
@@ -32,7 +38,8 @@
         <!-- Pregunta 3 -->
         <div class="pb-3 question" id="q3" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="energia" class="form-label">¿Qué nivel de energía te gustaría que tuviera el perro?</label>
-            <select class="form-select" id="energia" onchange="nextQuestion(4)" required>
+            <select class="form-select" id="energia" name="energia" onchange="nextQuestion(4)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Baja">Baja (tranquilo, adecuado para hogares más relajados)</option>
                 <option value="Moderada">Moderada (juega ocasionalmente, paseos regulares)</option>
                 <option value="Alta">Alta (activo, necesita ejercicio diario intenso)</option>
@@ -42,7 +49,8 @@
         <!-- Pregunta 4 -->
         <div class="pb-3 question" id="q4" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="pelaje" class="form-label">¿Tienes alguna preferencia sobre el tipo de pelaje o mantenimiento?</label>
-            <select class="form-select" id="pelaje" onchange="nextQuestion(5)" required>
+            <select class="form-select" id="pelaje" name="pelaje" onchange="nextQuestion(5)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Pelo corto">Pelo corto y fácil de mantener</option>
                 <option value="Pelo largo">Pelo largo (requiere más cuidado)</option>
                 <option value="Hipoalergénico">Hipoalergénico</option>
@@ -53,7 +61,8 @@
         <!-- Pregunta 5 -->
         <div class="pb-3 question" id="q5" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="caracter" class="form-label">¿Prefieres un perro con un carácter específico?</label>
-            <select class="form-select" id="caracter" onchange="nextQuestion(6)" required>
+            <select class="form-select" id="caracter" name="caracter" onchange="nextQuestion(6)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Sociable">Muy sociable y amigable</option>
                 <option value="Protector">Protector pero cariñoso</option>
                 <option value="Independiente">Independiente</option>
@@ -64,7 +73,8 @@
         <!-- Pregunta 6 -->
         <div class="pb-3 question" id="q6" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="paseo" class="form-label">¿Cuánto tiempo al día puedes dedicar a paseos o ejercicio con el perro?</label>
-            <select class="form-select" id="paseo" onchange="nextQuestion(7)" required>
+            <select class="form-select" id="paseo" name="paseo" onchange="nextQuestion(7)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Menos de 30 minutos">Menos de 30 minutos</option>
                 <option value="Entre 30 minutos y 1 hora">Entre 30 minutos y 1 hora</option>
                 <option value="Más de 1 hora">Más de 1 hora</option>
@@ -74,7 +84,8 @@
         <!-- Pregunta 7 -->
         <div class="pb-3 question" id="q7" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="frecuenciaCasa" class="form-label">¿Con qué frecuencia estarías en casa para acompañar al perro?</label>
-            <select class="form-select" id="frecuenciaCasa" onchange="nextQuestion(8)" required>
+            <select class="form-select" id="frecuenciaCasa" name="frecuenciaCasa" onchange="nextQuestion(8)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Trabajo desde casa o estoy en casa la mayor parte del tiempo">Trabajo desde casa o estoy en casa la mayor parte del tiempo</option>
                 <option value="Trabajo fuera pero puedo dedicar tiempo después">Trabajo fuera pero puedo dedicar tiempo después</option>
                 <option value="Paso la mayor parte del día fuera">Paso la mayor parte del día fuera</option>
@@ -84,7 +95,8 @@
         <!-- Pregunta 8 -->
         <div class="pb-3 question" id="q8" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="familia" class="form-label">¿Hay niños o personas mayores en el hogar?</label>
-            <select class="form-select" id="familia" onchange="nextQuestion(9)" required>
+            <select class="form-select" id="familia" name="familia" onchange="nextQuestion(9)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Niños pequeños">Sí, niños pequeños (menos de 12 años)</option>
                 <option value="Personas mayores">Sí, personas mayores</option>
                 <option value="No">No</option>
@@ -94,7 +106,8 @@
         <!-- Pregunta 9 -->
         <div class="pb-3 question" id="q9" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="otrasMascotas" class="form-label">¿Tienes otras mascotas?</label>
-            <select class="form-select" id="otrasMascotas" onchange="nextQuestion(10)" required>
+            <select class="form-select" id="otrasMascotas" name="otrasMascotas" onchange="nextQuestion(10)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Otros perros">Sí, otros perros</option>
                 <option value="Gatos">Sí, gatos</option>
                 <option value="Otros animales">Sí, otros animales</option>
@@ -105,7 +118,8 @@
         <!-- Pregunta 10 -->
         <div class="pb-3 question" id="q10" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="vivienda" class="form-label">¿Vives en una casa con jardín o en un apartamento?</label>
-            <select class="form-select" id="vivienda" onchange="nextQuestion(11)" required>
+            <select class="form-select" id="vivienda" name="vivienda" onchange="nextQuestion(11)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Casa con jardín">Casa con jardín</option>
                 <option value="Apartamento">Apartamento</option>
                 <option value="Otros">Otros</option>
@@ -115,7 +129,8 @@
         <!-- Pregunta 11 -->
         <div class="pb-3 question" id="q11" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="entrenamiento" class="form-label">¿Qué tan dispuesto estás a trabajar en el entrenamiento del perro?</label>
-            <select class="form-select" id="entrenamiento" onchange="nextQuestion(12)" required>
+            <select class="form-select" id="entrenamiento" name="entrenamiento" onchange="nextQuestion(12)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Ya entrenado">Prefiero un perro ya entrenado</option>
                 <option value="Entrenar desde cero">Estoy dispuesto a entrenarlo desde cero</option>
                 <option value="Sin preferencia">Sin preferencia</option>
@@ -125,7 +140,8 @@
         <!-- Pregunta 12 -->
         <div class="pb-3 question" id="q12" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="bienestarEmocional" class="form-label">¿Cómo crees que un perro puede influir en tu bienestar emocional o mental?</label>
-            <select class="form-select" id="bienestarEmocional" onchange="nextQuestion(13)" required>
+            <select class="form-select" id="bienestarEmocional" name="bienestarEmocional" onchange="nextQuestion(13)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Reducir estrés y ansiedad">Me ayudará a reducir el estrés y la ansiedad</option>
                 <option value="Mantenerme activo">Será una motivación para mantenerme activo</option>
                 <option value="Compañía y afecto">Me proporcionará compañía y afecto</option>
@@ -136,7 +152,8 @@
         <!-- Pregunta 13 -->
         <div class="pb-3 question" id="q13" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="razonAdopcion" class="form-label">¿Qué buscas al adoptar un perro?</label>
-            <select class="form-select" id="razonAdopcion" onchange="nextQuestion(14)" required>
+            <select class="form-select" id="razonAdopcion" name="razonAdopcion" onchange="nextQuestion(14)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Compañía">Compañía</option>
                 <option value="Seguridad">Seguridad</option>
                 <option value="Motivación para ser más activo">Una actividad que me motive a ser más activo</option>
@@ -147,7 +164,8 @@
         <!-- Pregunta 14 -->
         <div class="pb-3 question" id="q14" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="situacionesImprevistas" class="form-label">¿Cómo reaccionas ante situaciones imprevistas o desafiantes con una mascota?</label>
-            <select class="form-select" id="situacionesImprevistas" onchange="nextQuestion(15)" required>
+            <select class="form-select" id="situacionesImprevistas" name="situacionesImprevistas" onchange="nextQuestion(15)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Me adapto fácilmente">Me adapto fácilmente</option>
                 <option value="Me cuesta pero lo intento manejar">Me cuesta pero lo intento manejar</option>
                 <option value="Prefiero evitar complicaciones">Prefiero evitar demasiadas complicaciones</option>
@@ -157,7 +175,8 @@
         <!-- Pregunta 15 -->
         <div class="pb-3 question" id="q15" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="paciencia" class="form-label">¿Cómo describirías tu nivel de paciencia?</label>
-            <select class="form-select" id="paciencia" onchange="nextQuestion(16)" required>
+            <select class="form-select" id="paciencia" name="paciencia" onchange="nextQuestion(16)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Muy paciente">Muy paciente</option>
                 <option value="Moderadamente paciente">Moderadamente paciente</option>
                 <option value="Poco paciente">Poco paciente</option>
@@ -167,7 +186,8 @@
         <!-- Pregunta 16 -->
         <div class="pb-3 question" id="q16" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="problemaComportamiento" class="form-label">¿Qué harías si el perro presenta un problema de comportamiento inesperado, como ladrar mucho o morder muebles?</label>
-            <select class="form-select" id="problemaComportamiento" onchange="nextQuestion(17)" required>
+            <select class="form-select" id="problemaComportamiento" name="problemaComportamiento" onchange="nextQuestion(17)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Ayuda profesional">Buscaría ayuda profesional</option>
                 <option value="Entrenar yo mismo">Intentaría entrenarlo por mi cuenta</option>
                 <option value="Lo consideraría un gran problema">Lo consideraría un gran problema</option>
@@ -177,7 +197,8 @@
         <!-- Pregunta 17 -->
         <div class="pb-3 question" id="q17" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="convivenciaExterna" class="form-label">¿Qué tan importante es para ti que el perro pueda convivir con otras personas o animales fuera de casa?</label>
-            <select class="form-select" id="convivenciaExterna" onchange="nextQuestion(18)" required>
+            <select class="form-select" id="convivenciaExterna" name="convivenciaExterna" onchange="nextQuestion(18)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Muy importante">Muy importante</option>
                 <option value="Moderadamente importante">Moderadamente importante</option>
                 <option value="No me importa mucho">No me importa mucho</option>
@@ -187,7 +208,8 @@
         <!-- Pregunta 18 -->
         <div class="pb-3 question" id="q18" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="cuidadosMedicos" class="form-label">Si el perro necesitara cuidados médicos constantes o costosos, ¿estarías dispuesto a asumirlos?</label>
-            <select class="form-select" id="cuidadosMedicos" onchange="nextQuestion(19)" required>
+            <select class="form-select" id="cuidadosMedicos" name="cuidadosMedicos" onchange="nextQuestion(19)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Sí, sin problema">Sí, sin problema</option>
                 <option value="Dependería de la gravedad y el costo">Dependería de la gravedad y el costo</option>
                 <option value="No estoy preparado para esa situación">No estoy preparado para esa situación</option>
@@ -197,7 +219,8 @@
         <!-- Pregunta 19 -->
         <div class="pb-3 question" id="q19" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="conexionEmocional" class="form-label">¿Qué tipo de conexión emocional esperas tener con tu perro?</label>
-            <select class="form-select" id="conexionEmocional" onchange="nextQuestion(20)" required>
+            <select class="form-select" id="conexionEmocional" name="conexionEmocional" onchange="nextQuestion(20)" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Compañero más cercano">Quiero que sea mi compañero más cercano</option>
                 <option value="Parte del hogar">Quiero que sea parte del hogar sin necesitar demasiada atención</option>
                 <option value="Protector y guardián">Quiero que sea un protector y guardián</option>
@@ -207,7 +230,8 @@
         <!-- Pregunta 20 -->
         <div class="pb-3 question" id="q20" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
             <label for="actividadCotidiana" class="form-label">¿Te consideras una persona más activa o tranquila en tu vida cotidiana?</label>
-            <select class="form-select" id="actividadCotidiana" onchange="showSubmitButton()" required>
+            <select class="form-select" id="actividadCotidiana" name="actividadCotidiana" onchange="showSubmitButton()" required>
+                <option value="">Selecciona una opción</option>
                 <option value="Activa">Activa (me gusta estar en movimiento, hacer actividades al aire libre)</option>
                 <option value="Tranquila">Tranquila (prefiero actividades relajadas en casa)</option>
                 <option value="Equilibrio entre ambas">Un equilibrio entre ambas</option>

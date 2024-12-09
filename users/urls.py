@@ -2,8 +2,8 @@ from django.urls import path
 from users import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import landing_page,email_confirmation,canemtest_view
-
+from .views import landing_page,email_confirmation,canem_test
+from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', landing_page, name='landing_page'),
     path('signup/', views.signup, name='signup'),
@@ -20,7 +20,7 @@ urlpatterns = [
     path('wishlist/', views.wishlist_list, name='wishlist_list'),
     path('<int:animal_id>/add_wishlist/', views.wishlist_add, name='wishlist_add'),
     path('<int:wishlist_id>/remove_wishlist/', views.wishlist_remove, name='wishlist_remove'),
-    path('canem_test/', canemtest_view, name='canem_test'),
+    path('canem_test/', views.canem_test, name='canem_test'),  # Vista para seleccionar la especie
     path('dog_test/', views.DogTestView.as_view(), name='dog_test'),    
     path('cat_test/', views.CatTestView.as_view(), name='cat_test'),   
     path('resultado/', views.resultado_test, name='resultado_test'),
