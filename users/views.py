@@ -17,8 +17,8 @@ from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from .forms import TestPerroForm, TestGatoForm
-from .utils import encontrar_animal_ideal
 from shelters.models import Animal
+
 @never_cache
 def landing_page(request):
     print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
@@ -70,8 +70,8 @@ def signup(request):
             user.save()
 
             # # Enviar correo de confirmación
+            uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
             token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(user.pk.to_bytes())
             current_site = get_current_site(request)
             mail_subject = 'Confirma tu correo electrónico'
             message = render_to_string('registration/activation_email.html', {
@@ -183,20 +183,30 @@ def user_registration_view(request):
 def email_confirmation(request):
     return render(request, 'registration/email_confirmation.html')
 
+def activation_failed(request):
+    return render(request, 'registration/activation_failed.html')
+
 def activate(request, uidb64, token):
     try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = get_user_model().objects.get(pk=uid)
-        if default_token_generator.check_token(user, token):
+        # Decodificar UID y asegurarse de que es válido
+        uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+        print(f"UID decodificado: {uid}")
+        user = get_user_model().objects.get(pk=int(uid))  # Asegúrate de que sea un entero
+        print(f"Usuario encontrado: {user}")
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+        print("Error al decodificar el UID o encontrar el usuario.")
+    
+    if user is not None:
+        comprobacion = default_token_generator.check_token(user, token)
+        
+        if comprobacion:
             user.is_active = True
             user.save()
-            login(request, user)
-            return redirect('registration/login.html')
-        else:
-            messages.error(request, "El enlace de activación es inválido o ha expirado.")
-    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-        messages.error(request, "El enlace de activación es inválido.")
-    return redirect('login')
+            login(request, user, backend='users.backends.EmailBackend')
+            return render(request, 'landing_page.html')
+    
+    return render(request, 'registration/activation_failed.html')
 
 
 
@@ -262,8 +272,7 @@ def test_perro(request):
         if form.is_valid():
             respuestas = form.cleaned_data
             # Buscamos el perro ideal
-            animal_ideal = encontrar_animal_ideal(respuestas, 'perro')
-            return render(request, 'test/adoption_result.html', {'animal_ideal': animal_ideal, 'especie': especie})
+            return render(request, 'test/adoption_result.html', {'especie': especie})
     else:
         form = TestPerroForm()
     return render(request, 'dog_test.html', {'form': form, 'especie': especie})
@@ -275,18 +284,15 @@ def test_gato(request):
         if form.is_valid():
             respuestas = form.cleaned_data
             # Buscamos el gato ideal
-            animal_ideal = encontrar_animal_ideal(respuestas, 'gato')
-            return render(request, 'test/adoption_result.html', {'animal_ideal': animal_ideal, 'especie': especie})
+            return render(request, 'test/adoption_result.html', {'especie': especie})
     else:
         form = TestGatoForm()
     return render(request, 'cat_test.html', {'form': form, 'especie': especie})
 
 def resultado_test(request):
-    # Verificar si el formulario fue enviado
     if request.method == "POST":
-        # Obtener las respuestas del formulario y guardarlas en la sesión
         respuestas = {
-            'tamano': request.POST.get('tamaño'),
+            'tamaño': request.POST.get('tamaño'),
             'edad': request.POST.get('edad'),
             'energia': request.POST.get('energia'),
             'pelaje': request.POST.get('pelaje'),
@@ -307,12 +313,8 @@ def resultado_test(request):
             'conexionEmocional': request.POST.get('conexionEmocional'),
             'actividadCotidiana': request.POST.get('actividadCotidiana')
         }
-        # Guardar las respuestas en la sesión
         request.session['respuestas'] = respuestas
-        # Obtener la especie de la respuesta (supongamos que se tiene una pregunta para esto)
         especie = request.POST.get('especie')  # Esta respuesta debería venir de alguna parte
-        print(f"la especie es: {especie}")
-        # Verificar que la especie sea válida y crear el formulario correspondiente
         if especie == 'perro':
             form = TestPerroForm(respuestas)
         elif especie == 'gato':
@@ -320,38 +322,42 @@ def resultado_test(request):
         else:
             return render(request, 'error.html', {'mensaje': 'Especie no válida.'})
         
-        # Filtrar los animales por especie
         animales = Animal.objects.filter(species=especie)
 
-        # Crear una lista para almacenar las puntuaciones de compatibilidad
         puntuaciones = []
-        
-        # Iterar sobre los animales
         for animal in animales:
+            # Comparar las respuestas del usuario con los atributos del animal
             puntuacion = 0
+            if respuestas['tamaño'].lower() == animal.size.lower():
+                puntuacion += 3
+            if respuestas['energia'].lower() == animal.energy.lower():
+                puntuacion += 3
+            if respuestas['pelaje'].lower() == animal.fur.lower():
+                puntuacion += 3
+            if respuestas['caracter'].lower() == animal.personality.lower():
+                puntuacion += 3
 
-            # Comparar las respuestas con las características del animal
-            if animal.personality == respuestas.get('caracter'):
-                puntuacion += 1
-            if animal.size == respuestas.get('tamano'):
-                puntuacion += 1
-            if animal.energy == respuestas.get('energia'):
-                puntuacion += 1
-            # Se pueden agregar más comparaciones aquí
+            # Si es un perro, evaluamos los campos adicionales específicos de perros
+            if especie == 'perro':
+                if respuestas['paseo'] == animal.energy:  # Ejercicio y energía se correlacionan para perros
+                    puntuacion += 3
 
-            puntuaciones.append({'animal': animal, 'puntuacion': puntuacion})
+            # Si es un gato, evaluamos los campos adicionales específicos de gatos
+            if especie == 'gato':
+                # Para los gatos, podríamos agregar atributos como "actividad", si fuera relevante
+                if respuestas.get('actividad', '') == animal.energy:  # Adaptamos energía para gatos
+                    puntuacion += 3
 
-        # Ordenar los animales por puntuación
-        puntuaciones = sorted(puntuaciones, key=lambda x: x['puntuacion'], reverse=True)
-        print(f"puntuaciones ssss: {puntuaciones}")
+            puntuaciones.append((animal, puntuacion))
+        
+        # Ordenar los animales por la puntuación más alta
+        puntuaciones.sort(key=lambda x: x[1], reverse=True)
 
-        # Seleccionar el animal con la mayor puntuación
         if puntuaciones:
-            animal_ideal = puntuaciones[0]['animal']
+            animal_ideal = puntuaciones[0][0]  # Accedemos al primer elemento de la tupla (animal)
         else:
             animal_ideal = None
 
-        # Mostrar el resultado
         return render(request, 'test/adoption_result.html', {
             'animal_ideal': animal_ideal,
             'especie': especie,
