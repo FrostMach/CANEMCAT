@@ -9,34 +9,52 @@
     <p><strong>Descripción: </strong> {{ animal.description }}</p>
     <p><strong>Imagen: </strong><img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}"></p>
     <p><strong>Estado de adopción: </strong> {{ animal.adoption_status }}</p>
+    
     {% if user.is_authenticated %}
         {% if not is_in_wishlist %}
-            <form action="{% url 'wishlist_add' animal.id %}" method="post">
+            <form id="add-to-wishlist-form" method="post">
                 {% csrf_token %}
-                <button type="submit" onclick="recordInteraction({{ animal.id }}, 'favorite')" class="btn btn-success">Añadir a Favoritos</button>
+                <button type="button" id="add-to-wishlist-btn" class="btn btn-success">Añadir a Favoritos</button>
             </form>
+        {% else %}
+            <p class="text-success">Este animal ya está en tus favoritos.</p>
         {% endif %}
     {% else %}
-        <p>Debes iniciar sesión para agregar este animal a favoritos.</p>
+        <p class="text-warning">Debes iniciar sesión para agregar este animal a favoritos.</p>
     {% endif %}
+    
     <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
 </div>
 
 <script>
-    function recordInteraction(animal_id, interaction_type){
-        fetch(`/animals/${animal_id}/interact/${interaction_type}/`, {
+    document.getElementById('add-to-wishlist-btn')?.addEventListener('click', function (){
+        const animalId = {{ animal.id }};
+
+        fetch('/wishlist/add/', {
             method: 'POST',
             headers: {
-                'X-CSRFToken':'{{ csrf_token }}',
-            }
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                animal_id: animalId, // Usamos animal_id para coincidir con lo esperado en la vista de Django
+                interaction_type: 'favorite' // Usamos el argumento recibido
+            })
         })
         .then(response => response.json())
         .then(data => {
-            alert(data.message || 'Interacción registrada')
+            if (data.status === 'success'){
+                alert('Animal agregado a favoritos');
+                window.location.reload();
+            } else {
+                console.error('Error al agregar a favoritos: ', data.message);
+                alert('Error al agregar a favoritos: ' + data.message);
+            }
         })
         .catch(error => {
-            console.error('Error registrando la interacción: ', error)
+            console.error('Error al procesar la solicitud: ', error);
+            alert('Error inesperado, intenta nuevamente.')
         });
-    }
+    });
 </script>
 {% endblock %}

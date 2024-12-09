@@ -10,7 +10,7 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species', 'description', 'image', 'adoption_status']
+        fields = ['name', 'age', 'species', 'sex', 'size', 'personality', 'energy', 'fur','description', 'image', 'adoption_status', 'shelter']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
@@ -62,6 +62,26 @@ class RegisterShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter
         fields = ['name', 'address', 'email', 'telephone', 'accreditation_file']
+
+        def clean(self):
+            cleaned_data = super().clean()
+            name = cleaned_data.get('name')
+            telephone = cleaned_data.get('telephone')
+
+            if telephone and len(str(telephone)) < 9:
+                raise forms.ValidationError('El teléfono debe tener una longitud mínima de 9 dígitos.')
+            
+            if name and 'admin' in name.lower():
+                raise forms.ValidationError('El nombre no puede contener "admin".')
+
+            return cleaned_data
+        
+        def clean_email(self):
+            email = self.cleaned_data.get('email')
+            
+            if Shelter.objects.filter(email=email).exists():
+                raise forms.ValidationError("Este correo electrónico ya está registrado.")
+            return email
 
 class UpdateShelterForm(forms.ModelForm):
     class Meta:

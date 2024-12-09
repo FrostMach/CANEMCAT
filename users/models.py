@@ -91,7 +91,7 @@ class Wishlist(models.Model):
     interaction_type = models.CharField(blank=True, null=True, max_length=50, choices=INTERACTION_TYPE)
 
     def __str__(self):
-        return f"{self.user.name} - {self.animal.name}"
+        return f"{self.user.full_name} - {self.animal.name}"
 
     class Meta:
         db_table = 'wishlist'  # Custom table name in the database
