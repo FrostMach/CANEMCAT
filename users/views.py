@@ -530,7 +530,7 @@ def resultado_test(request):
             animal_ideal = None
 
     # Pasar el resultado a la plantilla
-    return render(request, 'resultado_test.html', {
+    return render(request, 'test/adoption_result.html', {
         'animal_ideal': animal_ideal,
         'especie': especie,
     })
