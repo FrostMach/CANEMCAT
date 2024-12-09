@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container bg-light mb-5 pb-5">
   <h2>Editar Perfil</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -9,4 +10,5 @@
     <button type="submit">Guardar cambios</button>
   </form>
   <a href="{% url 'profile' user.pk %}">Volver al perfil</a>
+</div>
 {% endblock %}

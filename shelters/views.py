@@ -6,8 +6,13 @@ from django.views import generic
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
+from django.views import View, generic
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
+from .models import Animal
 
 from users.models import Wishlist
 
@@ -36,25 +41,70 @@ class AnimalListView(generic.ListView):
     model = Animal
     template_name = 'animals/list.html'
     context_object_name = 'animals'
-    paginate_by = 5
+    paginate_by = 9
 
     def get_queryset(self):
-        return Animal.objects.all()
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
 
-@login_required
-def animal_detail(request, animal_id):
-    animal = get_object_or_404(Animal, id=animal_id)
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
 
-    if not Wishlist.objects.filter(user=request.user, animal=animal, interaction_type='view').exists():
-        Wishlist.objects.create(user=request.user, animal=animal, interaction_type='view')
+            if species:
+                queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
+            if size:
+                queryset = queryset.filter(size=size)
+            if shelter:
+                queryset = queryset.filter(shelter=shelter)
 
-    is_in_wishlist = Wishlist.objects.filter(user=request.user, animal=animal, interaction_type='favorite').exists()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
     
-    return render(request, 'animals/details.html', {'animal': animal, 'is_in_wishlist': is_in_wishlist})
-# class AnimalDetailView(generic.DetailView):
-#     model = Animal
-#     template_name = 'animals/details.html' 
-#     context_object_name = 'animal'  
+class AnimalShelterListView(generic.ListView):
+    model = Animal
+    template_name = 'shelter/animal_list.html'
+    context_object_name = 'animal_list'
+    paginate_by = 9
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
+
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
+
+            if species:
+                queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
+            if size:
+                queryset = queryset.filter(size=size)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
+    
+class AnimalDetailView(generic.DetailView):
+    model = Animal
+    template_name = 'animals/details.html' 
+    context_object_name = 'animal'  
 
 #     def get_context_data(self, **kwargs):
 #         context = super().get_context_data(**kwargs)
@@ -196,3 +246,6 @@ def shelters_by_postal_code(request):
 #     c = 2 * atan2(sqrt(a), sqrt(1-a))
     
 #     return R * c
+
+def landing_page2(request):
+    return render(request, 'shelter/landing_page2.html')

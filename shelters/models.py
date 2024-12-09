@@ -2,7 +2,7 @@ from django.db import models
 from enum import Enum
 from datetime import date
 from django.core.exceptions import ValidationError
-    
+
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
     address = models.CharField(max_length=100, verbose_name='Dirección')
@@ -17,8 +17,13 @@ class Shelter(models.Model):
     postal_code = models.CharField(blank=True, null=True, max_length=10, verbose_name='Código Postal')
 
     def __str__(self):
-        return f'{self.name}'    
+        return f'{self.name}'       
     
+class StatusEnum(Enum):
+    PENDING = 'P', 'Pendiente'
+    APPROVED = 'A', 'Aprobada'
+    DENIED = 'D', 'Denegada'
+
 class Animal(models.Model):
     SPECIES = [
         ('perro', 'Perro'),
@@ -53,7 +58,7 @@ class Animal(models.Model):
         ('hembra', 'Hembra'),
     ]
     name = models.CharField(max_length=100, verbose_name='Nombre')
-    species = models.CharField(max_length=10, choices=SPECIES)
+    species = models.CharField(max_length=10, choices=SPECIES, verbose_name='Especie')
     sex = models.CharField(max_length=10, choices=SEX, default='Macho')
     age = models.PositiveIntegerField()
     size = models.CharField(max_length=10, choices=SIZE)

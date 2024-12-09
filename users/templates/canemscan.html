@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    CanemSCAN
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-center" style="max-width: 600px; animation: fadeIn 1s;">
+    <div class="p-4 rounded shadow" style="background-color: white;">
+        <h1 class="mb-4" style="color: #004d40; font-weight: bold;">CanemSCAN</h1>
+        <p style="font-size: 1.2rem; color: #00695c;">¿Quieres analizar un gato o un perro?</p>
+    </div>
+
+    <!-- Botones elegantes -->
+    <div class="d-flex justify-content-center gap-4 mt-4">
+        <button id="dog-button" class="btn btn-lg btn-primary shadow btn-animated">Perro</button>
+        <button id="cat-button" class="btn btn-lg btn-primary shadow btn-animated">Gato</button>
+    </div>
+
+    <!-- Formulario -->
+    <div class="p-4 rounded shadow mt-5" id="form-container" style="display: none; opacity: 0;">
+        <form id="upload-form" style="visibility: hidden; height: 0; margin: 0; padding: 0;">
+            {% csrf_token %}
+            <label for="image" class="form-label" style="font-size: 1.1rem; color: #004d40;">Sube una imagen:</label>
+            <input type="file" id="image" name="image" accept="image/*" required class="form-control mb-3">
+            <button type="submit" class="btn btn-success btn-block shadow">Subir y analizar</button>
+        </form>
+    </div>
+
+    <!-- Cargando -->
+    <div id="loading-container" class="mt-4" style="display: none;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #004d40; font-weight: bold;">Analizando imagen...</p>
+            <img src="/static/images/loading-dog2.gif" alt="Cargando" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </div>
+
+    <!-- Resultado -->
+    <div id="image-preview" class="mt-4" style="display:none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <h3 class="mt-3" style="color: #004d40;">Imagen subida:</h3>
+        </div>
+        <img id="uploaded-image" src="" alt="Imagen subida" class="rounded shadow w-50 img-fluid my-3">
+        <div class="p-4 rounded shadow d-flex align-items-center justify-content-center" style="background-color: white; min-height: 100px;">
+            <p id="result" style="font-size: 1.2rem; font-weight: bold; color: #00695c; margin: 0;"></p>
+        </div>
+    </div>
+
+    <!-- Mensaje de comparación -->
+    <div id="compare-container" class="mt-4" style="display: none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #00695c; font-weight: bold;">¿Te gustaría ver perros o gatos parecidos disponibles en las protectoras?</p>
+            <button id="compare-button" class="btn btn-primary shadow btn-animated">Comparar</button>
+        </div>
+    </div>
+
+     <!-- Cargando para Comparar -->
+     <div id="loading-compare" class="mt-4" style="display: none;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <p style="font-size: 1.2rem; color: #004d40; font-weight: bold;">Buscando animales similares...</p>
+            <img src="/static/images/Loadingcat.gif" alt="Cargando" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </div>
+
+    <!-- Resultados de comparación -->
+    <div id="similar-images-container" class="mt-4" style="display: none; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <h3 style="color: #004d40;">Animales similares encontrados:</h3>
+        </div>
+        <div id="similar-images" class="d-flex flex-wrap justify-content-center gap-4"></div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #e0f7fa;
+        color: #004d40;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-animated {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .btn-animated:hover {
+        transform: scale(1.1);
+        background-color: #00897b !important;
+        color: white;
+    }
+
+    .p-4 {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    let uploadedImageId = null;
+
+    document.getElementById('dog-button').addEventListener('click', function () {
+        showUploadForm("Sube una imagen de tu perro:");
+    });
+
+    document.getElementById('cat-button').addEventListener('click', function () {
+        showUploadForm("Sube una imagen de tu gato:");
+    });
+
+    function showUploadForm(labelText) {
+        const uploadForm = document.getElementById('upload-form');
+        const formContainer = document.getElementById('form-container');
+        const label = uploadForm.querySelector('label');
+
+        label.textContent = labelText;
+
+        formContainer.style.display = 'block';
+        formContainer.style.animation = 'fadeIn 1s';
+        formContainer.style.opacity = 1;
+
+        uploadForm.style.visibility = 'visible';
+        uploadForm.style.height = 'auto';
+    }
+
+    document.getElementById('upload-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        document.getElementById('loading-container').style.display = 'block';
+        document.getElementById('form-container').style.display = 'none';
+
+        const formData = new FormData(this);
+
+        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
+
+        const response = await fetch('/canemscan/upload/', {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await response.json();
+        uploadedImageId = data.image_id;
+        document.getElementById('loading-container').style.display = 'none';
+
+        if (response.ok) {
+            uploadedImageId = data.image_id;
+            const breedMessage = data.breed.includes("La raza detectada es:") 
+                ? data.breed 
+                : `La raza detectada es: ${data.breed}`;
+    
+            document.getElementById('result').textContent = breedMessage;
+
+            const imageUrl = URL.createObjectURL(document.getElementById('image').files[0]);
+            document.getElementById('uploaded-image').src = imageUrl;
+            document.getElementById('image-preview').style.display = 'block';
+
+            // Esperar 3 segundos antes de mostrar el contenedor de comparación
+            setTimeout(() => {
+                document.getElementById('compare-container').style.display = 'block';
+            }, 3000);
+        } else {
+            document.getElementById('result').textContent = 'Ocurrió un error al analizar la imagen.';
+        }
+
+    });
+
+    document.getElementById('compare-button').addEventListener('click', async function () {
+        if (!uploadedImageId) {
+            alert('Primero sube una imagen para comparar.');
+            return;
+        }
+
+        const compareUrl = `/canemscan/compare/?uploaded_image_id=${uploadedImageId}`;
+
+        document.getElementById('loading-compare').style.display = 'block';
+        document.getElementById('compare-container').style.display = 'none';
+
+        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
+
+        const response = await fetch(compareUrl);
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('loading-compare').style.display = 'none';
+            const similarImagesContainer = document.getElementById('similar-images-container');
+            const similarImages = document.getElementById('similar-images');
+            
+            similarImages.innerHTML = '';
+
+            data.similar_images.forEach(image => {
+                const imageCard = document.createElement('div');
+                imageCard.classList.add('card');
+                imageCard.style.width = '200px';
+                imageCard.innerHTML = `
+                    <!-- Imagen clicable -->
+                    <a href="${image.detail_url}" target="_blank" style="text-decoration: none;">
+                        <img src="${image.image_url}" class="card-img-top rounded shadow" alt="Imagen similar">
+                    </a>
+                    <div class="card-body text-center">
+                        <!-- Nombre clicable sin subrayado -->
+                        <a href="${image.detail_url}" target="_blank" style="text-decoration: none; color: inherit;">
+                            <h5 class="card-title" style="color: #004d40; cursor: pointer;">${image.name}</h5>
+                        </a>
+                        <!-- Similitud no clicable -->
+                        <p class="card-text" style="color: #00695c;">Similitud: ${image.similarity}</p>
+                    </div>
+                `;
+                similarImages.appendChild(imageCard);
+            });
+
+            similarImagesContainer.style.display = 'block';
+        } else {
+            const error = await response.json();
+            console.error('Error:', error.error);
+            alert(`Ocurrió un error al realizar la comparación: ${error.error}`);
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

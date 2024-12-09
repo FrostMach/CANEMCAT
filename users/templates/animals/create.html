@@ -1,14 +1,48 @@
-{% extends 'base.html' %}
+{% extends 'shelter/base2.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center text-white">Añadir Animal</h2>
-    <form method="post" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.as_p }}
+<div class="container mt-4">
+    <!-- Fondo blanco y estilo centrado para el título -->
+    <div class="bg-white py-3 px-4 rounded shadow-sm mb-4">
+        <h2 class="text-center text-dark mb-0">Registrar Nuevo Animal</h2>
+    </div>
+
+    <!-- Formulario con etiquetas encima de los campos -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="row g-3">
+                    <!-- Renderiza los campos del formulario -->
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <!-- Asegúrate de que las etiquetas estén encima -->
+                            <label for="{{ field.id_for_label }}" class="form-label d-block">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors|striptags }}
+                            </div>
+                            {% endif %}
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Botones de acción -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-4">Guardar</button>
+                    <a href="{% url 'animals-list' %}" class="btn btn-secondary px-4">Volver a la lista</a>
+                </div>
+            </form>
         </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
+    </div>
 </div>
 {% endblock %}
+
+
+

@@ -10,10 +10,53 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species', 'sex', 'size', 'personality', 'energy', 'fur','description', 'image', 'adoption_status', 'shelter']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+        fields = [
+            'name', 'species', 'sex', 'age', 'size', 
+            'personality', 'energy', 'fur', 'description', 
+            'image', 'adoption_status', 'shelter'
+        ]
+        labels = {
+            'name': 'Nombre',
+            'species': 'Especie',
+            'sex': 'Sexo',
+            'age': 'Edad',
+            'size': 'Tamaño',
+            'personality': 'Personalidad',
+            'energy': 'Nivel de energía',
+            'fur': 'Pelaje',
+            'description': 'Descripción',
+            'image': 'Imagen',
+            'adoption_status': 'Estado de adopción',
+            'shelter': 'Protectora',
         }
+ 
+class AnimalFilterForm(forms.Form):
+    species = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SPECIES,  # Agrega opción vacía para no filtrar
+        required=False,
+        label="Especie"
+    )
+    sex = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SEX,
+        required=False,
+        label="Sexo"
+    )
+    size = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SIZE,
+        required=False,
+        label="Tamaño"
+    )
+    adoption_status = forms.ChoiceField(
+        choices=[('', '---')] + Animal.ADOPTION_STATUS,
+        required=False,
+        label="Estado de adopción"
+    )
+    shelter = forms.ModelChoiceField(
+        queryset=Shelter.objects.all(),
+        required=False,
+        label="Protectora",
+        empty_label="---"
+    )
  
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):

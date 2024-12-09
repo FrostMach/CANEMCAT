@@ -1,60 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5 p-4 bg-white shadow-sm rounded">
-    <h1>{{ animal.name }}</h1>
-    
-    <p><strong>Edad:</strong> {{ animal.age }} años</p>
-    <p><strong>Especie:</strong> {{ animal.get_species_display }}</p>
-    <p><strong>Descripción: </strong> {{ animal.description }}</p>
-    <p><strong>Imagen: </strong><img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}"></p>
-    <p><strong>Estado de adopción: </strong> {{ animal.adoption_status }}</p>
-    
-    {% if user.is_authenticated %}
-        {% if not is_in_wishlist %}
-            <form id="add-to-wishlist-form" method="post">
-                {% csrf_token %}
-                <button type="button" id="add-to-wishlist-btn" class="btn btn-success">Añadir a Favoritos</button>
-            </form>
-        {% else %}
-            <p class="text-success">Este animal ya está en tus favoritos.</p>
+<div class="animal-detail-section py-5">
+    <div class="container my-5 bg-white rounded shadow p-4">
+        <!-- Botón de regreso a CanemSCAN -->
+        {% if show_back_to_results %}
+        <div class="mb-4">
+            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">
+                &larr; Volver a los resultados de CanemSCAN
+            </a>
+        </div>
         {% endif %}
-    {% else %}
-        <p class="text-warning">Debes iniciar sesión para agregar este animal a favoritos.</p>
-    {% endif %}
-    
-    <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
+        
+        <!-- Imagen destacada -->
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" class="img-fluid rounded shadow">
+            </div>
+            <!-- Información principal -->
+            <div class="col-md-6">
+                <h2 class="display-4">{{ animal.name }}</h2>
+                <p><strong>Especie:</strong> {{ animal.get_species_display }}</p>
+                <p><strong>Sexo:</strong> {{ animal.get_sex_display }}</p>
+                <p><strong>Estado de adopción:</strong> <span class="badge badge-info">{{ animal.adoption_status }}</span></p>
+                <p><strong>Edad:</strong> {{ animal.age }} {{ animal.age|pluralize:"año,años" }}</p>
+                <p><strong>Tamaño:</strong> {{ animal.get_size_display }}</p>
+                <p><strong>Personalidad:</strong> {{ animal.get_personality_display }}</p>
+                <p><strong>Nivel de energía:</strong> {{ animal.get_energy_display }}</p>
+                <p><strong>Tipo de pelaje:</strong> {{ animal.get_fur_display }}</p>
+                <p><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
+                <a href="#" class="btn btn-primary mt-3">Solicitar Adopción</a>
+            </div>
+        </div>
+        
+        <!-- Descripción -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3>Descripción</h3>
+                <p>{{ animal.description }}</p>
+            </div>
+        </div>
+    </div>
 </div>
-
-<script>
-    document.getElementById('add-to-wishlist-btn')?.addEventListener('click', function (){
-        const animalId = {{ animal.id }};
-
-        fetch('/wishlist/add/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({
-                animal_id: animalId, // Usamos animal_id para coincidir con lo esperado en la vista de Django
-                interaction_type: 'favorite' // Usamos el argumento recibido
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success'){
-                alert('Animal agregado a favoritos');
-                window.location.reload();
-            } else {
-                console.error('Error al agregar a favoritos: ', data.message);
-                alert('Error al agregar a favoritos: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error al procesar la solicitud: ', error);
-            alert('Error inesperado, intenta nuevamente.')
-        });
-    });
-</script>
 {% endblock %}
