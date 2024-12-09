@@ -266,39 +266,43 @@ def send_mail(to, subject, body, from_mail=settings.DEFAULT_FROM_EMAIL, password
 
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
-    template_name = 'registration/password_reset.html'  # Plantilla personalizada para el formulario
-    email_template_name = 'registration/password_reset_email.html'  # Plantilla personalizada para el correo
-    subject_template_name = 'registration/password_reset_subject.txt'  # Plantilla personalizada para el asunto
-    success_url = reverse_lazy('password_reset_done')  # Redirige a la vista de "Correo Enviado"
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
 
     def get_users(self, email):
-        """
-        Sobrescribe el método `get_users` para devolver el queryset de usuarios
-        que coinciden con el correo electrónico proporcionado.
-        """
-        from django.contrib.auth.models import User
         return CustomUser.objects.filter(email=email)
 
     def form_valid(self, form):
-        """
-        Sobrescribir el método para manejar el formulario válido y enviar el correo.
-        """
         email = form.cleaned_data['email']
-
-        # Obtener el queryset de usuarios con el correo proporcionado usando get_users()
         users = self.get_users(email)
 
-        # Si no hay usuarios con ese correo, no hacemos nada
+        # Si no hay usuarios con el correo, no hacemos nada
         if not users:
             return self.render_to_response(self.get_context_data(form=form))
 
-        # Si hay usuarios, generamos el correo para cada uno
+        # Procesar cada usuario encontrado
         for user in users:
-            # Crear el token y el UID
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
+            print(f"Procesando usuario: {user}")  # Imprimir el usuario completo para depuración
 
-            # Preparar el mensaje del correo
+            # Verificar que `user.pk` no sea una lista ni otro tipo inesperado
+            if isinstance(user.pk, list):
+                print(f"Error: user.pk es una lista, valor: {user.pk}")
+                return self.render_to_response(self.get_context_data(form=form))  # O manejar el error como sea necesario
+
+            # Asegúrate de que `user.pk` es un valor correcto
+            print(f"user pk: {user.pk}")  # Verificar el tipo y valor de `user.pk`
+
+            # Usar `force_bytes` para convertir el ID a bytes
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            print(f"UID generado: {uid}")  # Imprimir para verificar
+
+            # Generar el token
+            token = default_token_generator.make_token(user)
+            print(f"Token generado: {token}")  # Imprimir para verificar
+
+            # Preparar el asunto y el mensaje del correo
             subject = render_to_string(self.subject_template_name, {'user': user})
             subject = ''.join(subject.splitlines())
 
@@ -311,14 +315,18 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 'protocol': 'https' if self.request.is_secure() else 'http',
             })
 
+            # Imprimir el email y su tipo para asegurarnos de que es una cadena
+            print(f"Email: {email}")
+            print(f"Valor de `email`: {email}")
+            print(f"Tipo de `email`: {type(email)}")
+
             # Enviar el correo
             send_mail(
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
-                [email],
+                [email],  # Asegúrate de que esto sea una lista de un solo correo
             )
-
         return super().form_valid(form)
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -355,9 +363,7 @@ def activate(request, uidb64, token):
     try:
         # Decodificar UID y asegurarse de que es válido
         uid = urlsafe_base64_decode(uidb64).decode('utf-8')
-        print(f"UID decodificado: {uid}")
         user = get_user_model().objects.get(pk=int(uid))  # Asegúrate de que sea un entero
-        print(f"Usuario encontrado: {user}")
     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = None
         print("Error al decodificar el UID o encontrar el usuario.")
