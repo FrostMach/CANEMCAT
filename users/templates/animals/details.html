@@ -30,6 +30,19 @@
                 <p><strong>Tipo de pelaje:</strong> {{ animal.get_fur_display }}</p>
                 <p><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
                 <a href="#" class="btn btn-primary mt-3">Solicitar Adopción</a>
+
+                {% if user.is_authenticated %}
+                    {% if not is_in_wishlist %}
+                        <form id="add-to-wishlist-form" method="post">
+                            {% csrf_token %}
+                            <button type="button" id="add-to-wishlist-btn" class="btn btn-success">Añadir a Favoritos</button>
+                        </form>
+                    {% else %}
+                        <p class="text-success">Este animal ya está en tus favoritos.</p>
+                    {% endif %}
+                {% else %}
+                    <p class="text-warning">Debes iniciar sesión para agregar este animal a favoritos.</p>
+                {% endif %}
             </div>
         </div>
         
@@ -42,4 +55,36 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('add-to-wishlist-btn')?.addEventListener('click', function (){
+        const animalId = {{ animal.id }};
+
+        fetch('/wishlist/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                animal_id: animalId, // Usamos animal_id para coincidir con lo esperado en la vista de Django
+                interaction_type: 'favorite' // Usamos el argumento recibido
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success'){
+                alert('Animal agregado a favoritos');
+                window.location.reload();
+            } else {
+                console.error('Error al agregar a favoritos: ', data.message);
+                alert('Error al agregar a favoritos: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error al procesar la solicitud: ', error);
+            alert('Error inesperado, intenta nuevamente.')
+        });
+    });
+</script>
 {% endblock %}

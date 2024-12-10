@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from shelters.models import Animal, AdoptionApplication, Shelter
 from django.urls import reverse_lazy, reverse
-from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, CompleteShelterForm, RegisterShelterForm, UpdateShelterForm
 from django.views import generic
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
@@ -106,20 +106,21 @@ class AnimalDetailView(generic.DetailView):
     template_name = 'animals/details.html' 
     context_object_name = 'animal'  
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         user = self.request.user
-#         animal = self.object
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        animal = self.object
 
-#         is_in_wishlist = False
+        if self.request.user.is_authenticated:
+            if not Wishlist.objects.filter(user=self.request.user, animal=animal,
+                interaction_type='view').exists():
+                Wishlist.objects.create(user=self.request.user, animal=animal, interaction_type='view')
 
-#         if user.is_authenticated:
-#             is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
-#             Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
-        
-#         context['is_in_wishlist'] = is_in_wishlist
+        context['is_in_wishlist'] = Wishlist.objects.filter(
+            user = self.request.user,
+            animal = animal,
+            interaction_type='favorite').exists()
 
-#         return context
+        return context
     
 #SOLICITUD DE ADOPCIÓN    
     
@@ -165,11 +166,15 @@ def shelter_approval(request, shelter_id):
             shelter.status = False
         
         shelter.save()
-        return redirect('shelter_list')
+        return redirect('register_complete', shelter_id=shelter_id)
     
-    return render(request, 'shelter/list_pending.html', {'shelter': shelter})
+    return render(request, 'shelter/approve.html', {'shelter': shelter})
+
+def admin_only(user):
+    return user.is_authenticated and user.is_staff
 
 @login_required
+@user_passes_test(admin_only)
 def register_shelter(request):
     if request.method == 'POST':
         form = RegisterShelterForm(request.POST, request.FILES)
@@ -181,6 +186,22 @@ def register_shelter(request):
         form = RegisterShelterForm()
 
     return render(request, 'shelter/register.html', {'form': form})
+
+@staff_member_required
+def complete_shelter_registration(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+
+    if request.method == 'POST':
+        form = CompleteShelterForm(request.POST, instance=shelter)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('shelter_list')
+    
+    else:
+        form = CompleteShelterForm(instance=shelter)
+
+    return render(request, 'shelter/complete_registration.html', {'form': form, 'shelter': shelter})
 
 class ShelterList(generic.ListView):
     model = Shelter
