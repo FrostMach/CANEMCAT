@@ -48,7 +48,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <!-- Logo -->
-                <a class="navbar-brand" href="{% url 'landing_page' %}">
+                <a class="navbar-brand" href="{% url 'lab' %}">
                     <img src="{% static 'images/Logo.png' %}" alt="Logo de CANEMCAT" style="width: 50px; height: auto;">
                 </a>
 
@@ -62,7 +62,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,6 +112,11 @@
 
                     <!-- Alineación a la derecha -->
                     <ul class="navbar-nav ms-auto d-flex">
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
+                        <li class="nav-item btn btn-sm btn-success">
+                            <a class="nav-link text-white" href="{% url 'landing_page' %}">CanemUSERS</a>
+                        </li>
+                        {% endif %}
                         {% if user.is_authenticated %}
                         <!-- Icono de usuario y logout -->
                         <li class="nav-item dropdown">
@@ -126,7 +131,7 @@
                                 {{ user.full_name }}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                                <li><a class="dropdown-item" href="">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile' user.pk %}">Perfil</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
                             </ul>
                         </li>

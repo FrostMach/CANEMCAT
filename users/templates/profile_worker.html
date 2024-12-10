@@ -1,0 +1,17 @@
+<!-- profile.html -->
+{% extends "shelter/base2.html" %}
+{% block content %}
+<div class="container bg-light mb-5 pb-5">  
+  <h2>Perfil de {{ user.full_name }}</h2>
+  <p><strong>Nombre completo:</strong> {{ user.full_name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Teléfono:</strong> {{ user.phone_number }}</p>
+  <p><strong>Dirección:</strong> {{ user.address }}</p>
+  <p><strong>Fecha de nacimiento:</strong> {{ user.birth_date }}</p>
+  {% if user.profile_picture %}
+    <p><strong>Foto de perfil:</strong></p>
+    <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" width="150">
+  {% endif %}
+  <a href="{% url 'profile_edit' user.pk %}">Editar perfil</a>
+</div>
+{% endblock %}
