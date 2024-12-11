@@ -2,6 +2,18 @@ from django.db import models
 from enum import Enum
 from datetime import date
 from django.core.exceptions import ValidationError
+from django.conf import settings
+
+class Event(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)  # Allow null temporarily
+    description = models.TextField(default='')
+    date = models.DateField(null=True, blank=True)
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
+    color = models.CharField(max_length=7, default='#FFFFFF')  # El color en formato #hex
+
+    def __str__(self):
+        return f"{self.description} ({self.date})"
 
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')

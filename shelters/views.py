@@ -12,11 +12,111 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
-from .models import Animal
+from .models import Animal, Event
 
 from users.models import Wishlist
 
 # Create your views here.
+
+#Calendar
+def calendar_view(request):
+    # Renderiza el calendario
+    return render(request, 'shelter/navegador/calendar.html')
+
+import json
+from django.utils.dateparse import parse_date
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def edit_event(request, event_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        # Obtener el evento por su ID
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            return JsonResponse({'error': 'Evento no encontrado'}, status=404)
+
+        # Verificar si el usuario está autorizado para editar el evento
+        if event.user != request.user:
+            return JsonResponse({'error': 'No tienes permisos para editar este evento'}, status=403)
+
+        # Actualizar los campos del evento
+        event.description = data['description']
+        event.date = parse_date(data['date'])
+        event.start_time = data['start_time']
+        event.end_time = data['end_time']
+        event.color = data['color']
+        
+        event.save()
+
+        return JsonResponse({
+            'success': True,
+            'event': {
+                'id': event.id,
+                'date': event.date.strftime('%Y-%m-%d'),
+                'description': event.description,
+                'start_time': event.start_time.strftime('%H:%M'),
+                'end_time': event.end_time.strftime('%H:%M'),
+                'color': event.color
+            }
+        })
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@csrf_exempt
+def delete_event(request, event_id):
+    if request.method == 'POST':
+        event = Event.objects.get(id=event_id)
+        event.delete()
+        return JsonResponse({'success': True})
+    
+def load_events(request, year, month):
+    # Obtener los eventos del mes solicitado
+    events = Event.objects.filter(date__year=year, date__month=month)
+    
+    event_data = []
+    for event in events:
+        event_data.append({
+            'date': event.date.strftime('%Y-%m-%d'),
+            'description': event.description,
+            'start_time': event.start_time.strftime('%H:%M') if event.start_time else '',
+            'end_time': event.end_time.strftime('%H:%M') if event.end_time else '',
+            'color': event.color
+        })
+    
+    return JsonResponse({'events': event_data})
+
+def save_event(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        date = parse_date(data['date'])
+        description = data['description']
+        start_time = data['start_time']
+        end_time = data['end_time']
+        color = data['color']
+        user = request.user  # Suponiendo que el usuario está autenticado
+        
+        event = Event.objects.create(
+            user=user,
+            date=date,
+            description=description,
+            start_time=start_time,
+            end_time=end_time,
+            color=color
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'event': {
+                'date': event.date.strftime('%Y-%m-%d'),
+                'description': event.description,
+                'start_time': event.start_time.strftime('%H:%M'),
+                'end_time': event.end_time.strftime('%H:%M'),
+                'color': event.color
+            }
+        })
+    return JsonResponse({'success': False}, status=400)
 
 #ANIMALES
 
