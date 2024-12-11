@@ -96,20 +96,24 @@
             <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     {% for animal in animals %}
-                    <div class="carousel-item active">
-                        <img src="{% animal.url %}" class="d-block w-100" alt="...">
-                    </div>
-                   {% endfor %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ animal.image.url }}" class="d-block w-100" alt="Imagen de {{ animal.name }}">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>{{ animal.name }}</h5>
+                                <p>{{ animal.species|capfirst }} - {{ animal.size|capfirst }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Previous</span>
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Next</span>
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
                 </button>
-              </div>
+            </div>
         </div>
     </div>
 </div>

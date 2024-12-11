@@ -31,13 +31,15 @@ from shelters.models import Animal
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
+import os
 
 @never_cache
 
 def landing_page(request):
     print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
     print(f"Sesión en landing: {request.session.items()}")
-    return render(request, 'landing_page.html')
+    animals = Animal.objects.filter(adoption_status='disponible')
+    return render(request, 'landing_page.html',{'animals':animals})
 
 #CANEMSCAN
 from django.http import JsonResponse
@@ -300,17 +302,21 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 print(f"Error: user.pk es una lista, valor: {user.pk}")
                 return self.render_to_response(self.get_context_data(form=form))  # O manejar el error como sea necesario
 
+            print(f"MAIL: {os.environ.get('MAIL')}")
+            print(f"MAIL_PASSWORD: {os.environ.get('MAIL_PASSWORD')}")
             # Asegúrate de que `user.pk` es un valor correcto
             print(f"user pk: {user.pk}")  # Verificar el tipo y valor de `user.pk`
-
             # Usar `force_bytes` para convertir el ID a bytes
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            uid = str(urlsafe_base64_encode(force_bytes(user.pk)))  # Asegúrate de que es una cadena
             print(f"UID generado: {uid}")  # Imprimir para verificar
 
             # Generar el token
-            token = default_token_generator.make_token(user)
+            token = str(default_token_generator.make_token(user))  # Asegúrate de que es una cadena
             print(f"Token generado: {token}")  # Imprimir para verificar
 
+            print(f"uid: {uid} (Tipo: {type(uid)})")
+            print(f"token: {token} (Tipo: {type(token)})")
+            print(f"email: {email} (Tipo: {type(email)})")
             # Preparar el asunto y el mensaje del correo
             subject = render_to_string(self.subject_template_name, {'user': user})
             subject = ''.join(subject.splitlines())
@@ -319,8 +325,8 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 'user': user,
                 'domain': get_current_site(self.request).domain,
                 'site_name': get_current_site(self.request).name,
-                'uid': uid,
-                'token': token,
+                'uid': str(uid),  # Asegúrate de que es una cadena
+                'token': str(token), 
                 'protocol': 'https' if self.request.is_secure() else 'http',
             })
 
