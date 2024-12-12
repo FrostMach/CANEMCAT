@@ -1,22 +1,90 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Animales en Adopción</h2>
-<div class="card-deck">
-    {% for animal in object_list %}
-    <div class="card" style="width: 18rem;">
-        <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
-        <div class="card-body">
-            <h5 class="card-title">{{ animal.name }}</h5>
-            <p class="card-text"><strong>Especie:</strong> {{ animal.get_species_display }}</p>
-            <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
-            <div class="btn-group" role="group" aria-label="Acciones">
-                <a href="{% url 'animals-update' animal.id %}" class="btn btn-primary">Editar</a>
-                <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>
+
+<!-- Barra de filtros -->
+<div class="filter-section">
+    <h2>Animales en adopción</h2>
+
+    <!-- Barra de filtros -->
+    <form method="get" class="filter-form mb-4">
+        <div class="form-row justify-content-between">
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.species.label_tag }}</label>
+                {{ filter_form.species }}
+            </div>
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.sex.label_tag }}</label>
+                {{ filter_form.sex }}
+            </div>
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.size.label_tag }}</label>
+                {{ filter_form.size }}
+            </div>
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.adoption_status.label_tag }}</label>
+                {{ filter_form.adoption_status }}
+            </div>
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.shelter.label_tag }}</label>
+                {{ filter_form.shelter }}
+            </div>
+            <div class="col-md-2 form-group d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
             </div>
         </div>
-    </div>
+    </form>
+</div>
+
+<!-- Lista de animales -->
+<div class="row">
+    {% for animal in object_list %}
+        <div class="col-md-4 mb-4 d-flex align-items-stretch">
+            <div class="card" style="width: 100%;">
+                <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ animal.name }}</h5>
+                    <p class="card-text"><strong>Sexo:</strong> {{ animal.sex }}</p>
+                    <p class="card-text"><strong>Descripción:</strong> {{ animal.description }}</p>
+                    <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
+                    <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
+                    <div class="btn-group" role="group" aria-label="Acciones">
+                        <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
+                        <a href="{% url 'animals-delete' animal.id %}" class="btn btn-success">Solicitar adopción</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No se encontraron animales con los filtros seleccionados.</p>
     {% endfor %}
 </div>
+
+<!-- Paginación -->
+<div class="pagination mt-4">
+    {% if is_paginated %}
+        <nav aria-label="Paginación">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" 
+                           class="page-link">Anterior</a>
+                    </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" 
+                           class="page-link">Siguiente</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
 {% endblock %}
+
 

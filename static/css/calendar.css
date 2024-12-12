@@ -1,0 +1,128 @@
+/* Estilos generales para la tabla del calendario */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Estilos para las celdas del calendario */
+td {
+    height: 100px;
+    vertical-align: top;
+    text-align: left; /* Mover el día a la izquierda */
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+}
+
+/* Resaltar el día de hoy */
+td.today {
+    background-color: #fffae6;
+    border: 2px solid #ffd700;
+}
+
+/* Número del día a la izquierda */
+td .day-number {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333333;
+    display: block;
+    margin-left: 10px;
+}
+
+/* Estilos para los eventos */
+td .event {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Botones para navegar entre meses */
+button#prev-month,
+button#next-month {
+    font-size: 1rem;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button#prev-month:hover,
+button#next-month:hover {
+    background-color: #0056b3;
+}
+
+/* Etiqueta para mes y año */
+#month-year {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333333;
+    margin: 0 20px;
+}
+
+/* Estilos para el calendario */
+#calendar-body td {
+    width: 14%;
+    height: 80px;
+    vertical-align: top;
+    cursor: pointer;
+}
+
+#calendar-body .day-number {
+    font-weight: bold;
+    margin: 5px;
+}
+
+#calendar-body .event {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 5px;
+    margin-top: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Estilos para el modal */
+.modal-body input[type="date"],
+.modal-body input[type="time"],
+.modal-body input[type="text"],
+.modal-body input[type="color"] {
+    width: 100%;
+}
+
+#events-list-container {
+    margin-top: 30px;
+}
+
+#events-list-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+#events-list-container li {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+#events-list-container .event-item {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#events-list-container .event-item:hover {
+    background-color: #f0f0f0;
+}

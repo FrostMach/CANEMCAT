@@ -1,0 +1,75 @@
+{% extends "shelter/base2.html" %}
+{% load static %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+<div>
+    <button id="prev-month" class="btn btn-primary">Anterior</button>
+    <span id="month-year" class="h4 mx-3"></span>
+    <button id="next-month" class="btn btn-primary">Siguiente</button>
+</div>
+
+<table border="1" class="table mt-3">
+    <thead>
+        <tr>
+            <th>Dom</th>
+            <th>Lun</th>
+            <th>Mar</th>
+            <th>Mié</th>
+            <th>Jue</th>
+            <th>Vie</th>
+            <th>Sáb</th>
+        </tr>
+    </thead>
+    <tbody id="calendar-body"></tbody>
+</table>
+
+<!-- Modal para crear/editar evento -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">Crear/Editar Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="event-form">
+                    <div class="mb-3">
+                        <label for="event-date" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="event-date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-description" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="event-description" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="start-time" class="form-label">Hora de Inicio</label>
+                        <input type="time" class="form-control" id="start-time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end-time" class="form-label">Hora de Fin</label>
+                        <input type="time" class="form-control" id="end-time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-color" class="form-label">Color</label>
+                        <input type="color" class="form-control" id="event-color">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="edit-event" class="btn btn-primary" style="display: none;">Editar Evento</button>
+                <button type="button" id="save-event" class="btn btn-success">Guardar Evento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de eventos -->
+<div id="events-list-container">
+    <h3>Eventos del Usuario</h3>
+    <ul id="events-list"></ul>
+</div>
+
+
+{% endblock %}

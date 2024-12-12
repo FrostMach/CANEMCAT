@@ -53,7 +53,7 @@
 
           <div class="form-group">
             <label for="{{ form.birth_date.id_for_label }}">Fecha de Nacimiento</label>
-            <input type="date" name="birth_date" class="form-control" id="{{ form.birth_date.id_for_label }}" value="{{ form.birth_date.value|default:'' }}">
+            <input type="date" name="birth_date" class="w-50 form-control" id="{{ form.birth_date.id_for_label }}" value="{{ form.birth_date.value|default:'' }}">
             {% if form.birth_date.errors %}
               <div class="alert alert-danger">
                 <ul>

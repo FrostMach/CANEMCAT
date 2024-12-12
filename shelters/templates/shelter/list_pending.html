@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Centros pendientes de Verificación</h1>
+    <h1>Aprobar Acreditación para {{ shelter.name }}</h1>
 
-    <ul>
-        {% for shelter in shelters %}
-            <li>
-                <a href="{% url 'check_pending'shelter.pk %}">{{shelter.name}}</a>
-            </li>
-        {% endfor %}
-    </ul>
+    {% if shelter.accreditation_file %}
+        <p><strong>Documento de Acreditación: </strong></p>
+        <a href="{{ shelter.accreditation_file.url }}" target="_blank">Ver documento</a>
+    {% else %}
+        <p>No hay documento de acreditación disponible</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="approve">Aprobar</button>
+        <button type="submit" name="action" value="reject">Rechazar</button>
+    </form>
 {% endblock %}

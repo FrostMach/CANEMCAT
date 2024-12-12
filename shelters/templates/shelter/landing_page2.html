@@ -1,0 +1,273 @@
+{% extends "shelter/base2.html" %}
+{% load static %}
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+<!-- Panel de Control -->
+<div class="container mt-5">
+    <div class="row">
+        <!-- KPIs -->
+        <div class="col-lg-4 mb-4">
+            <div class="card text-center shadow border-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Animales en la protectora</h5>
+                    <p class="display-4 text-primary">120</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card text-center shadow border-success">
+                <div class="card-body">
+                    <h5 class="card-title">Adopciones este mes</h5>
+                    <p class="display-4 text-success">35</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card text-center shadow border-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitudes pendientes</h5>
+                    <p class="display-4 text-danger">8</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <!-- Gráfico de tendencias de adopción -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Tendencias de adopción</h5>
+                <canvas id="adoptionTrendsChart"></canvas>
+            </div>
+        </div>
+        <!-- Gráfico de tiempo promedio en la protectora -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Tiempo promedio en la protectora</h5>
+                <canvas id="averageStayChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Gráfico de capacidad de la protectora -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Capacidad de la protectora</h5>
+                <canvas id="shelterCapacityChart"></canvas>
+            </div>
+        </div>
+        <!-- Gráfico de tasa de retorno -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Tasa de retorno por adopciones</h5>
+                <canvas id="returnRateChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Gráfico de distribución de animales -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Distribución de animales</h5>
+                <canvas id="animalDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de evolución de adopciones por especie -->
+        <div class="col-lg-6 mb-4">
+            <div class="p-3 bg-white shadow rounded">
+                <h5 class="text-center py-2 bg-light rounded">Evolución de adopciones por especie</h5>
+                <canvas id="adoptionEvolutionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuración común para un fondo blanco en los gráficos
+    const whiteBackgroundPlugin = {
+        id: 'whiteBackground',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
+    // Gráfico de distribución de animales
+    new Chart(document.getElementById('animalDistributionChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Perros', 'Gatos', 'Otros'],
+            datasets: [{
+                data: [70, 45, 5],
+                backgroundColor: ['#007bff', '#28a745', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de tendencias de adopción
+    new Chart(document.getElementById('adoptionTrendsChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [{
+                label: 'Adopciones',
+                data: [10, 15, 20, 30, 35],
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de tiempo promedio en la protectora
+    new Chart(document.getElementById('averageStayChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Perros', 'Gatos', 'Otros'],
+            datasets: [{
+                label: 'Días promedio',
+                data: [30, 45, 20],
+                backgroundColor: ['#007bff', '#28a745', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Días'
+                    },
+                    ticks: {
+                        stepSize: 10
+                    }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de capacidad de la protectora
+    new Chart(document.getElementById('shelterCapacityChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Perros', 'Gatos'],
+            datasets: [
+                {
+                    label: 'Capacidad Total',
+                    data: [100, 80],
+                    backgroundColor: '#007bff'
+                },
+                {
+                    label: 'Ocupación Actual',
+                    data: [70, 50],
+                    backgroundColor: '#28a745'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de tasa de retorno
+    new Chart(document.getElementById('returnRateChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [{
+                label: 'Retornos',
+                data: [2, 1, 3, 0, 1],
+                backgroundColor: '#dc3545'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+
+    // Gráfico de evolución de adopciones por especie
+    new Chart(document.getElementById('adoptionEvolutionChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+            datasets: [
+                {
+                    label: 'Perros',
+                    data: [5, 10, 15, 20, 25],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    fill: true
+                },
+                {
+                    label: 'Gatos',
+                    data: [3, 5, 8, 10, 12],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Número de Adopciones'
+                    },
+                    ticks: {
+                        stepSize: 5
+                    }
+                }
+            }
+        },
+        plugins: [whiteBackgroundPlugin]
+    });
+</script>
+{% endblock %}
+
+

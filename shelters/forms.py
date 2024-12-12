@@ -10,10 +10,53 @@ from django import forms
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ['name', 'age', 'species', 'description', 'image', 'adoption_status']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
+        fields = [
+            'name', 'species', 'sex', 'age', 'size', 
+            'personality', 'energy', 'fur', 'description', 
+            'image', 'adoption_status', 'shelter'
+        ]
+        labels = {
+            'name': 'Nombre',
+            'species': 'Especie',
+            'sex': 'Sexo',
+            'age': 'Edad',
+            'size': 'Tamaño',
+            'personality': 'Personalidad',
+            'energy': 'Nivel de energía',
+            'fur': 'Pelaje',
+            'description': 'Descripción',
+            'image': 'Imagen',
+            'adoption_status': 'Estado de adopción',
+            'shelter': 'Protectora',
         }
+ 
+class AnimalFilterForm(forms.Form):
+    species = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SPECIES,  # Agrega opción vacía para no filtrar
+        required=False,
+        label="Especie"
+    )
+    sex = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SEX,
+        required=False,
+        label="Sexo"
+    )
+    size = forms.ChoiceField(
+        choices=[('', '---')] + Animal.SIZE,
+        required=False,
+        label="Tamaño"
+    )
+    adoption_status = forms.ChoiceField(
+        choices=[('', '---')] + Animal.ADOPTION_STATUS,
+        required=False,
+        label="Estado de adopción"
+    )
+    shelter = forms.ModelChoiceField(
+        queryset=Shelter.objects.all(),
+        required=False,
+        label="Protectora",
+        empty_label="---"
+    )
  
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):
@@ -63,7 +106,28 @@ class RegisterShelterForm(forms.ModelForm):
         model = Shelter
         fields = ['name', 'address', 'email', 'telephone', 'accreditation_file']
 
+        def clean(self):
+            cleaned_data = super().clean()
+            name = cleaned_data.get('name')
+            telephone = cleaned_data.get('telephone')
+
+            if telephone and len(str(telephone)) < 9:
+                raise forms.ValidationError('El teléfono debe tener una longitud mínima de 9 dígitos.')
+            
+            if name and 'admin' in name.lower():
+                raise forms.ValidationError('El nombre no puede contener "admin".')
+
+            return cleaned_data
+        
+        def clean_email(self):
+            email = self.cleaned_data.get('email')
+            
+            if Shelter.objects.filter(email=email).exists():
+                raise forms.ValidationError("Este correo electrónico ya está registrado.")
+            return email
+
 class UpdateShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter
-        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'register_date', 'status', 'latitude', 'longitude', 'postal_code']
+        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'status',
+                   'latitude', 'longitude', 'postal_code']

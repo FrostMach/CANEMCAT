@@ -36,16 +36,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('adopter', 'Adopter'),  # Persona que adopta
         ('worker', 'Shelter Worker'),  # Trabajador de protectora
     )
-
     email = models.EmailField(unique=True)
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=9, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='adopter')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -79,32 +77,52 @@ class Questions(models.Model):
 class Answers(models.Model):
     question = models.ForeignKey(Questions, on_delete=models.CASCADE, related_name='questions')
 
+class CompatibilityTest(models.Model):
+    PET_CHOICES = [
+        ('dog', 'Perro'),
+        ('cat', 'Gato')
+    ]
+    
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
+    pet_type = models.CharField(max_length=3, choices=PET_CHOICES)
+    
+    # Preguntas relacionadas con el perro
+    dog_age_preference = models.CharField(max_length=20)
+    dog_coat_type = models.CharField(max_length=20)
+    dog_character = models.CharField(max_length=20)
+    dog_energy_level = models.CharField(max_length=20)
+    dog_other_pets = models.CharField(max_length=20)
+    
+    # Preguntas relacionadas con el gato
+    cat_age_preference = models.CharField(max_length=20)
+    cat_coat_type = models.CharField(max_length=20)
+    cat_character = models.CharField(max_length=20)
+    cat_energy_level = models.CharField(max_length=20)
+    cat_other_pets = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'Test de compatibilidad de {self.user.username} con {self.pet_type}'
+
+
 # Wishlist model
 class Wishlist(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='wishlists')
-    animals = models.ManyToManyField(Animal, related_name='wishlists')
+    INTERACTION_TYPE = [
+        ('view', 'View'), 
+        ('favorite', 'Favorite'),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    interaction_type = models.CharField(blank=True, null=True, max_length=50, choices=INTERACTION_TYPE)
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.animal.name}"
+
     class Meta:
         db_table = 'wishlist'  # Custom table name in the database
-        verbose_name = 'Wishlist'
-        verbose_name_plural = 'Wishlists'
-    def __str__(self):
-        return f"Wishlist of {self.user.name}"
-
-    # Método que verifica si un animal está en la lista de deseos
-    def is_animal_in_wishlist(self, animal):
-        return self.animals.filter(id=animal.id).exists()
-
-    # Método que devuelve la cantidad de animales en la lista de deseos
-    def animal_count(self):
-        return self.animals.count()
-
-    # Método que elimina un animal de la lista de deseos del usuario
-    def remove_animal(self, animal):
-        self.animals.remove(animal)
-
-    # Método que agrega un animal a la lista de deseos del usuario
-    def add_animal(self, animal):
-        self.animals.add(animal)
-        
-
-        
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'animal', 'interaction_type'],
+                name='unique_user_animal_interaction'
+            )
+        ]

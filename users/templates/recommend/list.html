@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Recomendaciones de Animales</h1>
+
+<div class="container mt-5">
+    <h2>Bienvenido, {{ user.full_name }}</h2>
+    
+    <h3>Tus Recomendaciones</h3>
+    <button id="refresh-recommendations" class="btn btn-secondary">Actualizar Recomendaciones</button>
+    {% if recommended_animals %}
+        <ul id='recommendations-list' class="list-group">
+            {% for animal in recommended_animals %}
+                <li class="list-group-item">
+                    <h4>{{ animal.name }}</h4>
+                    <p><strong>Descripción:</strong> {{ animal.description }}</p>
+                    {% if animal.image %}
+                        <p><strong>Imagen: </strong> <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 150px; height: auto;"></td></p>
+                    {% endif %}
+                    <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary btn-sm">Ver más</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay recomendaciones para mostrar. ¡Explora y agrega favoritos para obtener sugerencias!</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'animals-list' %}">Acceder a listado de animales</a>
+
+<script>
+    document.getElementById('refresh-recommendations')
+        .addEventListener('click', function() {
+            fetch('/dashboard/recommendations/')
+                .then(response =>  response.json())
+                .then(data => {
+                    const recommendationsList = document.getElementById('recommendations-list');
+                    recommendationsList.innerHTML = '';
+
+                    data.recommendations.forEach(animal => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item';
+
+                        listItem.innerHTML = `
+                            <h4>${animal.name}</h4>
+                            <p><strong>Descripción:</strong> ${animal.description}</p>
+                            ${animal.image ? `<img src="${animal.image}" class="img-thumbnail small-img" alt="${animal.name}">` : ''}
+                            <p><strong>Estado de Adopción:</strong> ${animal.adoption_status}</p>
+                            <a href="/animals/${animal.id}/" class="btn btn-primary btn-sm">Ver más</a>`;
+                        
+                        recommendationsList.appendChild(listItem);
+                    });
+            })
+            .catch(error => console.error('Error: ', error));
+    });
+</script>
+{% endblock %}

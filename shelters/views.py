@@ -3,12 +3,120 @@ from shelters.models import Animal, AdoptionApplication, Shelter
 from django.urls import reverse_lazy, reverse
 from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm
 from django.views import generic
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
+from django.views import View, generic
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
+from .models import Animal, Event
+
+from users.models import Wishlist
 
 # Create your views here.
+
+#Calendar
+def calendar_view(request):
+    # Renderiza el calendario
+    return render(request, 'shelter/navegador/calendar.html')
+
+import json
+from django.utils.dateparse import parse_date
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def edit_event(request, event_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        # Obtener el evento por su ID
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            return JsonResponse({'error': 'Evento no encontrado'}, status=404)
+
+        # Verificar si el usuario está autorizado para editar el evento
+        if event.user != request.user:
+            return JsonResponse({'error': 'No tienes permisos para editar este evento'}, status=403)
+
+        # Actualizar los campos del evento
+        event.description = data['description']
+        event.date = parse_date(data['date'])
+        event.start_time = data['start_time']
+        event.end_time = data['end_time']
+        event.color = data['color']
+        
+        event.save()
+
+        return JsonResponse({
+            'success': True,
+            'event': {
+                'id': event.id,
+                'date': event.date.strftime('%Y-%m-%d'),
+                'description': event.description,
+                'start_time': event.start_time.strftime('%H:%M'),
+                'end_time': event.end_time.strftime('%H:%M'),
+                'color': event.color
+            }
+        })
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@csrf_exempt
+def delete_event(request, event_id):
+    if request.method == 'POST':
+        event = Event.objects.get(id=event_id)
+        event.delete()
+        return JsonResponse({'success': True})
+    
+def load_events(request, year, month):
+    # Obtener los eventos del mes solicitado
+    events = Event.objects.filter(date__year=year, date__month=month)
+    
+    event_data = []
+    for event in events:
+        event_data.append({
+            'date': event.date.strftime('%Y-%m-%d'),
+            'description': event.description,
+            'start_time': event.start_time.strftime('%H:%M') if event.start_time else '',
+            'end_time': event.end_time.strftime('%H:%M') if event.end_time else '',
+            'color': event.color
+        })
+    
+    return JsonResponse({'events': event_data})
+
+def save_event(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        date = parse_date(data['date'])
+        description = data['description']
+        start_time = data['start_time']
+        end_time = data['end_time']
+        color = data['color']
+        user = request.user  # Suponiendo que el usuario está autenticado
+        
+        event = Event.objects.create(
+            user=user,
+            date=date,
+            description=description,
+            start_time=start_time,
+            end_time=end_time,
+            color=color
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'event': {
+                'date': event.date.strftime('%Y-%m-%d'),
+                'description': event.description,
+                'start_time': event.start_time.strftime('%H:%M'),
+                'end_time': event.end_time.strftime('%H:%M'),
+                'color': event.color
+            }
+        })
+    return JsonResponse({'success': False}, status=400)
 
 #ANIMALES
 
@@ -33,15 +141,85 @@ class AnimalListView(generic.ListView):
     model = Animal
     template_name = 'animals/list.html'
     context_object_name = 'animals'
+    paginate_by = 9
 
     def get_queryset(self):
-        return Animal.objects.all()
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
+
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
+
+            if species:
+                queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
+            if size:
+                queryset = queryset.filter(size=size)
+            if shelter:
+                queryset = queryset.filter(shelter=shelter)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
+    
+class AnimalShelterListView(generic.ListView):
+    model = Animal
+    template_name = 'shelter/animal_list.html'
+    context_object_name = 'animal_list'
+    paginate_by = 9
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = AnimalFilterForm(self.request.GET)
+
+        if form.is_valid():
+            # Filtros según los valores del formulario
+            species = form.cleaned_data.get("species")
+            sex = form.cleaned_data.get("sex")
+            size = form.cleaned_data.get("size")
+            shelter = form.cleaned_data.get("shelter")
+
+            if species:
+                queryset = queryset.filter(species=species)
+            if sex:
+                queryset = queryset.filter(sex=sex)
+            if size:
+                queryset = queryset.filter(size=size)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
+        return context
     
 class AnimalDetailView(generic.DetailView):
     model = Animal
     template_name = 'animals/details.html' 
     context_object_name = 'animal'  
-    
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         user = self.request.user
+#         animal = self.object
+
+#         is_in_wishlist = False
+
+#         if user.is_authenticated:
+#             is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
+#             Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
+        
+#         context['is_in_wishlist'] = is_in_wishlist
+
+#         return context
     
 #SOLICITUD DE ADOPCIÓN    
     
@@ -72,64 +250,37 @@ def confirm_view(request):
     return render(request, 'adoption_application/confirm.html')
 
 #SHELTERS
-def is_admin(user):
-    return user.is_staff
+@staff_member_required
+def shelter_approval(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(is_admin), name='dispatch')
-class CheckDocumentView(generic.View):
-    def get(self, request, pk):
-        shelter = get_object_or_404(Shelter, pk = pk)  
-        return render(request, 'shelter/pending.html', {'shelter':shelter}) 
-     
-    def post(self, request, pk):
-        shelter = get_object_or_404(Shelter, pk=pk)
+    if not request.user.is_staff:
+        raise PermissionDenied('No tienes permiso para aprobar la acreditación.')
+
+    if request.method == 'POST':
         action = request.POST.get('action')
-
-        if action == 'aprobar':
-            shelter.accreditation_status = True
-        shelter.status = True
+        if action == 'approve':
+            shelter.status = True
+        elif action == 'reject':
+            shelter.status = False
+        
         shelter.save()
-
         return redirect('shelter_list')
-        # shelter.accreditation_status = True
-        # shelter.save()
-        # messages.success(request, f'El centro "{shelter.name}" ha sido acreditado')
-        # return redirect('check_pending')
+    
+    return render(request, 'shelter/list_pending.html', {'shelter': shelter})
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(is_admin), name='dispatch')
-class ShelterListPendingView(generic.View):
-    def get(self, request):
-        shelters_pending = Shelter.objects.filter(status=False)
-        return render(request, 'shelter/list_pending.html', {'shelters', shelters_pending})
-    
-class RegisterShelterView(generic.CreateView):
-    def get(self, request):
-        form = RegisterShelterForm()
-        return render(request, 'shelter/register.html', {'form': form})
-    
-    def post(self, request):
+@login_required
+def register_shelter(request):
+    if request.method == 'POST':
         form = RegisterShelterForm(request.POST, request.FILES)
         
         if form.is_valid():
-            shelter = form.save(commit=False)
-            if shelter.accreditation_status:
-                shelter.save()
-                return redirect('exit_register')
-            else:
-                form.add_error(None, 'Solo centros acreditados pueden registrarse')
-        
-        return render(request, 'shelter/register.html', {'form': form})
+            form.save()
+            return redirect('shelter_list')
+    else:
+        form = RegisterShelterForm()
 
-    # model = Shelter
-    # form_class = RegisterShelterForm
-    # template_name = 'shelter/register.html'
-    # success_url = reverse_lazy('exit_register')
-
-    # def form_valid(self, form):
-    #     messages.success(self.request, 'El centro ha sido registrado existosamente. La aprobación está pendiente')
-    #     return super().form_valid(form)
+    return render(request, 'shelter/register.html', {'form': form})
 
 class ShelterList(generic.ListView):
     model = Shelter
@@ -195,3 +346,6 @@ def shelters_by_postal_code(request):
 #     c = 2 * atan2(sqrt(a), sqrt(1-a))
     
 #     return R * c
+
+def landing_page2(request):
+    return render(request, 'shelter/landing_page2.html')

@@ -2,7 +2,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Perfil de {{ user.username }}</h2>
+<div class="container bg-light mb-5 pb-5">  
+  <h2>Perfil de {{ user.full_name }}</h2>
   <p><strong>Nombre completo:</strong> {{ user.full_name }}</p>
   <p><strong>Email:</strong> {{ user.email }}</p>
   <p><strong>Teléfono:</strong> {{ user.phone_number }}</p>
@@ -13,4 +14,5 @@
     <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" width="150">
   {% endif %}
   <a href="{% url 'profile_edit' user.pk %}">Editar perfil</a>
+</div>
 {% endblock %}

@@ -1,22 +1,18 @@
 from django.contrib import admin
-from shelters.models import Shelter
+from .models import Shelter
 
 # Register your models here.
-
-    
-@admin.register(Shelter)
 class ShelterAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'accreditation_status', 'register_date')
-    list_filter = ('accreditation_status',)
-    search_fields = ('name', 'email')
-    # actions = ['accreditation_allow', 'accreditation_deny']
+    list_display = ('name', 'address', 'email', 'telephone', 'status')
+    list_filter = ('status',)
+    actions = ['approve_accreditation', 'reject_accreditation']
 
-    
-    def accreditation_allow(self, request, queryset):
-        queryset.update(accreditation_status=True)
-    accreditation_allow.short_description = 'Aprobar acreditación de los centros seleccionados'
+    def approve_accreditation(self, request, queryset):
+        queryset.update(status=True)
+    approve_accreditation.short_description = "Aprobar documentos de acreditación"
 
-    actions = ['accreditation_allow']
-    # @admin.action(description='Accreditation Deny')
-    # def accreditation_deny(self, request, queryset):
-    #     queryset.update(accreditation_status='deny')
+    def reject_accreditation(self, request, queryset):
+        queryset.update(status=False)
+    reject_accreditation.short_description = "Rechazar documentos de acreditación"
+
+admin.site.register(Shelter, ShelterAdmin)
