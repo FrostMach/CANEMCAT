@@ -12,6 +12,6 @@
     <p><strong>Foto de perfil:</strong></p>
     <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" width="150">
   {% endif %}
-  <a href="{% url 'profile_edit' user.pk %}">Editar perfil</a>
+  <a href="{% url 'profile_worker_edit' user.pk %}">Editar perfil</a>
 </div>
 {% endblock %}

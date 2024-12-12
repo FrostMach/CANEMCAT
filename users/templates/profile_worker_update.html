@@ -1,5 +1,4 @@
 <!-- profile_update.html -->
-{% extends "shelter/base2.html" %}
 
 {% block content %}
 <div class="container bg-light mb-5 pb-5">
@@ -9,6 +8,6 @@
     {{ form.as_p }}
     <button type="submit">Guardar cambios</button>
   </form>
-  <a href="{% url 'profile' user.pk %}">Volver al perfil</a>
+  <a href="{% url 'worker' user.pk %}">Volver al perfil</a>
 </div>
 {% endblock %}

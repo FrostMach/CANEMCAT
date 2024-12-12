@@ -204,7 +204,7 @@ class ProfileUpdateView(generic.UpdateView):
     model = CustomUser
     form_class = CustomUserChangeForm
     template_name = 'profile_update.html'
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('landing_page')
 
 class ProfileWorkerView(generic.DetailView):
     model = CustomUser
@@ -214,7 +214,7 @@ class ProfileWorkerUpdateView(generic.UpdateView):
     model = CustomUser
     form_class = CustomUserChangeForm
     template_name = 'profile_worker_update.html'
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('lab')
 
 
 def login_view(request):

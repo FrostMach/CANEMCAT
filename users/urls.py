@@ -3,7 +3,6 @@ from users import views
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import landing_page,email_confirmation,canem_test
-from shelters.views import landing_page2
 from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', landing_page, name='landing_page'),
@@ -16,9 +15,9 @@ urlpatterns = [
     path('reset/done/', views.CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('email_confirmation/', email_confirmation, name='email_confirmation'),
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
-    path('profile/<int:pk>/edit/', views.ProfileUpdateView.as_view(), name='profile_edit'),
+    path('profile/edit/<int:pk>/', views.ProfileUpdateView.as_view(), name='profile_edit'),
     path('worker/<int:pk>/', views.ProfileWorkerView.as_view(), name='profile_worker'),
-    path('worker/<int:pk>/edit/', views.ProfileWorkerUpdateView.as_view(), name='profile_worker_edit'),
+    path('worker/edit/<int:pk>/', views.ProfileWorkerUpdateView.as_view(), name='profile_worker_edit'),
     path('logout/', views.logout_view, name='logout'),
     path('wishlist/', views.wishlist_list, name='wishlist_list'),
     # path('<int:animal_id>/add_wishlist/', views.wishlist_add, name='wishlist_add'),

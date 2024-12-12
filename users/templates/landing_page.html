@@ -95,7 +95,7 @@
     </div>
     {% if animals %}
         <div class="row">
-            <div class="bd-example">
+            <div class="pb-5 bd-example">
                 <div id="carouselAnimal" class="carousel slide mt-4" data-bs-ride="carousel">
                   <!-- Indicadores del Carousel -->
                   <ol class="carousel-indicators">
@@ -109,10 +109,6 @@
                     {% for animal in animals %}
                       <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}">
-                        <div class="carousel-caption d-none d-md-block">
-                          <h5>{{ animal.name }}</h5>
-                          <p>{{ animal.species|title }} - {{ animal.adoption_status|title }}</p>
-                        </div>
                       </div>
                     {% endfor %}
                   </div>
