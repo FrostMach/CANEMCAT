@@ -34,12 +34,9 @@ import csv
 import os
 
 @never_cache
-
 def landing_page(request):
-    print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
-    print(f"Sesión en landing: {request.session.items()}")
-    animals = Animal.objects.filter(adoption_status='disponible')
-    return render(request, 'landing_page.html',{'animals':animals})
+    animals = Animal.objects.filter(adoption_status='Disponible')
+    return render(request, 'landing_page.html', {'animals': animals})
 
 #CANEMSCAN
 from django.http import JsonResponse

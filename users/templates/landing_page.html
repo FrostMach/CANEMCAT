@@ -93,29 +93,45 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div id="animalCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                {% for animal in animals %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+    {% if animals %}
+        <div class="row">
+            <div class="bd-example">
+                <div id="carouselAnimal" class="carousel slide mt-4" data-bs-ride="carousel">
+                  <!-- Indicadores del Carousel -->
+                  <ol class="carousel-indicators">
+                    {% for animal in animals %}
+                      <li data-bs-target="#carouselAnimal" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+                    {% endfor %}
+                  </ol>
+              
+                  <!-- Contenido del Carousel -->
+                  <div class="carousel-inner">
+                    {% for animal in animals %}
+                      <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>{{ animal.name }}</h5>
-                            <p>{{ animal.species|title }} - {{ animal.adoption_status|title }}</p>
+                          <h5>{{ animal.name }}</h5>
+                          <p>{{ animal.species|title }} - {{ animal.adoption_status|title }}</p>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#animalCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#animalCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+                      </div>
+                    {% endfor %}
+                  </div>
+              
+                  <!-- Controles del Carousel -->
+                  <a class="carousel-control-prev" href="#carouselAnimal" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carouselAnimal" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </a>
+                </div>
+              </div>
         </div>
-    </div>
+    {% else %}
+        <p>No hay animales disponibles para mostrar en el slider.</p>
+    {% endif %}
 </div>
 
 {% endblock %}
