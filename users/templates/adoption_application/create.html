@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2>Crear solicitud de adopción</h2>
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Campo para el nombre completo -->
+      <div class="mb-3 row">
+        <label for="id_user" class="col-sm-2 col-form-label">Nombre completo</label>
+        <div class="col-sm-10">
+          <input type="text" name="user" class="form-control" value="{{ form.user.value }}" id="id_user">
+        </div>
+      </div>
+
+      <!-- Campo para seleccionar el animal -->
+      <div class="mb-3 row">
+        <label for="id_animal" class="col-sm-2 col-form-label">Animal</label>
+        <div class="col-sm-10">
+          <select name="animal" class="form-select" id="id_animal">
+            {% for animal in form.animal.queryset %}
+              <option value="{{ animal.id }}" {% if animal.id == form.animal.value %}selected{% endif %}>{{ animal.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Campo para seleccionar el refugio -->
+      <div class="mb-3 row">
+        <label for="id_shelter" class="col-sm-2 col-form-label">Refugio</label>
+        <div class="col-sm-10">
+          <select name="shelter" class="form-select" id="id_shelter">
+            {% for shelter in form.shelter.queryset %}
+              <option value="{{ shelter.id }}" {% if shelter.id == form.shelter.value %}selected{% endif %}>{{ shelter.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Campo para la fecha de solicitud -->
+      <div class="mb-3 row">
+        <label for="id_application_date" class="col-sm-2 col-form-label">Fecha de solicitud</label>
+        <div class="col-sm-10">
+          <input type="date" name="application_date" class="form-control" value="{{ form.application_date.value }}" id="id_application_date">
+        </div>
+      </div>
+
+      <!-- Botón de enviar -->
+      <div class="mb-3 row">
+        <div class="col-sm-10 offset-sm-2">
+          <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

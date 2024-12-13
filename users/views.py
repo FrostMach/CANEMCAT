@@ -224,8 +224,6 @@ def login_view(request):
             user = form.user
             logout(request)  # Cerrar sesión antes de iniciar sesión
             login(request, user)
-            print(f"Usuario autenticado en login (después de login): {request.user.is_authenticated}")
-            print(f"Sesión en login: {request.session.items()}")
             return HttpResponseRedirect(reverse('landing_page'))  # o 'landing_page' si tienes nombre de ruta para la landing
         else:
             messages.error(request, "Email o contraseña incorrectos.")

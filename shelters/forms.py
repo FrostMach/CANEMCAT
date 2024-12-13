@@ -61,36 +61,33 @@ class AnimalFilterForm(forms.Form):
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):
     user = forms.CharField(max_length=255, label='Nombre completo')
+    shelter = forms.ModelChoiceField(queryset=Shelter.objects.all(), label="Refugio", required=True)
     application_date = forms.DateField(initial=date.today)
+
     class Meta:
         model = AdoptionApplication
-        fields = ('user', 'animal') #AÑADIR SHELTER!!!!!
-        
-    def clean_user(self):
-    # Obtener el valor del campo 'user' (nombre completo)
-        user_name = self.cleaned_data['user']
+        fields = ('user', 'animal', 'shelter')
 
-        # Intentar obtener un usuario que coincida con el nombre completo ingresado
+    def clean_user(self):
+        user_name = self.cleaned_data['user']
         try:
             user = CustomUser.objects.get(full_name=user_name)
         except CustomUser.DoesNotExist:
             raise ValidationError("El nombre ingresado no corresponde a un usuario registrado.")
-        
-        return user  # Devolvemos el usuario encontrado
+        return user
 
     def save(self, commit=True):
-        # Guardamos la solicitud de adopción con el usuario encontrado
         instance = super().save(commit=False)
-        instance.user = self.cleaned_data['user']  # Asociamos el usuario al modelo
+        instance.user = self.cleaned_data['user']
+        instance.shelter = self.cleaned_data['shelter']
         if 'application_date' in self.cleaned_data:
             instance.application_date = self.cleaned_data['application_date']
         else:
-            instance.application_date = date.today()  # Asignamos la fecha actual si no se especificó
-
+            instance.application_date = date.today()
+        
         if commit:
             instance.save()
         return instance
-
 # class EncuestaForm(forms.ModelForm):
 #     class Meta:
 #         model = RespuestaEncuesta

@@ -37,12 +37,10 @@ class LoginForm(forms.Form):
         email = self.cleaned_data.get('email')
         password = self.cleaned_data.get('password')
 
-        print(f"Cleaning form: email={email}, password={password}")  # Depuración
 
         if email and password:
             # Usamos authenticate, asegurándonos de pasar el 'email'
             user = authenticate(request=self.request, username=email, password=password)  # 'username' es 'email' aquí
-            print(f"Authenticate result: {user}")  # Depuración para ver si la autenticación falla
             if user is None:
                 raise forms.ValidationError("Email o contraseña incorrectos.")
             self.user = user

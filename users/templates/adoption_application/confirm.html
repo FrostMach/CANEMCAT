@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Confirmación de solicitud de adopción</h2>
+    <div class="alert alert-success" role="alert">
+      <p>¡Gracias por tu solicitud! La hemos recibido correctamente y será procesada por nuestro equipo.</p>
+      <p>Esperamos que pronto encuentres a tu nuevo amigo peludo. Mientras tanto, puedes seguir explorando más animales en nuestra página.</p>
+    </div>
+    <a href="{% url 'landing_page' %}" class="btn btn-primary">Volver a la página principal</a>
+  </div>
+{% endblock %}
