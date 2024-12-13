@@ -6,7 +6,7 @@
 <form method="post" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
     {% csrf_token %}
     {{ form.as_p }}
-    <button  type="submit">Actualizar</button>
+    <button type="submit" class="btn btn-success">Actualizar</button>
     <a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-secondary">Volver al perfil</a>
 </form>
 {% endblock %}

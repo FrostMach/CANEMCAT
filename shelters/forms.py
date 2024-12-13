@@ -125,7 +125,26 @@ class RegisterShelterForm(forms.ModelForm):
             if Shelter.objects.filter(email=email).exists():
                 raise forms.ValidationError("Este correo electrónico ya está registrado.")
             return email
+        
+class CompleteShelterForm(forms.ModelForm):
+    class Meta:
+        model = Shelter
+        fields = ['latitude', 'longitude', 'postal_code']
 
+        def clean_latitude(self):
+            latitude = self.cleaned_data.get('latitude')
+            
+            if latitude and not (-90 <= latitude <= 90):
+                raise ValidationError('La latitud debe estar entre -90 y 90.')
+            return latitude
+
+        def clean_longitude(self):
+            longitude = self.cleaned_data.get('longitude')
+
+            if longitude and not (-180 <= longitude <= 180):
+                raise ValidationError('La longitud debe estar entre -180 y 180.')
+            return longitude
+        
 class UpdateShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter

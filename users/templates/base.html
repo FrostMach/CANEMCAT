@@ -106,7 +106,7 @@
                             <a class="nav-link" href="{% url 'canem_test' %}">CanemTEST</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'dashboard' %}" class="nav-link">CanemRECOMMEND</a>
+                            <a href="{% url 'recommendations' %}" class="nav-link">CanemWISH</a>
                         </li>
                         {% endif %}
                         {% if not user.is_authenticated %}
@@ -115,6 +115,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="">CanemTEST</a>
+                        </li>
+                        <li class="nav-item" href="">
+                            <a href="" class="nav-link">CanemWISH</a>
                         </li>
                         {% endif %}
                         <!-- Opciones específicas para los trabajadores -->

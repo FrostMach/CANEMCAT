@@ -14,12 +14,14 @@
         <li><strong>Dirección: </strong>{{ shelter.address }}</li>
         <li><strong>Teléfono: </strong>{{ shelter.telephone}}</li>
         <li><strong>Correo electrónico: </strong>{{ shelter.email }}</li>
-        <li><strong>Documento acreditativo: </strong>{{ shelter.accreditation_file }}</li>
-        <li><strong>Estado de acreditación: </strong>{{ shelter.accreditation_status }}</li>
-        <li><strong>Fecha de registro: </strong>{{ shelter.register_date|date:'d-m-Y' }}</li>
-        <li><strong>Estado: </strong>{{ shelter.status }}</li>
-        <li><strong>Latitud: </strong>{{ shelter.latitude}}</li>
-        <li><strong>Longitud: </strong>{{ shelter.longitude }}</li>
+        {% if user.is_authenticated %}
+            <li><strong>Documento acreditativo: </strong>{{ shelter.accreditation_file }}</li>
+            <li><strong>Estado de acreditación: </strong>{{ shelter.accreditation_status }}</li>
+            <li><strong>Fecha de registro: </strong>{{ shelter.register_date|date:'d-m-Y' }}</li>
+            <li><strong>Estado: </strong>{{ shelter.status }}</li>
+            <li><strong>Latitud: </strong>{{ shelter.latitude }}</li>
+            <li><strong>Longitud: </strong>{{ shelter.longitude }}</li>
+        {% endif %}
         <li><strong>Código Postal: </strong>{{ shelter.postal_code }}</li>
     </ul>
 </div>

@@ -1,11 +1,13 @@
 import json
+from django.dispatch import receiver
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views import generic
+from django.views import View, generic
 from django.contrib.auth import views as auth_views
 from shelters.models import Animal
-from users.sys_recommend.sys_recommend import get_user_recommendations
-from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
+from users.sys_recommend.csv_util import export_data_to_csv, export_wishlist_to_csv, generate_animal_data
+from users.sys_recommend.recommendations import recommend_from_csv
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist, Test, AdopterProfile
 from django.contrib.auth import login, authenticate, logout, get_user_model
@@ -28,9 +30,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from .forms import TestPerroForm, TestGatoForm
 from shelters.models import Animal
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-import csv
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.signals import post_save, post_delete
 
 @never_cache
 
@@ -373,8 +375,6 @@ def activate(request, uidb64, token):
     
     return render(request, 'registration/activation_failed.html')
 
-
-
 def logout_view(request):
     logout(request)
     return redirect('landing_page') 
@@ -401,13 +401,6 @@ def wishlist_add(request):
 
     return JsonResponse({"status": "error", "message": "Método no permitido."})
 
-    # animal = get_object_or_404(Animal, id=animal_id)
-    # if request.method == 'POST':
-    #     interaction_type = request.POST.get('interaction_type')
-    #     Wishlist.objects.get_or_create(user=request.user, animal=animal, interaction_type=interaction_type)
-    #     return redirect('wishlist_list')
-    # return render(request, 'add_to_wishlist.html', {'animal': animal})
-
 @login_required
 def wishlist_remove(request, wishlist_id):
     wishlist_item = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
@@ -418,7 +411,6 @@ def wishlist_remove(request, wishlist_id):
 def wishlist_list(request):
     wishlist_items = Wishlist.objects.filter(user=request.user)
     return render(request, 'wish/list.html', {'wishlist_items': wishlist_items})
-
 
     
 class DogTestView(generic.ListView):
@@ -554,64 +546,30 @@ def resultado_test(request):
         'animal_ideal': animal_ideal,
         'especie': especie,
     })
+
 def admin_only(user):
     return user.is_authenticated and user.is_staff
 
-# @user_passes_test(admin_only)
-# def export_animals_csv(request):
-#     animals = Animal.objects.all()
+class RecommendationView(View):
+    def get(self, request):
+        try:
+            generate_animal_data()
+            user_id = request.user.id
+            
+            recommendations = recommend_from_csv(user_id)
 
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="animals.csv"'
+            data = recommendations.to_dict('records')
 
-#     writer = csv.writer(response)
-#     writer.writerow(['ID', 'Name', 'Age', 'Species', 'Description', 'Image', 'Adoption_status'])
+            for animal in data:
+                if 'image' in animal and animal['image'] and not animal['image'].startswith('/media/'):
+                    animal['image'] = f"/{animal['image']}"
 
-#     for animal in animals:
-#         writer.writerow([animal.id, animal.name, animal.age, animal.species, animal.description, animal.image, animal.adoption_status])
+            return render(request, 'recommend/list.html', {
+                'recommended_animals': data})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
 
-#     return response
-
-# @user_passes_test(admin_only)
-# def export_interactions_csv(request):
-#     interactions = Wishlist.objects.all()
-
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="interactions.csv"'
-
-#     writer = csv.writer(response)
-#     writer.writerow(['ID', 'User', 'Animals', 'Interaction_type'])
-
-#     for interaction in interactions:
-#         writer.writerow([interaction.id, interaction.user, interaction.animals, interaction.interaction_type])
-    
-#     return response
-
-@login_required
-def user_dashboard(request):
-    user = request.user
-
-    recommendations = get_user_recommendations(user)
-
-    return render(request, 'recommend/list.html', {'recommended_animals': recommendations})
-
-# @login_required
-# def get_recommendations(request):
-#     recommended_animals = user_dashboard(request.user)
-
-#     return render(request, 'recommend/list.html', {'recommendations':recommendations_list})
-
-# def record_interaction(request, animal_id, interaction_type):
-#     if request.method == 'POST':
-#         user = request.user
-#         animal = get_object_or_404(Animal, id=animal_id)
-
-#         interaction = Wishlist.object.create(user=user, animal=animal, interaction_type=interaction_type)
-
-#         return JsonResponse({
-#             'message': 'Interacción registrada exitosamente'
-#         })
-    
-#     return JsonResponse({
-#         'error': 'Método no permitido'
-#     }, status=405)    
+@receiver(post_save, sender=Wishlist)
+@receiver(post_delete, sender=Wishlist)
+def update_wishlist_csv(sender, instance, **kwargs):
+    export_wishlist_to_csv()
