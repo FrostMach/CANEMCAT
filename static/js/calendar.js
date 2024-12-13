@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             cell.addEventListener("click", () => {
-                window.openNewEventModal(date); // Si no hay evento, abre el modal para un nuevo evento
-            });
+                window.openNewEventModal(date); // Llama a la función para abrir el modal
+            });            
 
             row.appendChild(cell);
         }
@@ -106,3 +106,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadEvents();
 });
+

@@ -5,9 +5,13 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 class Event(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)  # Allow null temporarily
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="events"
+    )    
     description = models.TextField(default='')
-    date = models.DateField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
     end_time = models.TimeField(null=True, blank=True)
     color = models.CharField(max_length=7, default='#FFFFFF')  # El color en formato #hex

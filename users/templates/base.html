@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,10 +33,13 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
         body {
-        cursor: url("{% static 'images/cursorcat.png' %}"), auto;
+            cursor: url("{% static 'images/cursorcat.png' %}"),
+            auto;
         }
+
         a:hover {
-            cursor: url("{% static 'images/cursorcat2.png' %}"), pointer;
+            cursor: url("{% static 'images/cursorcat2.png' %}"),
+            pointer;
         }
     </style>
     {% block head %}{% endblock %}
@@ -50,7 +54,8 @@
                 <a class="navbar-brand" href="{% url 'landing_page' %}">
                     <img src="{% static 'images/Logo.png' %}" alt="Logo de CANEMCAT" style="width: 50px; height: auto;">
                 </a>
-                <img src="{% static 'images/logo_final.png' %}" alt="Logo adicional de CANEMCAT" style="width: 150px; height: auto;">
+                <img src="{% static 'images/logo_final.png' %}" alt="Logo adicional de CANEMCAT"
+                    style="width: 150px; height: auto;">
                 <!-- Botón de menú móvil -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +66,12 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
+                        {% if user.is_authenticated and user.user_type == 'adopter' and user.user_type == 'worker' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
                         </li>
@@ -83,7 +93,19 @@
                             </ul>
                         </li>
                         {% endif %}
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
+                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
+                                </li>
 
+                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
+                                        Protectoras</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
                         <!-- Protectoras - Dropdown, visible solo para adoptantes -->
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
                         <li class="nav-item dropdown">
@@ -92,13 +114,11 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
                                 <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
-                                        Protectoras</a></li>
                             </ul>
                         </li>
                         {% endif %}
                         <!-- CanemScan y CanemTest solo para adoptantes -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
+                        {% if user.is_authenticated%}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'canemscan' %}">CanemSCAN</a>
                         </li>
@@ -111,34 +131,21 @@
                             <a class="nav-link" href="{% url 'canemscan' %}">CanemSCAN</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">CanemTEST</a>
+                            <a class="nav-link" href="{% url 'canem_test' %}">CanemTEST</a>
                         </li>
                         {% endif %}
-                        <!-- Opciones específicas para los trabajadores -->
-                        {% if user.user_type == 'worker' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Gestionar Animales</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Planificacion</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Inventario</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Datos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Solicitudes</a>
-                        </li>
 
-                        {% endif %}
                     </ul>
 
                     <!-- Opciones específicas para los adoptantes -->
 
                     <!-- Alineación a la derecha -->
                     <ul class="navbar-nav ms-auto d-flex">
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
+                        <li class="nav-item btn btn-sm btn-primary">
+                            <a class="nav-link text-white" href="{% url 'lab' %}">CanemLAB</a>
+                        </li>
+                        {% endif %}
                         {% if user.is_authenticated %}
                         <!-- Icono de usuario y logout -->
                         <li class="nav-item dropdown">
@@ -155,7 +162,8 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
                                 <li><a class="dropdown-item" href="{% url 'profile' user.pk %}">Perfil</a></li>
-                                <li><a href="{% url 'wishlist_list' %}" class="dropdown-item">Mis Mascotas Preferidas</a></li>
+                                <li><a href="{% url 'wishlist_list' %}" class="dropdown-item">Mis Mascotas
+                                        Preferidas</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
                             </ul>
                         </li>
@@ -167,7 +175,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
                         </li>
-                    
+
                         {% endif %}
 
 
@@ -240,4 +248,5 @@
         </div>
     </div>
 </body>
+
 </html>
