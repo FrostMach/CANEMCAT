@@ -34,5 +34,5 @@ urlpatterns = [
     # path('animals/evaluate', views.evaluate_system, name='evaluate_system'),
     path('dashboard/', views.user_dashboard, name='dashboard'),
     # path('dashboard/recommendations/', views.get_recommendations, name='get_recommendations'),
-    # path('animals/<int:animal_id>/interact/<str:interaction_type>/', views.record_interaction, name='record_interaction'),    
+    # path('animals/<int:animal_id>/interact/<str:interaction_type>/', views.record_interaction, name='record_interaction'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

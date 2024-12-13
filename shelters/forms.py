@@ -62,11 +62,12 @@ class AnimalFilterForm(forms.Form):
 class AdoptionApplicationCreationForm(forms.ModelForm):
     user = forms.CharField(max_length=255, label='Nombre completo')
     shelter = forms.ModelChoiceField(queryset=Shelter.objects.all(), label="Refugio", required=True)
-    application_date = forms.DateField(initial=date.today)
+    animal = forms.ModelChoiceField(queryset=Animal.objects.filter(adoption_status='disponible'), label="Animal", required=True)
+    application_date = forms.DateField(initial=date.today, label='Fecha de solicitud')
 
     class Meta:
         model = AdoptionApplication
-        fields = ('user', 'animal', 'shelter')
+        fields = ('user', 'animal', 'shelter', 'application_date')
 
     def clean_user(self):
         user_name = self.cleaned_data['user']
@@ -84,7 +85,7 @@ class AdoptionApplicationCreationForm(forms.ModelForm):
             instance.application_date = self.cleaned_data['application_date']
         else:
             instance.application_date = date.today()
-        
+
         if commit:
             instance.save()
         return instance

@@ -29,7 +29,7 @@
                 <p><strong>Nivel de energía:</strong> {{ animal.get_energy_display }}</p>
                 <p><strong>Tipo de pelaje:</strong> {{ animal.get_fur_display }}</p>
                 <p><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
-                <a href="#" class="btn btn-primary mt-3">Solicitar Adopción</a>
+                <a href="{% url 'adoption_application_create' %}" class="btn btn-primary mt-3">Solicitar Adopción</a>
             </div>
         </div>
         
