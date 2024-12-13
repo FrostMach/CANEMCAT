@@ -551,23 +551,44 @@ def admin_only(user):
     return user.is_authenticated and user.is_staff
 
 class RecommendationView(View):
-    def get(self, request):
+       def get(self, request):
         try:
+            # Generar o cargar los datos solo si es necesario
             generate_animal_data()
+
             user_id = request.user.id
             
+            # Obtener las recomendaciones (asegúrate de que esta función retorne datos válidos)
             recommendations = recommend_from_csv(user_id)
-
+            
+            if recommendations.empty:  # Si no hay recomendaciones
+                return render(request, 'recommend/list.html', {
+                    'message': "No se encontraron recomendaciones basadas en tus preferencias."
+                })
+            
+            # Convierte las recomendaciones a un formato de lista de diccionarios
             data = recommendations.to_dict('records')
 
+            # Asegúrate de que las imágenes tengan el prefijo adecuado
             for animal in data:
-                if 'image' in animal and animal['image'] and not animal['image'].startswith('/media/'):
-                    animal['image'] = f"/{animal['image']}"
+                if 'image' in animal and animal['image']:
+                    if not animal['image'].startswith('/media/'):
+                        animal['image'] = f"/{animal['image']}"
 
             return render(request, 'recommend/list.html', {
-                'recommended_animals': data})
+                'recommended_animals': data
+            })
+
+        except FileNotFoundError as e:
+            # Manejar errores específicos, por ejemplo, si no se encuentra el archivo CSV
+            return render(request, 'recommend/list.html', {
+                'error': f"Error al cargar los datos de animales: {str(e)}"
+            })
         except Exception as e:
-            return JsonResponse({'error': str(e)})
+            # Manejo genérico de otros errores
+            return render(request, 'recommend/list.html', {
+                'error': f"Ha ocurrido un error inesperado: {str(e)}"
+            })
 
 @receiver(post_save, sender=Wishlist)
 @receiver(post_delete, sender=Wishlist)

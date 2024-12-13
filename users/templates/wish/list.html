@@ -1,26 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Mi Lista de Deseos</h1>
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
 
-    <ul class="list-group">
+    .card {
+        flex: 1 1 calc(25% - 10px);
+        max-width: calc(25% - 10px);
+        min-width: 200px;
+        position: relative;
+        overflow: visible;
+        margin: 10px;
+    }
+
+    .card-img-top {
+        display: block;
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex: 1 1 calc(50% - 10px); /* Cambiar a 2 columnas en pantallas medianas */
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card {
+            flex: 1 1 calc(100% - 10px); /* Cambiar a 1 columna en pantallas pequeñas */
+        }
+    }
+</style>
+
+<h1>Mi Lista de Deseos</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
         {% for item in wishlist_items %}
-            <li class="list-group-item list-group-item-info">
-                {% if item.interaction_type == 'favorite' %}
-                    <label for="name">Nombre: </label> {{ item.animal.name }}<p>
-                    <label for="species">Especie: </label> {{item.animal.species}}<p>
-                    <label for="age">Edad: </label> {{item.animal.age}}</p>
-                    <label for="img">Foto: </label><img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="img-fluid"></p>
-                    <form action="{% url 'wishlist_remove' item.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                    </form>
-                {% endif %}
-            </li>
+            {% if item.interaction_type == 'favorite' %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card" style="width: 100%;">
+                        <img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">Nombre:</h5> {{ item.animal.name }}
+                            <p><strong>Especie: </strong>{{item.animal.species}}</p>
+                            <p><strong>Edad: </strong>{{item.animal.age}}</p>
+            
+                            <form action="{% url 'wishlist_remove' item.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% empty %}
             <li>No hay mascotas favoritas en la lista</li>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 
-    <a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
+<a href="{% url 'animals-list' %}" class="btn btn-secondary">Volver al listado</a>
 {% endblock %}

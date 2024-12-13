@@ -1,22 +1,46 @@
 {% extends 'base.html' %}
 
-{% block title %} Registro Protectora {% endblock %}
+{% block title %} Alta Protectora {% endblock %}
 {% block content %}
-    <h1>Registro Centro de Adopción</h1>
+<div class="d-flex justify-content-center align-items-center bg-light">
+    <div class="w-100" style="max-width: 600px;">
+        <h1 class="text-center mb-4">Alta Centro de Adopción</h1>
 
-    <form method="post" enctype="multipart/form-data" class="mt-4 p-4 bg-white shadow-sm rounded">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-success" type="submit">Registrar</button>
-    </form>
-    
-    {% if form.errors %}
-        <ul>
+        <form method="post" enctype="multipart/form-data" class="p-4 bg-white shadow-sm rounded">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
             {% for field in form %}
-                {% for error in field.errors %}
-                    <li>{{ field.name }}: {{ error }}</li>
-                {% endfor %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
+                    <div class="d-flex flex-column">
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    
+                    {% if field.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in field.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
             {% endfor %}
-        </ul>
-    {% endif %}
+            <button class="btn btn-success w-100 py-2" type="submit">Registrar</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

@@ -90,8 +90,7 @@
         <p>¿Te gustaría ver las sugerencias de mascotas idóneas para ti?</p>
 
         <div class="confirmation-buttons" id="confirmationButtons">
-            <button id="confirmYes" class="btn btn-success">Sí</button>
-            <a href="{% url 'animals-list' %}" id="confirmNo" class="btn btn-secondary">No</a>
+            <button id="confirmYes" class="btn btn-success">Recomendarme</button>
         </div>
     </div>
     
@@ -121,7 +120,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Obtener los elementos del DOM
             const confirmYes = document.getElementById('confirmYes');
-            const confirmNo = document.getElementById('confirmNo');
             const questionContainer = document.getElementById('questionContainer');
             const recommendedAnimals = document.getElementById('recommendedAnimals');
             const confirmationButtons = document.getElementById('confirmationButtons');
@@ -148,11 +146,6 @@
                         }, index * 1000);  // El retraso aumenta con cada tarjeta (1 segundo de diferencia)
                     });
                 }, 500); 
-            });
-
-            // Redirigir al listado de animales si el usuario hace clic en "No"
-            confirmNo.addEventListener('click', function() {
-                window.location.href = '{% url "animals-list" %}';
             });
 
             images.forEach(image => {

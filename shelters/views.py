@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
 from .models import Animal
+from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from users.models import Wishlist
 
@@ -173,19 +175,26 @@ def shelter_approval(request, shelter_id):
 def admin_only(user):
     return user.is_authenticated and user.is_staff
 
-@login_required
-@user_passes_test(admin_only)
-def register_shelter(request):
-    if request.method == 'POST':
-        form = RegisterShelterForm(request.POST, request.FILES)
-        
-        if form.is_valid():
-            form.save()
-            return redirect('shelter_list')
-    else:
-        form = RegisterShelterForm()
 
-    return render(request, 'shelter/register.html', {'form': form})
+# def register_shelter(request):
+#     if request.method == 'POST':
+#         form = RegisterShelterForm(request.POST, request.FILES)
+        
+#         if form.is_valid():
+#             form.save()
+#             return redirect('shelter_list')
+#     else:
+#         form = RegisterShelterForm()
+
+#     return render(request, 'shelter/register.html', {'form': form})
+
+class ShelterRegistrationView(LoginRequiredMixin, CreateView):
+    model = Shelter
+    form_class = RegisterShelterForm
+    template_name = 'shelter/register.html'
+    
+    def get_success_url(self):
+        return reverse('view_shelter', kwargs={'pk':self.object.pk})
 
 @staff_member_required
 def complete_shelter_registration(request, shelter_id):
@@ -219,6 +228,16 @@ class UpdateShelterView(generic.UpdateView):
     
     def get_success_url(self):
         return reverse('view_shelter', kwargs={'pk':self.object.pk})
+    
+    def get_form(self, form_class=None):
+        # Sobrescribimos el método `get_form` para agregar las clases 'form-control' a todos los campos
+        form = super().get_form(form_class)
+        
+        # Añadir la clase 'form-control' a cada campo del formulario
+        for field in form:
+            field.field.widget.attrs.update({'class': 'form-control'})
+        
+        return form
 
 class DeleteShelterView(generic.DeleteView):
     model = Shelter
