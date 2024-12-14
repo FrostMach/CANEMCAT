@@ -8,6 +8,7 @@
     <button id="prev-month" class="btn btn-primary">Anterior</button>
     <span id="month-year" class="h4 mx-3"></span>
     <button id="next-month" class="btn btn-primary">Siguiente</button>
+    <button id="edit-event-btn" class="btn btn-warning">Editar Evento</button>
 </div>
 
 <table border="1" class="table mt-3">
@@ -35,6 +36,7 @@
             </div>
             <div class="modal-body">
                 <form id="event-form">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="event-date" class="form-label">Fecha</label>
                         <input type="date" class="form-control" id="event-date" required>
@@ -58,18 +60,20 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="edit-event" class="btn btn-primary" style="display: none;">Editar Evento</button>
+                <!-- Botón para editar evento -->
+                <button id="edit-event" class="btn btn-warning" style="display: none;">Editar Evento</button>
+                <!-- Botón para guardar evento -->
                 <button type="button" id="save-event" class="btn btn-success">Guardar Evento</button>
             </div>
+
         </div>
     </div>
 </div>
 
-<!-- Lista de eventos -->
-<div id="events-list-container">
-    <h3>Eventos del Usuario</h3>
-    <ul id="events-list"></ul>
-</div>
 
+
+
+<script src="{% static 'js/modify-events.js' %}"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
 
 {% endblock %}

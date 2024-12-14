@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
 from .models import Animal, Event
-
+from django.core.paginator import Paginator
 from users.models import Wishlist
 
 # Create your views here.
@@ -24,44 +24,76 @@ def calendar_view(request):
     return render(request, 'shelter/navegador/calendar.html')
 
 import json
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_time
 from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt  # Esto es si quieres permitir que se haga un POST sin CSRF token, puede ser necesario si se está usando en un formulario externo
+def user_events(request):
+    if not request.user.is_authenticated:
+        # Si el usuario no está autenticado, redirige o muestra un mensaje de error
+        return render(request, 'error.html', {'message': 'Por favor, inicie sesión para ver los eventos.'})
+
+    # Obtener todos los eventos del usuario autenticado
+    events = Event.objects.filter(user=request.user).order_by('date', 'start_time')
+
+    # Paginación: Mostrar 5 eventos por página
+    paginator = Paginator(events, 5)
+    page = request.GET.get('page')
+    events_page = paginator.get_page(page)
+
+    # Pasar los eventos paginados a la plantilla
+    # Pasar los eventos paginados a la plantilla
+    return render(request, 'calendar.html', {
+        'events': events_page,
+        'is_paginated': events_page.has_other_pages(),  # Ver si hay más de una página
+        'page_obj': events_page,  # El objeto de la página actual
+})
 
 @csrf_exempt
 def edit_event(request, event_id):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        
-        # Obtener el evento por su ID
         try:
-            event = Event.objects.get(id=event_id)
-        except Event.DoesNotExist:
-            return JsonResponse({'error': 'Evento no encontrado'}, status=404)
+            data = json.loads(request.body)
+            
+            # Validación de campos requeridos
+            required_fields = ['description', 'date', 'start_time', 'end_time', 'color']
+            for field in required_fields:
+                if field not in data or not data[field]:
+                    return JsonResponse({'error': f'El campo {field} es obligatorio'}, status=400)
 
-        # Verificar si el usuario está autorizado para editar el evento
-        if event.user != request.user:
-            return JsonResponse({'error': 'No tienes permisos para editar este evento'}, status=403)
+            # Obtener el evento por su ID
+            try:
+                event = Event.objects.get(id=event_id)
+            except Event.DoesNotExist:
+                return JsonResponse({'error': 'Evento no encontrado'}, status=404)
 
-        # Actualizar los campos del evento
-        event.description = data['description']
-        event.date = parse_date(data['date'])
-        event.start_time = data['start_time']
-        event.end_time = data['end_time']
-        event.color = data['color']
-        
-        event.save()
+            # Verificar permisos del usuario
+            if event.user != request.user:
+                return JsonResponse({'error': 'No tienes permisos para editar este evento'}, status=403)
 
-        return JsonResponse({
-            'success': True,
-            'event': {
-                'id': event.id,
-                'date': event.date.strftime('%Y-%m-%d'),
-                'description': event.description,
-                'start_time': event.start_time.strftime('%H:%M'),
-                'end_time': event.end_time.strftime('%H:%M'),
-                'color': event.color
-            }
-        })
+            # Actualizar los campos del evento
+            event.description = data['description']
+            event.date = parse_date(data['date'])
+            event.start_time = parse_time(data['start_time'])
+            event.end_time = parse_time(data['end_time'])
+            event.color = data['color']
+            event.save()
+
+            # Respuesta JSON con los datos actualizados
+            return JsonResponse({
+                'success': True,
+                'event': {
+                    'id': event.id,
+                    'date': event.date.strftime('%Y-%m-%d'),
+                    'description': event.description,
+                    'start_time': event.start_time.strftime('%H:%M'),
+                    'end_time': event.end_time.strftime('%H:%M'),
+                    'color': event.color
+                }
+            })
+        except ValueError:
+            return JsonResponse({'error': 'Datos inválidos'}, status=400)
+
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 @csrf_exempt
@@ -87,13 +119,18 @@ def load_events(request, year, month):
     
     return JsonResponse({'events': event_data})
 
+from datetime import datetime
+
 def save_event(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        date = parse_date(data['date'])
+        
+        # Convierte las fechas y horas a objetos datetime
+        date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+        start_time = datetime.strptime(data['start_time'], '%H:%M').time()
+        end_time = datetime.strptime(data['end_time'], '%H:%M').time()
+        
         description = data['description']
-        start_time = data['start_time']
-        end_time = data['end_time']
         color = data['color']
         user = request.user  # Suponiendo que el usuario está autenticado
         
