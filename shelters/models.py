@@ -5,11 +5,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 class Event(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="events"
-    )    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events")    
     description = models.TextField(default='')
     date = models.DateField(auto_now_add=True, null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
@@ -18,6 +14,7 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.description} ({self.date})"
+
 
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')

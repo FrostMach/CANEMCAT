@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // Obtener el token CSRF desde el campo oculto dentro del modal
+    // Obtener el token CSRF desde el campo oculto
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
     
     // Abre el modal al hacer clic en el icono de chat

@@ -43,7 +43,7 @@ def user_events(request):
 
     # Pasar los eventos paginados a la plantilla
     # Pasar los eventos paginados a la plantilla
-    return render(request, 'calendar.html', {
+    return render(request, 'shelter/navegador/calendar.html', {
         'events': events_page,
         'is_paginated': events_page.has_other_pages(),  # Ver si hay más de una página
         'page_obj': events_page,  # El objeto de la página actual

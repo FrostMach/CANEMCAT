@@ -242,12 +242,14 @@
                     <input type="text" id="user_input" class="form-control" placeholder="Escribe tu mensaje...">
                     <button type="button" class="btn btn-primary" id="sendMessageButton">Enviar</button>
 
-                    <!-- CSRF Token escondido -->
+                    <!-- Token CSRF -->
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 </div>
             </div>
         </div>
     </div>
+
+
 </body>
 
 </html>
