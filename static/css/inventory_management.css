@@ -1,0 +1,195 @@
+/* Variables de colores */
+:root {
+    --primary-blue: #0056b3;
+    --primary-blue-light: #007bff;
+    --secondary-blue: #e3f2fd;
+    --light-blue: #f1f8ff;
+    --dark-blue: #003c82;
+    --text-gray: #6c757d;
+    --white: #ffffff;
+    --warning-blue: #339af0; /* Azul equivalente al amarillo */
+    --danger-blue: #1c7ed6; /* Azul equivalente al rojo */
+}
+
+/* General */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--light-blue);
+    color: var(--text-gray);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1, h3, h4 {
+    color: var(--dark-blue);
+}
+
+p {
+    color: var(--text-gray);
+}
+
+/* Botones */
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--white);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-blue-light);
+    transform: scale(1.05);
+}
+
+.btn-warning {
+    background-color: var(--warning-blue);
+    border-color: var(--warning-blue);
+    color: var(--white);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: var(--primary-blue-light);
+    transform: scale(1.05);
+}
+
+.btn-danger {
+    background-color: var(--dark-blue);
+    border-color: var(--dark-blue);
+    color: var(--white);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: var(--primary-blue-light);
+    transform: scale(1.05);
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+/* Tablas */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+    background-color: var(--white);
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #dee2e6;
+}
+
+.table thead th {
+    background-color: var(--secondary-blue);
+    color: var(--dark-blue);
+    font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: var(--light-blue);
+}
+
+.table tbody tr:hover {
+    background-color: var(--secondary-blue);
+    cursor: pointer;
+}
+
+/* Pestañas */
+.nav-tabs {
+    border-bottom: 2px solid var(--primary-blue-light);
+}
+
+.nav-tabs .nav-item {
+    margin-bottom: -1px;
+}
+
+.nav-tabs .nav-link {
+    background-color: var(--white);
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: var(--dark-blue);
+    padding: 10px 15px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue) var(--primary-blue) var(--white);
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--white);
+}
+
+/* Otros elementos */
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rounded {
+    border-radius: 8px;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.bg-white {
+    background-color: var(--white) !important;
+}
+
+.p-3 {
+    padding: 1rem;
+}
+
+.p-4 {
+    padding: 1.5rem;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .d-flex {
+        flex-direction: column;
+    }
+
+    .table th, .table td {
+        font-size: 0.9rem;
+    }
+}
+

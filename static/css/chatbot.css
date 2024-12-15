@@ -1,17 +1,31 @@
 /* Estilo para el icono del chat flotante */
+/* Estilo para el icono del chat flotante */
+/* Estilo para el icono del chat flotante */
 #chat-icon {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #5cb85c;
-    color: white;
-    border-radius: 50%;
-    padding: 5px;
-    font-size: 24px;
+    bottom: 10px;
+    right: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: none; /* Elimina la sombra */
     z-index: 9999;
+    background-color: transparent; /* Sin fondo */
+    border-radius: 0; /* Sin bordes redondeados */
+    padding: 0; /* Elimina el espacio interno */
+    opacity: 0; /* Empieza invisible */
+    animation: fadeIn 3s ease-in forwards;
+    animation-delay: 2s; /* Espera 2 segundos antes de iniciar */
 }
+
+/* Definición de la animación */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 
 /* Estilo para el modal de chat */
 #chatModal .modal-content {
@@ -63,4 +77,75 @@
 
 #chatbox div:last-child {
     margin-bottom: 0;
+}
+
+/* Bocadillo de diálogo */
+#chat-bubble {
+    position: absolute;
+    bottom: 105%; /* Posición del bocadillo por encima del ícono */
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0; /* Oculto inicialmente */
+    animation: showBubble 3s ease-in-out forwards, hideBubble 1s ease-out forwards;
+    animation-delay: 2s, 10s; /* 2s para aparecer, y luego 10s antes de desaparecer */
+}
+
+/* Triángulo del bocadillo */
+#chat-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f1f1f1;
+}
+
+/* Animación del bocadillo */
+@keyframes showBubble {
+    0% {
+        opacity: 0;
+        transform: translateX(50%) translateY(10px) scale(0.9);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(50%) translateY(-5px) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(50%) translateY(0) scale(1);
+    }
+}
+
+/* Animación del bocadillo para ocultar */
+@keyframes hideBubble {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(50%) translateY(-10px);
+    }
+}
+
+/* Clase que desactiva la animación */
+.no-animation #chat-icon {
+    opacity: 1; /* Directamente visible */
+    animation: none; /* Sin animación */
+}
+
+.no-animation #chat-bubble {
+    opacity: 0; /* Bocadillo oculto si ya se ejecutó */
+    animation: none; /* Sin animación */
 }

@@ -1,0 +1,90 @@
+/* Estilo para la sección de filtros */
+.filter-section {
+    background-color: #3b6e41; /* Fondo verde */
+    padding: 20px;
+    border-radius: 10px; /* Bordes redondeados */
+    color: white; /* Texto en blanco */
+}
+
+.filter-section h2 {
+    color: white; /* Título en blanco */
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.filter-form .form-group {
+    margin-bottom: 15px;
+}
+
+.filter-form label {
+    font-weight: bold;
+    color: white;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.filter-form select {
+    border-radius: 10px; /* Redondear bordes de los selects */
+    border: 1px solid #ccc;
+    padding: 8px;
+    width: 100%;
+}
+
+.filter-form button {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #3b6e41; /* Texto verde */
+    border: 2px solid #3b6e41; /* Borde verde */
+    border-radius: 10px; /* Bordes redondeados */
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-form button:hover {
+    background-color: #3b6e41; /* Fondo verde al pasar el cursor */
+    color: white; /* Texto blanco al pasar el cursor */
+}
+
+/* Estilo para la tarjeta de los animales */
+.card {
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.card img {
+    border-top-left-radius: 10px; /* Redondear parte superior de la imagen */
+    border-top-right-radius: 10px;
+}
+
+.card .card-body {
+    padding: 20px;
+}
+
+.card .card-title {
+    font-weight: bold;
+    color: #3b6e41; /* Título verde */
+}
+
+.card .btn-primary {
+    background-color: #3b6e41;
+    border: none;
+    color: white;
+    border-radius: 10px;
+}
+
+.card .btn-primary:hover {
+    background-color: #2e5332;
+}
+
+/* Paginación */
+.pagination .page-item .page-link {
+    color: #3b6e41;
+    border-radius: 10px;
+    border: 1px solid #3b6e41;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #3b6e41;
+    color: white;
+}

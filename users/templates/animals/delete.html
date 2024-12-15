@@ -1,12 +1,15 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'shelter/base2.html' %}
+{% load static %}
 
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/delete.css' %}">
 <div class="container mt-5">
     <h2 class="text-center text-white">Eliminar Animal</h2>
     
     <div class="mt-4 bg-white">
         <p>¿Estás seguro de que deseas eliminar este animal?</p>
     
+        <!-- El formulario utiliza el método POST para enviar la solicitud de eliminación -->
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
@@ -14,7 +17,9 @@
             </div>
         </form>
 
-        <a href="{% url 'animals-list' %}" class="btn btn-secondary">Cancelar</a>
+        <!-- Enlace para cancelar y volver a la lista de animales -->
+        <a href="{% url 'animal_list' %}" class="btn btn-secondary">Cancelar</a>
     </div>
 </div>
+
 {% endblock %}

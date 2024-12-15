@@ -1,0 +1,168 @@
+{% extends 'shelter/base2.html' %}
+{% load static %}
+
+{% block title %}
+Gestión de Inventario
+{% endblock %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/inventory_management.css' %}">
+<div class="container mt-4 bg-white p-4 rounded shadow-sm">
+    <h1 class="text-center">Gestión de Inventario</h1>
+    <p class="text-center">Aquí puedes gestionar todo el stock relacionado con la protectora.</p>
+
+    <!-- Botón para agregar nuevos elementos -->
+    <div class="d-flex justify-content-between mb-4 bg-white p-3 rounded shadow-sm">
+        <h3>Lista de Categorías</h3>
+        <a href="{% url 'add_item' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Añadir nuevo ítem
+        </a>
+    </div>
+
+    <!-- Pestañas de Categorías -->
+    <ul class="nav nav-tabs bg-white p-3 rounded shadow-sm" id="inventoryTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="food-tab" data-bs-toggle="tab" href="#food" role="tab" aria-controls="food" aria-selected="true">Alimentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="medications-tab" data-bs-toggle="tab" href="#medications" role="tab" aria-controls="medications" aria-selected="false">Medicamentos y Vacunas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="others-tab" data-bs-toggle="tab" href="#others" role="tab" aria-controls="others" aria-selected="false">Otros</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <!-- Alimentos -->
+        <div class="tab-pane fade show active bg-white p-4 rounded shadow-sm" id="food" role="tabpanel" aria-labelledby="food-tab">
+            <h4>Alimentos</h4>
+            <table class="table table-striped table-bordered bg-white">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Cantidad</th>
+                        <th>Fecha de Caducidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in food_items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.get_category_display }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            {% if item.no_expiration %}
+                                Sin fecha de caducidad
+                            {% else %}
+                                {{ item.expiration_date|date:"d/m/Y" }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_item' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No hay alimentos disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Medicamentos y Vacunas -->
+        <div class="tab-pane fade bg-white p-4 rounded shadow-sm" id="medications" role="tabpanel" aria-labelledby="medications-tab">
+            <h4>Medicamentos y Vacunas</h4>
+            <table class="table table-striped table-bordered bg-white">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Cantidad</th>
+                        <th>Fecha de Caducidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in medication_items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.get_category_display }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            {% if item.no_expiration %}
+                                Sin fecha de caducidad
+                            {% else %}
+                                {{ item.expiration_date|date:"d/m/Y" }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_item' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No hay medicamentos disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Otros -->
+        <div class="tab-pane fade bg-white p-4 rounded shadow-sm" id="others" role="tabpanel" aria-labelledby="others-tab">
+            <h4>Otros</h4>
+            <table class="table table-striped table-bordered bg-white">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Cantidad</th>
+                        <th>Fecha de Caducidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in other_items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.get_category_display }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            {% if item.no_expiration %}
+                                Sin fecha de caducidad
+                            {% else %}
+                                {{ item.expiration_date|date:"d/m/Y" }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_item' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'delete_item' item.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No hay otros ítems disponibles.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

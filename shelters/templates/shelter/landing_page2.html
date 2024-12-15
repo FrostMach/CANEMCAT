@@ -100,14 +100,14 @@
         }
     };
 
-    // Gráfico de distribución de animales
+    // Gráfico de distribución de animales (sin "Otros")
     new Chart(document.getElementById('animalDistributionChart').getContext('2d'), {
         type: 'doughnut',
         data: {
-            labels: ['Perros', 'Gatos', 'Otros'],
+            labels: ['Perros', 'Gatos'],
             datasets: [{
-                data: [70, 45, 5],
-                backgroundColor: ['#007bff', '#28a745', '#ffc107']
+                data: [70, 45],
+                backgroundColor: ['#007bff', '#28a745']
             }]
         },
         options: {
@@ -141,15 +141,15 @@
         plugins: [whiteBackgroundPlugin]
     });
 
-    // Gráfico de tiempo promedio en la protectora
+    // Gráfico de tiempo promedio en la protectora (sin "Otros")
     new Chart(document.getElementById('averageStayChart').getContext('2d'), {
         type: 'bar',
         data: {
-            labels: ['Perros', 'Gatos', 'Otros'],
+            labels: ['Perros', 'Gatos'],
             datasets: [{
                 label: 'Días promedio',
-                data: [30, 45, 20],
-                backgroundColor: ['#007bff', '#28a745', '#ffc107']
+                data: [30, 45],
+                backgroundColor: ['#007bff', '#28a745']
             }]
         },
         options: {
@@ -269,5 +269,6 @@
     });
 </script>
 {% endblock %}
+
 
 

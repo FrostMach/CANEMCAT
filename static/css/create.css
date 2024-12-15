@@ -1,0 +1,148 @@
+/* Variables de color */
+:root {
+    --primary-blue: #0056b3;
+    --primary-blue-light: #007bff;
+    --secondary-blue: #e3f2fd;
+    --light-blue: #f1f8ff;
+    --dark-blue: #003c82;
+    --gray: #6c757d;
+    --white: #ffffff;
+    --danger-red: #dc3545;
+    --success-green: #28a745;
+}
+
+/* Estilo general del cuerpo */
+body {
+    background-color: var(--light-blue);
+    font-family: 'Arial', sans-serif;
+    color: var(--gray);
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilo del título */
+h2 {
+    color: var(--white); /* Texto blanco */
+    background-color: var(--primary-blue); /* Fondo azul */
+    padding: 10px; /* Espaciado interno */
+    margin: 0; /* Eliminar márgenes externos */
+    text-align: center; /* Centrar el texto */
+    font-size: 1.75rem; /* Tamaño de fuente */
+    font-weight: bold; /* Texto en negrita */
+    border-radius: 0; /* Sin bordes redondeados */
+    box-shadow: none; /* Eliminar sombra */
+    border: none; /* Eliminar bordes */
+}
+
+/* Tarjeta del formulario */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--white);
+}
+
+/* Estilo del cuerpo de la tarjeta */
+.card-body {
+    padding: 30px;
+}
+
+/* Etiquetas del formulario */
+.form-label {
+    font-weight: bold;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+}
+
+/* Campos del formulario */
+.form-control {
+    border: 1px solid var(--secondary-blue);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue-light);
+    box-shadow: 0 0 6px var(--primary-blue-light);
+}
+
+/* Mensajes de error */
+.invalid-feedback {
+    color: var(--danger-red);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Ayuda en texto */
+.form-text {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+/* Botones */
+button.btn-primary {
+    background-color: var(--primary-blue);
+    border: none;
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button.btn-primary:hover {
+    background-color: var(--primary-blue-light);
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+}
+
+a.btn-secondary {
+    background-color: var(--secondary-blue);
+    color: var(--dark-blue);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a.btn-secondary:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--white);
+}
+
+/* Espaciado entre campos del formulario */
+.row.g-3 > .col-md-6 {
+    margin-bottom: 20px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+        padding: 10px;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    button.btn-primary,
+    a.btn-secondary {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+

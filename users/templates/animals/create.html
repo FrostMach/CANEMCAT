@@ -1,10 +1,20 @@
 {% extends 'shelter/base2.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/create.css' %}">
 <div class="container mt-4">
-    <!-- Fondo blanco y estilo centrado para el título -->
-    <div class="bg-white py-3 px-4 rounded shadow-sm mb-4">
-        <h2 class="text-center text-dark mb-0">Registrar Nuevo Animal</h2>
+    <!-- Estilo corregido para el título con bordes redondeados -->
+    <div class="py-3 mb-4">
+        <h2 class="text-center mb-0" style="
+            color: white; 
+            background-color: #0056b3; 
+            padding: 10px; 
+            margin: 0; 
+            border: none; 
+            border-radius: 10px;">
+            Registrar Nuevo Animal
+        </h2>
     </div>
 
     <!-- Formulario con etiquetas encima de los campos -->

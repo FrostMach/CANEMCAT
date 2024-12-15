@@ -169,3 +169,4 @@ EMAIL_SUBJECT_PREFIX="Recuperar contraseña"
 LOGIN_REDIRECT_URL = '/dashboard/'  # Página a la que se redirige después de loguearse
 LOGOUT_REDIRECT_URL = 'landing_page'  # Página a la que se redirige después de cerrar sesión
 LOGIN_URL = '/login/'
+

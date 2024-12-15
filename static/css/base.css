@@ -1,6 +1,6 @@
 body {
     height: 100%; 
-    background-image: url( '../images/fondo.jpg' ); 
+    background-image: url( '../images/fondo2.png' ); 
     background-size: cover; 
     background-position: center; 
     display: flex; 
@@ -23,3 +23,13 @@ body {
     display: none;
     position: absolute;
 }
+
+.footer-color {
+    background-color: #3b6e41;
+}
+
+/* Desplaza hacia abajo el texto de copyright */
+.footer-color .footer-copyright {
+    margin-top: 20px; /* Ajusta este valor según el desplazamiento que desees */
+}
+

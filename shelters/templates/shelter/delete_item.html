@@ -1,0 +1,23 @@
+{% extends 'shelter/base2.html' %}
+
+{% block title %}
+Eliminar Ítem
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 bg-white p-4 rounded shadow-sm">
+    <h1 class="mb-4">Eliminar Ítem</h1>
+    <p>¿Estás seguro de que deseas eliminar el ítem <strong>{{ item.name }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Botón Eliminar -->
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        
+        <!-- Botón Cancelar -->
+        <a href="{% url 'inventory_management' %}" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
+
+

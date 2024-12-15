@@ -21,6 +21,7 @@
     <div class="p-4 rounded shadow mt-5" id="form-container" style="display: none; opacity: 0;">
         <form id="upload-form" style="visibility: hidden; height: 0; margin: 0; padding: 0;">
             {% csrf_token %}
+            <input type="hidden" id="animal-type" name="animal_type" value="">
             <label for="image" class="form-label" style="font-size: 1.1rem; color: #004d40;">Sube una imagen:</label>
             <input type="file" id="image" name="image" accept="image/*" required class="form-control mb-3">
             <button type="submit" class="btn btn-success btn-block shadow">Subir y analizar</button>
@@ -114,12 +115,37 @@
     let uploadedImageId = null;
 
     document.getElementById('dog-button').addEventListener('click', function () {
-        showUploadForm("Sube una imagen de tu perro:");
-    });
+    // Realizar una solicitud POST para guardar 'perro' en la sesión
+    saveAnimalType('perro');
+    showUploadForm("Sube una imagen de tu perro:");
+});
 
-    document.getElementById('cat-button').addEventListener('click', function () {
-        showUploadForm("Sube una imagen de tu gato:");
+document.getElementById('cat-button').addEventListener('click', function () {
+    // Realizar una solicitud POST para guardar 'gato' en la sesión
+    saveAnimalType('gato');
+    showUploadForm("Sube una imagen de tu gato:");
+});
+
+async function saveAnimalType(animalType) {
+    const response = await fetch('/guardar_animal/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken(), // Asegúrate de incluir el CSRF token
+        },
+        body: JSON.stringify({ animal_type: animalType }),
     });
+    if (!response.ok) {
+        console.error('Error al guardar el tipo de animal.');
+    }
+}
+
+// Función para obtener el CSRF token
+function getCsrfToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    return csrfToken;
+}
+
 
     function showUploadForm(labelText) {
         const uploadForm = document.getElementById('upload-form');

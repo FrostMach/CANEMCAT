@@ -35,7 +35,7 @@ class AnimalUpdateView(generic.UpdateView):
 class AnimalDeleteView(generic.DeleteView):
     model = Animal
     template_name = 'animals/delete.html'
-    success_url = reverse_lazy('animals-list')
+    success_url = reverse_lazy('animal_list')
 
 class AnimalListView(generic.ListView):
     model = Animal
@@ -249,3 +249,52 @@ def shelters_by_postal_code(request):
 
 def landing_page2(request):
     return render(request, 'shelter/landing_page2.html')
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Item
+from .forms import ItemForm  # Crearemos este formulario más adelante
+from django.contrib import messages
+
+def inventory_management(request):
+    food_items = Item.objects.filter(category='alimentos')
+    medication_items = Item.objects.filter(category='medicamentos_vacunas')
+    other_items = Item.objects.filter(category='otros')
+    
+    return render(request, 'shelter/inventory_management.html', {
+        'food_items': food_items,
+        'medication_items': medication_items,
+        'other_items': other_items,
+    })
+
+
+def add_item(request):
+    if request.method == 'POST':
+        form = ItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Ítem añadido correctamente!')
+            return redirect('inventory_management')
+    else:
+        form = ItemForm()
+    return render(request, 'shelter/add_item.html', {'form': form})
+
+def edit_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    if request.method == 'POST':
+        form = ItemForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Ítem actualizado correctamente!')
+            return redirect('inventory_management')
+    else:
+        form = ItemForm(instance=item)
+    return render(request, 'shelter/edit_item.html', {'form': form, 'item': item})
+
+def delete_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    if request.method == 'POST':
+        item.delete()
+        messages.success(request, '¡Ítem eliminado correctamente!')
+        return redirect('inventory_management')
+    return render(request, 'shelter/delete_item.html', {'item': item})
+

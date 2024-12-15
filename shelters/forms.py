@@ -131,3 +131,34 @@ class UpdateShelterForm(forms.ModelForm):
         model = Shelter
         fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'status',
                    'latitude', 'longitude', 'postal_code']
+        
+from .models import Item
+
+from django import forms
+from .models import Item
+
+class ItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ['name', 'category', 'quantity', 'description', 'expiration_date', 'no_expiration']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción'}),
+            'expiration_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'no_expiration': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        expiration_date = cleaned_data.get('expiration_date')
+        no_expiration = cleaned_data.get('no_expiration')
+
+        if no_expiration and expiration_date:
+            raise forms.ValidationError("No puedes seleccionar una fecha de caducidad si marcas 'Sin fecha de caducidad'.")
+        
+        if not no_expiration and not expiration_date:
+            raise forms.ValidationError("Debes proporcionar una fecha de caducidad o marcar 'Sin fecha de caducidad'.")
+
+        return cleaned_data

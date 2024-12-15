@@ -1,49 +1,57 @@
-$(document).ready(function() {
-    // Obtener el token CSRF desde el campo oculto dentro del modal
+$(document).ready(function () {
+    // Detectar si estamos en la landing page (raíz del dominio)
+    const isLandingPage = window.location.pathname === '/';
+
+    if (isLandingPage) {
+        // Si estamos en la landing, permitir que la animación se ejecute siempre
+        localStorage.removeItem('chatAnimationPlayed'); // Borra cualquier estado previo para reiniciar la animación
+    }
+
+    // Comprobar si la animación ya se ejecutó
+    if (localStorage.getItem('chatAnimationPlayed') === 'true') {
+        // Añadir clase para desactivar animaciones
+        $('body').addClass('no-animation');
+    } else {
+        // Marcar que la animación ya se ejecutó
+        localStorage.setItem('chatAnimationPlayed', 'true');
+    }
+
+    // Resto del código para el chatbot
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-    
-    // Abre el modal al hacer clic en el icono de chat
-    $('#chat-icon').click(function() {
+
+    $('#chat-icon').click(function () {
         $('#chatModal').modal('show');
     });
 
-    // Función para enviar el mensaje del usuario
-    $('#sendMessageButton').click(function() {
+    $('#sendMessageButton').click(function () {
         var message = $('#user_input').val();
-        if (message.trim() === '') return; // No enviar si está vacío
+        if (message.trim() === '') return;
 
-        // Mostrar el mensaje del usuario en el chatbox
         $('#chatbox').append('<div><b>Usuario:</b> ' + message + '</div>');
-        
-        // Limpiar el campo de entrada
         $('#user_input').val('');
 
-        // Enviar el mensaje al servidor usando jQuery AJAX
         $.ajax({
-            url: '/chat/',  // La URL a la que se hace la solicitud
+            url: '/chat/',
             method: 'POST',
             data: {
-                'message': message,  // El mensaje que el usuario escribió
-                'csrfmiddlewaretoken': csrfToken  // Usar el token CSRF desde el campo oculto
+                'message': message,
+                'csrfmiddlewaretoken': csrfToken,
             },
-            success: function(data) {
-                // Mostrar la respuesta del chatbot en el chatbox
+            success: function (data) {
                 $('#chatbox').append('<div><b>ChatBot:</b> ' + data.response + '</div>');
-                
-                // Desplazar el chatbox hacia abajo para mostrar el mensaje más reciente
                 $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
             },
-            error: function() {
-                // Si ocurre un error, mostrar un mensaje en el chatbox
+            error: function () {
                 $('#chatbox').append('<div><b>Error:</b> No se pudo obtener respuesta del chatbot.</div>');
-            }
+            },
         });
     });
 
-    // También asociar la función al presionar "Enter"
-    $('#user_input').on('keypress', function(e) {
-        if (e.which === 13) {  // 13 es la tecla Enter
+    $('#user_input').on('keypress', function (e) {
+        if (e.which === 13) {
             $('#sendMessageButton').click();
         }
     });
 });
+
+

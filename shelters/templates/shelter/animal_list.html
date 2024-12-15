@@ -1,7 +1,8 @@
 {% extends 'shelter/base2.html' %}
+{% load static %}
 
 {% block content %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'css/animal_list.css' %}">
 <!-- Barra de filtros -->
 <div class="filter-section">
     <h2>Animales en adopción</h2>
@@ -40,10 +41,9 @@
                 <img src="{{ animal.image.url }}" class="card-img-top small-img" alt="{{ animal.name }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ animal.name }}</h5>
-                    <p class="card-text"><strong>Sexo:</strong> {{ animal.sex }}</p>
+                    <p class="card-text"><strong>Sexo:</strong> {{ animal.sex|capfirst }}</p>
                     <p class="card-text"><strong>Descripción:</strong> {{ animal.description }}</p>
-                    <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status }}</p>
-                    <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
+                    <p class="card-text"><strong>Estado de adopción:</strong> {{ animal.adoption_status|capfirst }}</p>
                     <div class="btn-group" role="group" aria-label="Acciones">
                         <a href="{% url 'animals-update' animal.id %}" class="btn btn-warning">Editar</a>
                         <a href="{% url 'animals-delete' animal.id %}" class="btn btn-danger">Eliminar</a>

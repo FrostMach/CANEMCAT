@@ -1,0 +1,58 @@
+{% extends 'shelter/base2.html' %}
+
+{% block title %}
+Editar Ítem
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 bg-white p-4 rounded shadow-sm">
+    <h1 class="mb-4">Editar Ítem: {{ item.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Campo Nombre -->
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Nombre del producto</label>
+            {{ form.name }}
+        </div>
+
+        <!-- Campo Categoría -->
+        <div class="mb-3">
+            <label for="id_category" class="form-label">Categoría</label>
+            {{ form.category }}
+        </div>
+
+        <!-- Campo Cantidad -->
+        <div class="mb-3">
+            <label for="id_quantity" class="form-label">Cantidad</label>
+            {{ form.quantity }}
+        </div>
+
+        <!-- Campo Descripción -->
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <!-- Campo Fecha de caducidad -->
+        <div class="mb-3">
+            <label for="id_expiration_date" class="form-label">Fecha de caducidad</label>
+            {{ form.expiration_date }}
+        </div>
+
+        <!-- Campo Sin fecha de caducidad -->
+        <div class="form-check mb-3">
+            {{ form.no_expiration }}
+            <label class="form-check-label ms-2" for="id_no_expiration">Sin fecha de caducidad</label>
+        </div>
+
+        <!-- Botón Actualizar -->
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+
+    <!-- Botón Volver -->
+    <a href="{% url 'inventory_management' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% endblock %}
+
+

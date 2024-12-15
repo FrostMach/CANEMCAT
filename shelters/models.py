@@ -80,11 +80,6 @@ class Animal(models.Model):
         """
         if self.species == 'perro' and not self.size:
             raise ValidationError({'size': 'El tamaño es obligatorio para los perros.'})
-    
-    def save(self, *args, **kwargs):
-        # Asegura que el estado de adopción tiene la primera letra en mayúscula antes de guardarlo
-        self.adoption_status = self.adoption_status.capitalize()
-        super().save(*args, **kwargs)    
 
 class StatusEnum(Enum):
     PENDING = 'P', 'Pendiente'
@@ -103,3 +98,28 @@ class AdoptionApplication(models.Model):
     application_date = models.DateField(default=date.today)
     def __str__(self):
         return f"Solicitud de adopción de {self.user.full_name} para {self.animal}"
+    
+    from django.db import models
+
+class Item(models.Model):
+    CATEGORY = [
+        ('alimentos', 'Alimentos'),
+        ('medicamentos_vacunas', 'Medicamentos y Vacunas'),
+        ('otros', 'Otros'),
+    ]
+    
+    name = models.CharField(max_length=100, verbose_name="Nombre del producto")
+    category = models.CharField(max_length=20, choices=CATEGORY, verbose_name="Categoría")
+    quantity = models.PositiveIntegerField(verbose_name="Cantidad")
+    description = models.TextField(blank=True, verbose_name="Descripción")
+    expiration_date = models.DateField(
+        null=True, blank=True, verbose_name="Fecha de caducidad"
+    )
+    no_expiration = models.BooleanField(
+        default=False, verbose_name="Sin fecha de caducidad"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
+
+    def __str__(self):
+        return self.name

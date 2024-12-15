@@ -1,0 +1,93 @@
+:root {
+    --primary-blue: #0056b3;
+    --primary-blue-light: #007bff;
+    --secondary-blue: #e3f2fd;
+    --light-blue: #f1f8ff;
+    --dark-blue: #003c82;
+    --text-gray: #6c757d;
+    --white: #ffffff;
+    --warning-blue: #339af0;
+    --danger-blue: #1c7ed6;
+}
+
+body {
+    background-color: var(--light-blue);
+    font-family: 'Arial', sans-serif;
+    color: var(--text-gray);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    color: var(--white);
+    background-color: var(--primary-blue);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.bg-white {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: var(--dark-blue);
+}
+
+button.btn-danger {
+    background-color: var(--danger-blue);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-danger:hover {
+    background-color: #1b6ec2; /* Un tono más oscuro del danger blue */
+}
+
+a.btn-secondary {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: var(--secondary-blue);
+    color: var(--dark-blue);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a.btn-secondary:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}

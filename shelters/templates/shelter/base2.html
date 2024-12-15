@@ -23,22 +23,93 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <style>
+        /* General body styles */
         body {
             background-image: url("{% static 'images/fondo_lab2.png' %}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            color: #6c757d;
         }
-    </style>
-    <style>
-        body {
-        cursor: url("{% static 'images/cursorcat.png' %}"), auto;
-        }
-        a:hover {
-            cursor: url("{% static 'images/cursorcat2.png' %}"), pointer;
-        }
-    </style>
 
+        /* Navbar styles */
+        .navbar {
+            background-color: #0056b3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            height: 70px; /* Ajusta según tu preferencia */
+            padding: 10px 15px; /* Define un padding fijo */
+            transition: none; /* Evita cambios animados de altura */
+        }
+
+        .navbar-brand img {
+            width: 50px;
+            height: auto;
+        }
+
+        .navbar-nav .nav-link {
+            color: white;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1f8ff;
+            background-color: #007bff;
+        }
+
+        .navbar-toggler {
+            border-color: white;
+        }
+
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            color: #003c82;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Button and interactive element cursors */
+        body,
+        * {
+            cursor: url("{% static 'images/cursorcat.png' %}"), auto !important;
+        }
+
+        .btn,
+        .btn:hover,
+        .btn:focus,
+        .btn:active,
+        a,
+        a:hover,
+        a:focus,
+        a:active,
+        .dropdown-toggle,
+        .dropdown-toggle:hover,
+        .dropdown-toggle:focus {
+            cursor: url("{% static 'images/cursorcat2.png' %}"), pointer !important;
+        }
+
+        input[type="submit"],
+        select {
+            cursor: url("{% static 'images/cursorcat2.png' %}"), pointer !important;
+        }
+    </style>
+    
     {% block head %}{% endblock %}
 </head>
 
@@ -62,7 +133,6 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -73,23 +143,8 @@
                                 <li><a class="dropdown-item" href="{% url 'animals-create' %}">Registrar nuevo animal</a></li>
                             </ul>
                         </li>
-                        {% endif %}
 
-                        {% if not user.is_authenticated %}
-                        <!-- Animales - Dropdown para usuarios no autenticados -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Gestión de animales
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
-                                <li><a class="dropdown-item" href="{% url 'animal_list' %}">Lista de animales</a></li>
-                                <li><a class="dropdown-item" href="{% url 'animals-create' %}">Registrar nuevo animal</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
-
-                        <!-- Protectoras - Dropdown -->
+                        <!-- Planificación -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">Planificación</a>
@@ -98,12 +153,9 @@
                             </ul>
                         </li>
 
-                        <!-- Otras opciones comunes -->
+                        <!-- Otras opciones -->
                         <li class="nav-item">
-                            <a class="nav-link" href="">Inventario</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="">Datos</a>
+                            <a class="nav-link" href="{% url 'inventory_management' %}">Inventario</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="">Solicitudes</a>
@@ -113,7 +165,6 @@
                     <!-- Alineación a la derecha -->
                     <ul class="navbar-nav ms-auto d-flex">
                         {% if user.is_authenticated %}
-                        <!-- Icono de usuario y logout -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -121,7 +172,7 @@
                                 <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" class="rounded-circle"
                                     width="30">
                                 {% else %}
-                                <i class="bi bi-person-circle"></i> <!-- Icono de usuario -->
+                                <i class="bi bi-person-circle"></i>
                                 {% endif %}
                                 {{ user.full_name }}
                             </a>
@@ -131,7 +182,6 @@
                             </ul>
                         </li>
                         {% else %}
-                        <!-- Enlace de registro -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'signup' %}">Registrar</a>
                         </li>
@@ -141,10 +191,10 @@
             </div>
         </nav>
 
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </div>
 </body>
 
 </html>
+
 
