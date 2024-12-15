@@ -3,33 +3,34 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/list.css' %}">
+
 <!-- Barra de filtros -->
 <div class="filter-section">
     <h2>Animales en adopción</h2>
-
-    <!-- Barra de filtros -->
+    
+    <!-- Formulario de filtros -->
     <form method="get" class="filter-form mb-4">
         <div class="form-row justify-content-between">
             <div class="col-md-2 form-group">
                 <label>{{ filter_form.species.label_tag }}</label>
                 {{ filter_form.species }}
             </div>
+
             <div class="col-md-2 form-group">
                 <label>{{ filter_form.sex.label_tag }}</label>
                 {{ filter_form.sex }}
             </div>
+
             <div class="col-md-2 form-group">
                 <label>{{ filter_form.size.label_tag }}</label>
                 {{ filter_form.size }}
             </div>
+
             <div class="col-md-2 form-group">
                 <label>{{ filter_form.adoption_status.label_tag }}</label>
                 {{ filter_form.adoption_status }}
             </div>
-            <div class="col-md-2 form-group">
-                <label>{{ filter_form.shelter.label_tag }}</label>
-                {{ filter_form.shelter }}
-            </div>
+
             <div class="col-md-2 form-group d-flex align-items-end">
                 <button type="submit" class="btn btn-primary w-100">Filtrar</button>
             </div>
@@ -51,13 +52,15 @@
                     <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
                     <div class="btn-group" role="group" aria-label="Acciones">
                         <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
-                        <a href="{% url 'animals-delete' animal.id %}" class="btn btn-success">Solicitar adopción</a>
+                        <a href="{% url 'confirm_adoption' animal.id %}" class="btn btn-primary">Solicitar Adopción</a>
                     </div>
                 </div>
             </div>
         </div>
     {% empty %}
-        <p>No se encontraron animales con los filtros seleccionados.</p>
+        <div class="bg-light py-5">
+            <p class="text-center">No se encontraron animales con los filtros seleccionados.</p>
+        </div>
     {% endfor %}
 </div>
 
@@ -87,5 +90,6 @@
 </div>
 
 {% endblock %}
+
 
 

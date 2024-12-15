@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Solicitudes de Adopción - {{ shelter_name }}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Animal</th>
+                <th>Solicitante</th>
+                <th>Fecha de Solicitud</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in adoption_applications %}
+            <tr>
+                <td>{{ application.animal.name }}</td>
+                <td>{{ application.user.full_name }}</td>
+                <td>{{ application.application_date }}</td>
+                <td>
+                    {% if application.status == 'P' %}
+                        <span class="badge badge-warning">Pendiente</span>
+                    {% elif application.status == 'A' %}
+                        <span class="badge badge-success">Aprobada</span>
+                    {% elif application.status == 'D' %}
+                        <span class="badge badge-danger">Denegada</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if application.status == 'P' %}
+                        <form action="{% url 'update_adoption_application' application.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="approve" class="btn btn-success">Aprobar</button>
+                            <button type="submit" name="action" value="deny" class="btn btn-danger">Denegar</button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">Acción no disponible</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay solicitudes de adopción pendientes.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

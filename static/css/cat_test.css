@@ -1,0 +1,75 @@
+/* Estilos generales */
+body {
+    background-color: #f9f9f9; /* Fondo suave */
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    background-color: #ffffff; /* Fondo blanco para el formulario */
+    border-radius: 15px; /* Bordes redondeados */
+    border: 1px solid #ddd; /* Bordes con color tenue */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    padding: 20px; /* Espaciado interno */
+}
+
+/* Estilo para los encabezados */
+h2, h5 {
+    color: #198754; /* Verde principal */
+    margin-bottom: 10px;
+}
+
+/* Estilo para las preguntas */
+.question {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f7fcf9; /* Fondo verde claro */
+    border: 1px solid #cce3d8; /* Bordes verdes suaves */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Estilo para etiquetas y selects */
+label {
+    font-weight: bold;
+    color: #333; /* Color del texto */
+}
+
+.form-select {
+    border-radius: 8px; /* Bordes redondeados */
+    border: 1px solid #cce3d8; /* Bordes verdes suaves */
+    background-color: #ffffff;
+    padding: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(25, 135, 84, 0.5);
+    border-color: #198754; /* Verde principal */
+}
+
+/* Botón de enviar */
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+    border-radius: 8px; /* Bordes redondeados */
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #145c38; /* Oscurecer el verde al pasar el cursor */
+}
+
+/* Estilos para mejorar la transición de preguntas */
+.question {
+    transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
+    transform: translateY(10px);
+}
+
+.question[style*="opacity: 1"] {
+    transform: translateY(0);
+}
+
+/* Sombra suave para preguntas activas */
+.question:focus-within {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

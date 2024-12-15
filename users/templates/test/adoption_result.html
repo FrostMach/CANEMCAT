@@ -3,16 +3,43 @@
 {% block title %}Cat Test{% endblock %}
 
 {% block content %}
-
-<div class="container bg-light pb-3">
+<link rel="stylesheet" type="text/css" href="{% static 'css/adoption_result.css' %}">
+<div class="container bg-light py-3 my-5">
     <h1>Resultado del Test</h1>
+    <h2>Los animales que más se acercan a tus preferencias son:</h2>
 
-    {% if animal_ideal %}
-        <h2>El animal ideal para ti es:</h2>
-        <h3>{{ animal_ideal.name }}</h3>
-        <img class="w-25" src="{{ animal_ideal.image.url }}" alt="{{ animal_ideal.name }}">
+    {% if animales_adecuados %}
+        <div class="row">
+            {% for animal_adecuado in animales_adecuados %}
+                <div class="col-md-4 mb-4 tarjeta-animal" style="opacity: 0;">
+                    <div class="card border-0">
+                        <img class="card-img-top" src="{{ animal_adecuado.image.url }}" alt="{{ animal_adecuado.name }}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ animal_adecuado.name }}</h5>
+                            <p class="card-text"><strong>Edad:</strong> {{ animal_adecuado.age }}</p>
+                            <p class="card-text"><strong>Sexo:</strong> {{ animal_adecuado.sex|capfirst }}</p>
+                            <p class="card-text"><strong>Descripción:</strong> {{ animal_adecuado.description }}</p>
+                            <p class="card-text"><strong>Protectora:</strong> {{ animal_adecuado.shelter.name }}</p>
+                            <a href="{% url 'confirm_adoption' animal_adecuado.id %}" class="btn btn-primary">Solicitar Adopción</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>No se encontró un animal ideal. Intenta de nuevo.</p>
     {% endif %}
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tarjetas = document.querySelectorAll('.tarjeta-animal');
+        tarjetas.forEach((tarjeta, index) => {
+            setTimeout(() => {
+                tarjeta.style.opacity = 1;
+                tarjeta.style.transition = 'opacity 2s';
+            }, index * 1500); // Retraso progresivo de 500ms entre tarjetas
+        });
+    });
+</script>
 {% endblock %}

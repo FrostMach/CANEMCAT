@@ -1,0 +1,90 @@
+/* Definición de variables de color */
+:root {
+    --color-darkest: #485C4C;   /* Verde más oscuro */
+    --color-darker: #5C9074;    /* Verde oscuro */
+    --color-medium: #58A681;    /* Verde medio */
+    --color-light: #8EB59C;     /* Verde claro */
+    --color-lightest: #89B398;  /* Verde muy claro */
+    --color-white: #FFFFFF;     /* Blanco */
+    --transition-speed: 0.3s;   /* Velocidad de transiciones */
+}
+
+/* Estilo general */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--color-lightest);
+    color: var(--color-darkest);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 600px;
+    animation: fadeIn var(--transition-speed);
+}
+
+/* Tarjetas y contenedores */
+.p-4 {
+    background-color: var(--color-white);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones */
+.btn {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+}
+
+.btn-success {
+    background-color: var(--color-darker);
+    color: var(--color-white);
+}
+
+.btn-success:hover {
+    transform: scale(1.05);
+    background-color: var(--color-darkest);
+}
+
+.btn-animated {
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+}
+
+.btn-animated:hover {
+    transform: scale(1.1);
+    background-color: var(--color-darkest);
+}
+
+label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

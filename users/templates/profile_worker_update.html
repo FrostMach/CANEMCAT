@@ -1,0 +1,13 @@
+<!-- profile_update.html -->
+
+{% block content %}
+<div class="container bg-light my-5 py-5">
+  <h2>Editar Perfil</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+  </form>
+  <a href="{% url 'worker' user.pk %}">Volver al perfil</a>
+</div>
+{% endblock %}

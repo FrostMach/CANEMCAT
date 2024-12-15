@@ -6,96 +6,204 @@
 
 
 <!-- Contenido principal -->
-<div class="jumbotron text-center mt-4" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div class="container jumbotron text-center mt-4" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <h1 class="display-4" style="color: #333;">Bienvenido/a a CANEMCAT</h1>
     <p class="lead" style="color: #555;">La plataforma que utiliza inteligencia artificial para facilitar la adopción de perros y gatos.</p>
 </div>
 
-<!-- Contenedores desplegables -->
-<div class="container mt-4">
-    <div class="row">
-        <!-- Primer recuadro desplegable -->
-        <div class="col-md-6 mb-3">
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                            CanemSCAN
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div class="accordion-body" style="background-color: #ffffff; border-radius: 8px; padding: 1rem;">
-                            Esta herramienta te permite subir la imagen de un perro o un gato para que una inteligencia artificial la analice y determine la raza más probable del animal. Una vez analizada, se te dará la opción de comparar el animal de la imagen con los que hay en las distintas protectoras. Si te interesa adoptar alguno, podrás acceder a su ficha para solicitarlo.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Segundo recuadro desplegable -->
-        <div class="col-md-6 mb-3">
-            <div class="accordion" id="accordionExample2">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                            CanemTEST
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample2">
-                        <div class="accordion-body" style="background-color: #ffffff; border-radius: 8px; padding: 1rem;">
-                            Esta herramienta interactiva que te ayudará a determinar qué mascota es la más adecuada para ti según tus preferencias, estilo de vida y necesidades. Responde unas preguntas simples y descubre qué perros o gatos podrían encajar mejor contigo.
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- Contenedor en fila -->
+<div class="pentagon-container mt-5 mb-5">
+    <div class="pentagon-item" onclick="rotateCard(this)">
+        <div class="pentagon-content">
+            <div class="front">CanemSCAN</div>
+            <div class="back">Sube la imagen de un perro o gato para determinar su raza. Podrás comparar la imagen con animales de las protectoras.</div>
         </div>
     </div>
-
-    <div class="row">
-        <!-- Tercer recuadro desplegable -->
-        <div class="col-md-6 mb-3">
-            <div class="accordion" id="accordionExample3">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                            CanemCHAT
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample3">
-                        <div class="accordion-body" style="background-color: #ffffff; border-radius: 8px; padding: 1rem;">
-                            Este asistente virtual te guiará por las distintas secciones de la plataforma. Haz preguntas o pide ayuda para encontrar lo que buscas.
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="pentagon-item" onclick="rotateCard(this)">
+        <div class="pentagon-content">
+            <div class="front">CanemTEST</div>
+            <div class="back">Responde preguntas simples para descubrir qué mascota es adecuada para ti según tus preferencias, estilo de vida y necesidades.</div>
         </div>
-
-        <!-- Cuarto recuadro desplegable -->
-        <div class="col-md-6 mb-3">
-            <div class="accordion" id="accordionExample4">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFour">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                            CanemLAB
-                        </button>
-                    </h2>
-                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample4">
-                        <div class="accordion-body" style="background-color: #ffffff; border-radius: 8px; padding: 1rem;">
-                            Plataforma exclusiva para los empleados de las protectoras que utilicen CanemCAT como herramienta de trabajo. Este módulo presenta una serie de funciones como:
-                            <ul>
-                                <li>Análisis de datos</li>
-                                <li>Registro y edición de animales</li>
-                                <li>Planificación</li>
-                                <li>Control de inventario</li>
-                                <li>Gestión de solicitudes de adopción</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+    <div class="pentagon-item" onclick="rotateCard(this)">
+        <div class="pentagon-content">
+            <div class="front">CanemWISH</div>
+            <div class="back">Recomendaciones personalizadas de perros y gatos ideales para ti basadas en tus interacciones en la plataforma.</div>
+        </div>
+    </div>
+    <div class="pentagon-item" onclick="rotateCard(this)">
+        <div class="pentagon-content">
+            <div class="front">CanemCHAT</div>
+            <div class="back">Un asistente virtual que te guiará por la plataforma, ayudándote a encontrar lo que necesitas.</div>
+        </div>
+    </div>
+    <div class="pentagon-item" onclick="rotateCard(this)">
+        <div class="pentagon-content">
+            <div class="front">CanemLAB</div>
+            <div class="back">Funciones exclusivas para empleados de protectoras: análisis de datos, registro y edición de animales, gestión de adopciones, y más.</div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --color-darker: #485C4C;
+    }
+
+    .pentagon-container {
+        display: flex; /* Cambiar a disposición en fila */
+        justify-content: space-between; /* Espacio uniforme entre los elementos */
+        align-items: center; /* Alinear verticalmente al centro */
+        width: 100%; /* O ajustar según necesidad */
+        max-width: 1200px; /* Ancho máximo opcional */
+        margin: 0 auto; /* Centrar el contenedor horizontalmente */
+    }
+
+    .pentagon-item {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        perspective: 1000px;
+        cursor: pointer;
+        margin: 0 10px; /* Separación entre elementos */
+    }
+
+    .pentagon-content {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+    }
+
+    .pentagon-content .front,
+    .pentagon-content .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        font-size: 0.9rem;
+    }
+
+    /* Aplicar color de fondo y texto a la parte frontal */
+    .pentagon-content .front {
+        background-color: var(--color-darker);
+        color: #ffffff; /* Color blanco para el texto */
+        font-weight: bold;
+        font-size: 1.5rem; /* Aumenta el tamaño del texto */
+    }
+
+    .pentagon-content .back {
+        background-color: #f5f5f5;
+        color: #555;
+        transform: rotateY(180deg);
+        overflow: auto;
+    }
+
+    .pentagon-content.rotated {
+        transform: rotateY(180deg);
+    }
+</style>
+
+<script>
+function rotateCard(element) {
+    const content = element.querySelector('.pentagon-content');
+    content.classList.toggle('rotated');
+}
+</script>
+
+{% if animals %}
+<div class="row justify-content-center my-4">
+    <div class="col-12 text-center">
+        <h2 class="bg-white p-2 shadow-sm rounded" style="display: inline-block;">Animales que buscan una nueva familia</h2>
+    </div>
+    <div class="carousel-container" style="max-width: 800px; margin: 0 auto;">
+        <div id="carouselAnimal" class="carousel slide mt-4 carousel-animal" data-bs-ride="carousel">
+            <!-- Indicadores del Carousel -->
+            <ol class="carousel-indicators">
+                {% for animal in animals %}
+                <li data-bs-target="#carouselAnimal" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+                {% endfor %}
+            </ol>
+
+            <!-- Contenido del Carousel -->
+            <div class="carousel-inner">
+                {% for animal in animals %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ animal.name }}</h5>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Controles del Carousel -->
+            <a class="carousel-control-prev" href="#carouselAnimal" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselAnimal" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<p class="text-center">No hay animales disponibles para mostrar en el slider.</p>
+{% endif %}
+
+<div class="container my-5">
+    {% if news %}
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="bg-white p-2 shadow-sm rounded" style="display: inline-block;">Noticias</h2>
+        </div>
+    </div>
+    <div id="carouselNews" class="carousel slide mt-4 carousel-news" data-bs-ride="carousel">
+        <!-- Indicadores del Carousel -->
+        <ol class="carousel-indicators">
+            {% for new in news %}
+            <li data-bs-target="#carouselNews" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+            {% endfor %}
+        </ol>
+
+        <!-- Contenido del Carousel -->
+        <div class="carousel-inner">
+            {% for new in news %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ new.title }}</h5>
+                    <p>{{ new.content|truncatewords:20 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Controles del Carousel -->
+        <a class="carousel-control-prev" href="#carouselNews" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselNews" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+    {% else %}
+    <p class="text-center">No hay noticias disponibles para mostrar.</p>
+    {% endif %}
+</div>
+
 
 {% endblock %}
 

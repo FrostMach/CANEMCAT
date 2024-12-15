@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container bg-light py-5 my-5">    
+    <h2>Mis Solicitudes de Adopción</h2>
+
+    {% if adoption_applications %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Estado</th>
+                    <th>Fecha de Solicitud</th>
+                    <th>Protectora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in adoption_applications %}
+                    <tr>
+                        <td>{{ application.animal.name }}</td>
+                        <td>
+                            {% if application.status == 'P' %}
+                                Pendiente
+                            {% elif application.status == 'A' %}
+                                Aprobada
+                            {% else %}
+                                Denegada
+                            {% endif %}
+                        </td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.shelter.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="container bg-light py-5 my-5">
+        <p>No tienes solicitudes de adopción.</p>
+    </div>
+    {% endif %}
+{% endblock %}

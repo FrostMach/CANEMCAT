@@ -1,0 +1,139 @@
+/* Definición de variables de color */
+:root {
+    --color-darkest: #485C4C;   /* Verde más oscuro */
+    --color-darker: #5C9074;    /* Verde oscuro */
+    --color-medium: #58A681;    /* Verde medio */
+    --color-light: #8EB59C;     /* Verde claro */
+    --color-lightest: #89B398;  /* Verde muy claro */
+    --color-white: #FFFFFF;     /* Blanco */
+    --transition-speed: 0.3s;   /* Velocidad de transiciones */
+}
+
+/* Estilo general */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--color-lightest);
+    color: var(--color-darkest);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 600px;
+    animation: fadeIn var(--transition-speed);
+}
+
+/* Tarjetas y contenedores */
+.p-4 {
+    background-color: var(--color-white);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones */
+.btn {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+}
+
+.btn-primary {
+    background-color: var(--color-medium);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    background-color: var(--color-darker);
+}
+
+.btn-success {
+    background-color: var(--color-darker);
+    color: var(--color-white);
+}
+
+.btn-success:hover {
+    transform: scale(1.05);
+    background-color: var(--color-darkest);
+}
+
+/* Formulario */
+#form-container {
+    display: none;
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+}
+
+#form-container.visible {
+    display: block;
+    opacity: 1;
+}
+
+input[type="file"] {
+    border: 1px solid var(--color-light);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+input[type="file"]:focus {
+    outline: none;
+    border-color: var(--color-medium);
+}
+
+/* Cargando */
+#loading-container {
+    display: none;
+    animation: fadeIn var(--transition-speed);
+}
+
+/* Imagen subida */
+#uploaded-image {
+    border: 3px solid var(--color-light);
+    border-radius: 0.5rem;
+    max-width: 100%;
+}
+
+/* Tarjetas de comparación */
+.card {
+    width: 200px;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform var(--transition-speed);
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    border-bottom: 3px solid var(--color-light);
+}
+
+.card-title {
+    color: var(--color-darkest);
+    font-weight: bold;
+}
+
+.card-text {
+    color: var(--color-medium);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

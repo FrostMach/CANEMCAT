@@ -33,8 +33,8 @@ def validate_email(value):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     USER_TYPES = (
-        ('adopter', 'Adopter'),  # Persona que adopta
-        ('worker', 'Shelter Worker'),  # Trabajador de protectora
+        ('adopter', 'Adoptante'),  # Persona que adopta
+        ('worker', 'Trabajador de protectora'),  # Trabajador de protectora
     )
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
@@ -126,3 +126,13 @@ class Wishlist(models.Model):
                 name='unique_user_animal_interaction'
             )
         ]
+        
+class News(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    image = models.ImageField(upload_to='news_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    

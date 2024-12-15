@@ -114,12 +114,12 @@
 </head>
 
 <body>
-    <div class="container mt-4" style="flex-grow: 1;">
+    <div class="w-100" style="flex-grow: 1;">
         <!-- Barra de navegación -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <!-- Logo -->
-                <a class="navbar-brand" href="{% url 'landing_page' %}">
+                <a class="navbar-brand" href="{% url 'lab' %}">
                     <img src="{% static 'images/Logo.png' %}" alt="Logo de CANEMCAT" style="width: 50px; height: auto;">
                 </a>
 
@@ -133,6 +133,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -143,6 +144,7 @@
                                 <li><a class="dropdown-item" href="{% url 'animals-create' %}">Registrar nuevo animal</a></li>
                             </ul>
                         </li>
+                        {% endif %}
 
                         <!-- Planificación -->
                         <li class="nav-item dropdown">
@@ -158,12 +160,21 @@
                             <a class="nav-link" href="{% url 'inventory_management' %}">Inventario</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">Solicitudes</a>
+                            <a class="nav-link" href="{% url 'adoption_application_list_shelterworker' %}">Solicitudes</a>
                         </li>
                     </ul>
 
                     <!-- Alineación a la derecha -->
                     <ul class="navbar-nav ms-auto d-flex">
+                        {% if user.is_authenticated and user.user_type == 'worker' %}
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="btn btn-sm btn-success text-white d-flex align-items-center justify-content-center fw-bold" 
+                               href="{% url 'landing_page' %}" 
+                               style="height: 40px; width: 150px; padding: 0; font-size: 1rem; line-height: 1.5; border-radius: 4px;">
+                                CanemUSERS
+                            </a>
+                        </li>
+                        {% endif %}
                         {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
@@ -177,7 +188,7 @@
                                 {{ user.full_name }}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                                <li><a class="dropdown-item" href="">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile_worker' user.pk %}">Perfil</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
                             </ul>
                         </li>

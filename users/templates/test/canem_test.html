@@ -3,35 +3,27 @@
 {% block title %}Dog or Cat?{% endblock %}
 
 {% block content %}
-<div class="container bg-light py-5">
-    <h2 class="text-center text-success mb-5" data-aos="fade-up" data-aos-duration="1500">¿Qué especie prefieres?</h2>
+<link rel="stylesheet" type="text/css" href="{% static 'css/canemtest.css' %}">
+    <div class="container my-5 text-center" style="max-width: 600px; animation: fadeIn 1s;">
+        <div class="p-4 rounded shadow" style="background-color: white;">
+            <h1 class="mb-4" style="color: #004d40; font-weight: bold;">CanemTEST</h1>
+            <p style="font-size: 1.2rem; color: #00695c;">¿Qué especie prefieres?</p>
+        </div>
     <form method="POST" action="{% url 'resultado_test' %}">
         {% csrf_token %}
-        <!-- Fila para las cards -->
-        <div class="row justify-content-center">
-            <!-- Card para Perro -->
-            <div class="col-12 col-md-5 mb-4" data-aos="flip-left" data-aos-duration="1500" data-aos-delay="300">
-                <div class="card h-100 shadow-lg border-0 rounded-3 py-5">
-                    <div class="card-body text-center">
-                        <input type="radio" id="perro" name="especie" value="Perro" class="d-none" onclick="location.href='{% url 'dog_test' %}'">
-                        <label for="perro" class="card-title mb-3 text-success w-100">
-                            <h3 class="card-title mb-3 text-success">Perro</h5>
-                        </label>
-                    </div>
-                </div>
+        <div class="d-flex justify-content-center gap-4 mt-4">
+            <div class="btn btn-lg btn-success shadow btn-animated">
+                <label for="perro">
+                    <input type="radio" id="perro" name="especie" value="Perro" class="d-none " onclick="location.href='{% url 'dog_test' %}'">
+                    <span class="text-white">Perro</span>
+                </label>
             </div>
-
-            <!-- Card para Gato -->
-            <div class="col-12 col-md-5 mb-4" data-aos="flip-right" data-aos-duration="1500" data-aos-delay="300">
-                <div class="card h-100 shadow-lg border-0 rounded-3 py-5">
-                    <div class="card-body text-center">
-                        <input type="radio" id="gato" name="especie" value="Gato" class="d-none" onclick="location.href='{% url 'cat_test' %}'">
-                        <label for="gato" class="card-title mb-3  w-100">
-                            <h3 class="card-title mb-3 text-success">Gato</h5>
-                        </label>
-                    </div>
-                </div>
-            </div>
+            <div class="btn btn-lg btn-success shadow btn-animated">
+                <label for="gato">    
+                    <input type="radio" id="gato" name="especie" value="Gato" class="d-none" onclick="location.href='{% url 'cat_test' %}'">
+                    <span class="text-white">Gato</span>
+                </label>
+            </div>    
         </div>
     </form>
 </div>

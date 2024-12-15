@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, ShelterWorkerProfile, AdopterProfile
+from .models import CustomUser, ShelterWorkerProfile, AdopterProfile, News
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -20,6 +20,13 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email', 'full_name')
     ordering = ('email',)
 
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at', 'image')  # Los campos que se mostrarán en la lista de noticias
+    search_fields = ('title', 'content')  # Permite buscar por título o contenido
+    list_filter = ('created_at',)  # Filtros para ordenar por fecha de creación
+
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(ShelterWorkerProfile)
 admin.site.register(AdopterProfile)
+admin.site.register(News, NewsAdmin)
+

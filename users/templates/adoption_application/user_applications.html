@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Mis solicitudes de adopción</h2>
+    <ul class="list-group">
+      {% for application in object_list %}
+        <li class="list-group-item">
+          <h5>{{ application.animal.name }} - Estado: {{ application.get_status_display }}</h5>
+          <p>Fecha de solicitud: {{ application.application_date }}</p>
+        </li>
+      {% empty %}
+        <li class="list-group-item">No tienes solicitudes de adopción.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

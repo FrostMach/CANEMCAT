@@ -13,9 +13,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
 from .models import Animal
-
-from users.models import Wishlist
-
+from users.models import AdopterProfile, Wishlist
 # Create your views here.
 
 #ANIMALES
@@ -24,7 +22,7 @@ class AnimalCreateView(generic.CreateView):
     model = Animal
     form_class = AnimalForm
     template_name = 'animals/create.html'
-    success_url = reverse_lazy('animals-list')
+    success_url = reverse_lazy('animal_list')
 
 class AnimalUpdateView(generic.UpdateView):
     model = Animal
@@ -52,7 +50,11 @@ class AnimalListView(generic.ListView):
             species = form.cleaned_data.get("species")
             sex = form.cleaned_data.get("sex")
             size = form.cleaned_data.get("size")
+            adoption_status = form.cleaned_data.get("adoption_status")
             shelter = form.cleaned_data.get("shelter")
+
+            if adoption_status:
+                adoption_status = adoption_status.capitalize()  # Asegura que el valor tiene la primera letra mayúscula
 
             if species:
                 queryset = queryset.filter(species=species)
@@ -60,8 +62,12 @@ class AnimalListView(generic.ListView):
                 queryset = queryset.filter(sex=sex)
             if size:
                 queryset = queryset.filter(size=size)
+            if adoption_status:
+                queryset = queryset.filter(adoption_status=adoption_status)
             if shelter:
                 queryset = queryset.filter(shelter=shelter)
+
+        queryset = queryset.order_by('id')  # O usa otro campo para ordenar según tus necesidades
 
         return queryset
 
@@ -85,15 +91,21 @@ class AnimalShelterListView(generic.ListView):
             species = form.cleaned_data.get("species")
             sex = form.cleaned_data.get("sex")
             size = form.cleaned_data.get("size")
+            adoption_status = form.cleaned_data.get("adoption_status")
             shelter = form.cleaned_data.get("shelter")
-
+            
+            if adoption_status:
+                adoption_status = adoption_status.capitalize()  # Asegura que el valor tiene la primera letra mayúscula
+            
             if species:
                 queryset = queryset.filter(species=species)
             if sex:
                 queryset = queryset.filter(sex=sex)
             if size:
                 queryset = queryset.filter(size=size)
-
+            if adoption_status:
+                queryset = queryset.filter(adoption_status=adoption_status)
+            
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -123,17 +135,33 @@ class AnimalDetailView(generic.DetailView):
     
 #SOLICITUD DE ADOPCIÓN    
     
-class AdoptionApplicationCreateView(generic.CreateView):
-    model = AdoptionApplication
-    form_class = AdoptionApplicationCreationForm
-    template_name = 'adoption_application/create.html'
-    success_url = reverse_lazy('solicitud_adopcion_confirm')
+
 
 class AdoptionApplicationConfirmationView(generic.ListView):
     model = AdoptionApplication
     fields = ['user','animal','center']
     template_name = 'adoption_application/confirm.html'
     success_url = reverse_lazy('landing_page')
+
+class AdoptionApplicationStatusView(generic.UpdateView):
+    model = AdoptionApplication
+    fields = ['status']
+    template_name = 'adoption_application/status_update.html'
+    success_url = reverse_lazy('solicitud_adopcion_confirm')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['application'] = self.object
+        return context
+
+class UserAdoptionApplicationsView(generic.ListView):
+    model = AdoptionApplication
+    template_name = 'adoption_application/user_applications.html'
+
+    def get_queryset(self):
+        # Asegúrate de filtrar las solicitudes según el usuario actual
+        return AdoptionApplication.objects.filter(user=self.request.user)
+
 
 def create_adoption_application(request):
     if request.method == 'POST':

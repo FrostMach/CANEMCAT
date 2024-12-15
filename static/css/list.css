@@ -1,13 +1,23 @@
+/* Declaración de variables de colores */
+:root {
+    --color-darkest: #485C4C;    /* Verde más oscuro */
+    --color-darker: #5C9074;     /* Verde oscuro */
+    --color-medium: #58A681;     /* Verde medio */
+    --color-light: #8EB59C;      /* Verde claro */
+    --color-lightest: #89B398;   /* Verde muy claro */
+    --color-white: #FFFFFF;      /* Blanco */
+}
+
 /* Estilo para la sección de filtros */
 .filter-section {
-    background-color: #3b6e41; /* Fondo verde */
+    background-color: var(--color-darkest); /* Fondo verde medio */
     padding: 20px;
     border-radius: 10px; /* Bordes redondeados */
-    color: white; /* Texto en blanco */
+    color: var(--color-white); /* Texto en blanco */
 }
 
 .filter-section h2 {
-    color: white; /* Título en blanco */
+    color: var(--color-white); /* Título en blanco */
     margin-bottom: 20px;
     font-weight: bold;
     text-align: center;
@@ -19,35 +29,35 @@
 
 .filter-form label {
     font-weight: bold;
-    color: white;
+    color: var(--color-white);
     display: block;
     margin-bottom: 5px;
 }
 
 .filter-form select {
     border-radius: 10px; /* Redondear bordes de los selects */
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-light);
     padding: 8px;
     width: 100%;
 }
 
 .filter-form button {
-    background-color: #ffffff; /* Fondo blanco */
-    color: #3b6e41; /* Texto verde */
-    border: 2px solid #3b6e41; /* Borde verde */
+    background-color: var(--color-white); /* Fondo blanco */
+    color: var(--color-medium); /* Texto verde medio */
+    border: 2px solid var(--color-medium); /* Borde verde medio */
     border-radius: 10px; /* Bordes redondeados */
     padding: 10px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .filter-form button:hover {
-    background-color: #3b6e41; /* Fondo verde al pasar el cursor */
-    color: white; /* Texto blanco al pasar el cursor */
+    background-color: var(--color-medium); /* Fondo verde medio al pasar el cursor */
+    color: var(--color-white); /* Texto blanco al pasar el cursor */
 }
 
 /* Estilo para la tarjeta de los animales */
 .card {
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-light);
     border-radius: 10px; /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
@@ -63,28 +73,28 @@
 
 .card .card-title {
     font-weight: bold;
-    color: #3b6e41; /* Título verde */
+    color: var(--color-darkest); /* Título verde más oscuro */
 }
 
 .card .btn-primary {
-    background-color: #3b6e41;
+    background-color: var(--color-medium); /* Fondo verde medio */
     border: none;
-    color: white;
+    color: var(--color-white);
     border-radius: 10px;
 }
 
 .card .btn-primary:hover {
-    background-color: #2e5332;
+    background-color: var(--color-darker); /* Fondo verde oscuro al pasar el cursor */
 }
 
 /* Paginación */
 .pagination .page-item .page-link {
-    color: #3b6e41;
+    color: var(--color-medium); /* Verde medio */
     border-radius: 10px;
-    border: 1px solid #3b6e41;
+    border: 1px solid var(--color-medium);
 }
 
 .pagination .page-item .page-link:hover {
-    background-color: #3b6e41;
-    color: white;
+    background-color: var(--color-medium);
+    color: var(--color-white);
 }

@@ -23,8 +23,7 @@ body {
     display: none;
     position: absolute;
 }
-
-.footer-color {
+footer-color {
     background-color: #3b6e41;
 }
 
@@ -32,4 +31,52 @@ body {
 .footer-color .footer-copyright {
     margin-top: 20px; /* Ajusta este valor según el desplazamiento que desees */
 }
+li.nav-item.btn.btn-sm.btn-primary {
+    height: 43px;
+}
+li.nav-item.btn.btn-sm.btn-success {
+    height: 43px;
+}  
 
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ccc; /* Opcional */
+    object-fit: cover; /* Asegura que la imagen no se deforme y se recorte */
+    object-position: center; /* Centra la imagen dentro del contenedor */
+}
+
+/* Asegurarse de que el navbar tenga un comportamiento adecuado */
+.navbar {
+    border-radius: 15px; /* Ajusta el nivel de redondeo según tu preferencia */
+    overflow: visible; /* Permite que el contenido salga fuera del navbar */
+}
+
+/* Estilo del dropdown-menu para evitar que se corte */
+.navbar .dropdown-menu {
+    border-radius: 0 0 15px 15px; /* Redondeo solo de las esquinas inferiores */
+    position: absolute;
+    z-index: 1050; /* Asegura que esté por encima de otros elementos */
+    left: 0; /* Alineación con el elemento que despliega el menú */
+}
+
+/* Opcional: Ajustar la dirección del dropdown si es necesario */
+.navbar .dropdown-toggle::after {
+    z-index: 1060; /* Asegura que el indicador esté por encima del menú */
+}
+
+.navbar .dropdown-menu {
+    max-width: 100vw; /* Limitar el ancho máximo al ancho de la ventana */
+    left: auto;
+    right: 0; /* Alineación del dropdown a la derecha */
+    white-space: nowrap; /* Evitar que el texto dentro del dropdown se rompa */
+    overflow-x: auto; /* Permite desplazarse horizontalmente si el contenido excede el ancho */
+    box-sizing: border-box; /* Asegura que el padding y border no afecten al tamaño total */
+}
+
+/* Si quieres que los elementos dentro del dropdown no sobrepasen el borde de la ventana */
+.navbar .dropdown-menu li {
+    max-width: 100%;
+    overflow: hidden;
+}

@@ -1,16 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/details.css' %}">
 <div class="animal-detail-section py-5">
     <div class="container my-5 bg-white rounded shadow p-4">
-        <!-- Botón de regreso a CanemSCAN -->
-        {% if show_back_to_results %}
+        <!-- Botón de regreso -->
         <div class="mb-4">
-            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">
-                &larr; Volver a los resultados de CanemSCAN
+            <!-- Botón de regreso a CanemSCAN (si hay referencia previa) -->
+            {% if show_back_to_results %}
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">
+                    &larr; Volver a los resultados de CanemSCAN
+                </a>
+            {% endif %}
+            <!-- Botón de regreso a la lista -->
+            <a href="{% url 'animals-list' %}" class="btn btn-secondary ml-2">
+                &larr; Volver a la lista de animales
             </a>
         </div>
-        {% endif %}
         
         <!-- Imagen destacada -->
         <div class="row">
@@ -29,17 +36,12 @@
                 <p><strong>Nivel de energía:</strong> {{ animal.get_energy_display }}</p>
                 <p><strong>Tipo de pelaje:</strong> {{ animal.get_fur_display }}</p>
                 <p><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
-                <a href="#" class="btn btn-primary mt-3">Solicitar Adopción</a>
-            </div>
-        </div>
-        
-        <!-- Descripción -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3>Descripción</h3>
-                <p>{{ animal.description }}</p>
+                <p><strong>Descripción:</strong> {{ animal.description }}</p>
+                <a href="{% url 'confirm_adoption' animal.id %}" class="btn btn-primary mt-3">Solicitar Adopción</a>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+

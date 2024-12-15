@@ -1,0 +1,105 @@
+:root {
+    --color-darkest: #485C4C;   /* Verde más oscuro */
+    --color-darker: #5C9074;    /* Verde oscuro */
+    --color-medium: #58A681;    /* Verde medio */
+    --color-light: #8EB59C;     /* Verde claro */
+    --color-lightest: #89B398;  /* Verde muy claro */
+    --color-white: #FFFFFF;     /* Blanco */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--color-lightest); /* Fondo general del login */
+    color: var(--color-darkest);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px; /* Ancho máximo aumentado */
+    margin: 5% auto;
+    padding: 0 15px;
+}
+
+.bg-white {
+    background-color: var(--color-white);
+}
+
+.shadow-sm {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: var(--color-darkest);
+    font-weight: bold;
+}
+
+label {
+    color: var(--color-darker);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+input.form-control {
+    border: 1px solid var(--color-light);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    color: var(--color-darkest);
+}
+
+input.form-control:focus {
+    border-color: var(--color-medium);
+    outline: none;
+    box-shadow: 0 0 3px var(--color-medium);
+}
+
+button.btn-primary {
+    background-color: var(--color-darker);
+    border: none;
+    border-radius: 5px;
+    color: var(--color-white);
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-primary:hover {
+    background-color: var(--color-medium);
+}
+
+button.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 3px var(--color-medium);
+}
+
+.alert {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.alert-danger {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #d9534f;
+    border: 1px solid #d9534f;
+}
+
+.text-center a {
+    color: var(--color-darker);
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.text-center a:hover {
+    color: var(--color-medium);
+}
+
+/* Ajustes para el contenedor del formulario */
+.col-md-6 {
+    max-width: 700px; /* Ancho del formulario ajustado */
+    margin: 0 auto;   /* Centrado horizontal */
+}

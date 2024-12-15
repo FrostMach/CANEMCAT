@@ -3,11 +3,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.contrib.auth import views as auth_views
-from shelters.models import Animal
+from shelters.models import AdoptionApplication, Animal, StatusEnum
 from users.sys_recommend.sys_recommend import get_user_recommendations
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist, Test, AdopterProfile
+from .models import CustomUser, Wishlist, Test, AdopterProfile, ShelterWorkerProfile, News
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
 from django.shortcuts import render
@@ -31,13 +31,21 @@ from shelters.models import Animal
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
+import os
 
 @never_cache
-
 def landing_page(request):
-    print(f"Usuario autenticado en landing: {request.user.is_authenticated}")
-    print(f"Sesión en landing: {request.session.items()}")
-    return render(request, 'landing_page.html')
+    # Obtener todas las noticias
+    news = News.objects.all()  # Si quieres ordenarlas por fecha, puedes hacerlo con .order_by('-created_at')
+    
+    # Obtener los animales (si es necesario para el slider de animales)
+    animals = Animal.objects.all()
+    
+    return render(request, 'landing_page.html', {
+        'is_landing_page': True,
+        'news': news,  # Pasar las noticias al template
+        'animals': animals,  # Pasar los animales al template
+    })
 
 #CANEMSCAN
 from django.http import JsonResponse
@@ -255,8 +263,17 @@ class ProfileUpdateView(generic.UpdateView):
     model = CustomUser
     form_class = CustomUserChangeForm
     template_name = 'profile_update.html'
-    success_url = reverse_lazy('profile')
-    
+    success_url = reverse_lazy('landing_page')
+
+class ProfileWorkerView(generic.DetailView):
+    model = CustomUser
+    template_name = 'profile_worker.html'
+
+class ProfileWorkerUpdateView(generic.UpdateView):
+    model = CustomUser
+    form_class = CustomUserChangeForm
+    template_name = 'profile_worker_update.html'
+    success_url = reverse_lazy('lab')
 
 
 def login_view(request):
@@ -266,8 +283,6 @@ def login_view(request):
             user = form.user
             logout(request)  # Cerrar sesión antes de iniciar sesión
             login(request, user)
-            print(f"Usuario autenticado en login (después de login): {request.user.is_authenticated}")
-            print(f"Sesión en login: {request.session.items()}")
             return HttpResponseRedirect(reverse('landing_page'))  # o 'landing_page' si tienes nombre de ruta para la landing
         else:
             messages.error(request, "Email o contraseña incorrectos.")
@@ -283,7 +298,10 @@ def signup(request):
             user = form.save(commit=False)
             user.is_active = False  # El usuario no estará activo hasta que confirme su email
             user.save()
-
+            if user.user_type == 'adopter':
+                AdopterProfile.objects.create(user=user)
+            elif user.user_type == 'worker':
+                ShelterWorkerProfile.objects.create(user=user)
             # # Enviar correo de confirmación
             uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
             token = default_token_generator.make_token(user)
@@ -316,39 +334,47 @@ def send_mail(to, subject, body, from_mail=settings.DEFAULT_FROM_EMAIL, password
 
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
-    template_name = 'registration/password_reset.html'  # Plantilla personalizada para el formulario
-    email_template_name = 'registration/password_reset_email.html'  # Plantilla personalizada para el correo
-    subject_template_name = 'registration/password_reset_subject.txt'  # Plantilla personalizada para el asunto
-    success_url = reverse_lazy('password_reset_done')  # Redirige a la vista de "Correo Enviado"
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
 
     def get_users(self, email):
-        """
-        Sobrescribe el método `get_users` para devolver el queryset de usuarios
-        que coinciden con el correo electrónico proporcionado.
-        """
-        from django.contrib.auth.models import User
         return CustomUser.objects.filter(email=email)
 
     def form_valid(self, form):
-        """
-        Sobrescribir el método para manejar el formulario válido y enviar el correo.
-        """
         email = form.cleaned_data['email']
-
-        # Obtener el queryset de usuarios con el correo proporcionado usando get_users()
         users = self.get_users(email)
 
-        # Si no hay usuarios con ese correo, no hacemos nada
+        # Si no hay usuarios con el correo, no hacemos nada
         if not users:
             return self.render_to_response(self.get_context_data(form=form))
 
-        # Si hay usuarios, generamos el correo para cada uno
+        # Procesar cada usuario encontrado
         for user in users:
-            # Crear el token y el UID
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
+            print(f"Procesando usuario: {user}")  # Imprimir el usuario completo para depuración
 
-            # Preparar el mensaje del correo
+            # Verificar que `user.pk` no sea una lista ni otro tipo inesperado
+            if isinstance(user.pk, list):
+                print(f"Error: user.pk es una lista, valor: {user.pk}")
+                return self.render_to_response(self.get_context_data(form=form))  # O manejar el error como sea necesario
+
+            print(f"MAIL: {os.environ.get('MAIL')}")
+            print(f"MAIL_PASSWORD: {os.environ.get('MAIL_PASSWORD')}")
+            # Asegúrate de que `user.pk` es un valor correcto
+            print(f"user pk: {user.pk}")  # Verificar el tipo y valor de `user.pk`
+            # Usar `force_bytes` para convertir el ID a bytes
+            uid = str(urlsafe_base64_encode(force_bytes(user.pk)))  # Asegúrate de que es una cadena
+            print(f"UID generado: {uid}")  # Imprimir para verificar
+
+            # Generar el token
+            token = str(default_token_generator.make_token(user))  # Asegúrate de que es una cadena
+            print(f"Token generado: {token}")  # Imprimir para verificar
+
+            print(f"uid: {uid} (Tipo: {type(uid)})")
+            print(f"token: {token} (Tipo: {type(token)})")
+            print(f"email: {email} (Tipo: {type(email)})")
+            # Preparar el asunto y el mensaje del correo
             subject = render_to_string(self.subject_template_name, {'user': user})
             subject = ''.join(subject.splitlines())
 
@@ -356,19 +382,23 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 'user': user,
                 'domain': get_current_site(self.request).domain,
                 'site_name': get_current_site(self.request).name,
-                'uid': uid,
-                'token': token,
+                'uid': str(uid),  # Asegúrate de que es una cadena
+                'token': str(token), 
                 'protocol': 'https' if self.request.is_secure() else 'http',
             })
+
+            # Imprimir el email y su tipo para asegurarnos de que es una cadena
+            print(f"Email: {email}")
+            print(f"Valor de `email`: {email}")
+            print(f"Tipo de `email`: {type(email)}")
 
             # Enviar el correo
             send_mail(
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
-                [email],
+                [email],  # Asegúrate de que esto sea una lista de un solo correo
             )
-
         return super().form_valid(form)
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -405,9 +435,7 @@ def activate(request, uidb64, token):
     try:
         # Decodificar UID y asegurarse de que es válido
         uid = urlsafe_base64_decode(uidb64).decode('utf-8')
-        print(f"UID decodificado: {uid}")
         user = get_user_model().objects.get(pk=int(uid))  # Asegúrate de que sea un entero
-        print(f"Usuario encontrado: {user}")
     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = None
         print("Error al decodificar el UID o encontrar el usuario.")
@@ -561,7 +589,7 @@ def resultado_test(request):
         elif especie == 'gato':
             form = TestGatoForm(respuestas)
         else:
-            return render(request, 'error.html', {'mensaje': 'Especie no válida.'})
+            return render(request, 'test/error.html', {'mensaje': 'Especie no válida.'})
         
         animales = Animal.objects.filter(species=especie)
 
@@ -595,13 +623,13 @@ def resultado_test(request):
         puntuaciones.sort(key=lambda x: x[1], reverse=True)
 
         if puntuaciones:
-            animal_ideal = puntuaciones[0][0]  # Accedemos al primer elemento de la tupla (animal)
+            animales_adecuados = [animal[0] for animal in puntuaciones[:4]]
         else:
-            animal_ideal = None
+            animales_adecuados = []
 
     # Pasar el resultado a la plantilla
     return render(request, 'test/adoption_result.html', {
-        'animal_ideal': animal_ideal,
+        'animales_adecuados': animales_adecuados,
         'especie': especie,
     })
 def admin_only(user):
@@ -664,4 +692,97 @@ def user_dashboard(request):
     
 #     return JsonResponse({
 #         'error': 'Método no permitido'
-#     }, status=405)    
+#     }, status=405)
+
+
+@login_required
+def adoption_application_view(request, animal_id):
+    animal = get_object_or_404(Animal, pk=animal_id)
+
+    # Verificar si el usuario es un adoptante
+    if request.user.user_type != 'adopter':
+        # Si el usuario no es un adoptante, redirigir o mostrar un mensaje de error
+        return redirect('error_user_type')  # Puedes personalizar este redireccionamiento
+
+    # Obtener el perfil de AdopterProfile asociado al usuario
+    user_profile = AdopterProfile.objects.get(user=request.user)
+
+    # Si el método es POST, creamos la solicitud de adopción
+    if request.method == 'POST':
+        # Crear la solicitud de adopción
+        adoption_application = AdoptionApplication(
+            user=user_profile,  # Usar el perfil de adoptante
+            animal=animal,
+            shelter=animal.shelter,  # La protectora del animal
+            status='P',  # Por defecto, la solicitud está pendiente
+        )
+        adoption_application.save()
+
+        # Redirigir al usuario a la lista de solicitudes o una página de confirmación
+        return redirect('adoption_application_list')  # Personaliza esta URL según tu caso
+
+    return render(request, 'adoption_application/adoption_application_request.html', {'animal': animal})
+
+def error_user_type(request):
+    return render(request, 'shelter/error_tipo_usuario.html')
+
+@login_required
+def adoption_application_list(request):
+    # Obtener el perfil de adoptante del usuario
+    user_profile = AdopterProfile.objects.get(user=request.user)
+    
+    # Obtener todas las solicitudes de adopción del usuario
+    adoption_applications = AdoptionApplication.objects.filter(user=user_profile)
+
+    return render(request, 'adoption_application/adoption_application_list.html', {'adoption_applications': adoption_applications})
+
+@login_required
+def adoption_application_list_shelterworker(request):
+    # Verificar que el usuario es un "Shelter Worker"
+    if request.user.user_type != 'worker':
+        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
+    
+    # Obtener el perfil del trabajador de la protectora
+    shelter_worker_profile = get_object_or_404(ShelterWorkerProfile, user=request.user)
+
+    # Verificar si el perfil tiene un "shelter" válido
+    if not shelter_worker_profile.shelter_name:
+        return render(request,'adoption_application/error_shelter_missing.html')  # Redirigir o mostrar error si no tiene un shelter
+
+    # Obtener todas las solicitudes de adopción de los animales de la protectora del trabajador
+    adoption_applications = AdoptionApplication.objects.filter(shelter=shelter_worker_profile.shelter_name)
+
+    # Pasar las solicitudes a la plantilla
+    return render(request, 'adoption_application/adoption_application_list_shelterworker.html', {
+        'adoption_applications': adoption_applications
+    })
+
+@login_required
+def update_adoption_application(request, application_id):
+    # Verificar que el usuario es un "Shelter Worker"
+    if request.user.user_type != 'worker':
+        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
+
+    # Obtener la solicitud de adopción
+    application = get_object_or_404(AdoptionApplication, pk=application_id)
+
+    # Verificar que la solicitud pertenezca a la misma protectora del trabajador
+    shelter_worker_profile = ShelterWorkerProfile.objects.get(user=request.user)
+    if application.shelter != shelter_worker_profile.shelter_name:
+        return redirect('error_user_type')  # Si el trabajador no pertenece a la protectora, redirigir
+
+    if request.method == 'POST':
+        # Verificar si se ha aprobado o denegado la solicitud
+        action = request.POST.get('action')
+
+        if action == 'approve':
+            application.status = StatusEnum.APPROVED.value[0]
+        elif action == 'deny':
+            application.status = StatusEnum.DENIED.value[0]
+        
+        application.save()  # Guardar los cambios
+
+        # Redirigir después de actualizar
+        return redirect('adoption_application_list_shelterworker')
+
+    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})    

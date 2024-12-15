@@ -87,7 +87,7 @@ class StatusEnum(Enum):
     DENIED = 'D', 'Denegada'
     
 class AdoptionApplication(models.Model):
-    user = models.ForeignKey('users.ShelterWorkerProfile', on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey('users.AdopterProfile', on_delete=models.CASCADE, default=1)
     animal = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True)
     shelter = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True)
     status = models.CharField(

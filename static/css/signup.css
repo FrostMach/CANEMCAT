@@ -1,0 +1,135 @@
+:root {
+    --color-darkest: #485C4C;   /* Verde más oscuro */
+    --color-darker: #5C9074;    /* Verde oscuro */
+    --color-medium: #58A681;    /* Verde medio */
+    --color-light: #8EB59C;     /* Verde claro */
+    --color-lightest: #89B398;  /* Verde muy claro */
+    --color-white: #FFFFFF;     /* Blanco */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--color-lightest); /* Fondo general */
+    color: var(--color-darkest);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px; /* Más ancho */
+    margin: 5% auto;
+    padding: 0 15px;
+}
+
+.bg-white {
+    background-color: var(--color-white);
+}
+
+.shadow-sm {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: var(--color-darkest);
+    font-weight: bold;
+}
+
+label {
+    color: var(--color-darker);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 8px; /* Separación con el campo */
+    display: block; /* Asegura alineación vertical */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control {
+    border: 1px solid var(--color-light);
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 1rem;
+    color: var(--color-darkest);
+    margin-bottom: 20px; /* Más espacio entre campos */
+}
+
+input.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    border-color: var(--color-medium);
+    outline: none;
+    box-shadow: 0 0 4px var(--color-medium);
+}
+
+button.btn-primary {
+    background-color: var(--color-darker);
+    border: none;
+    border-radius: 5px;
+    color: var(--color-white);
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px; /* Separación con los campos */
+    width: 100%; /* Botón ocupa todo el ancho */
+}
+
+button.btn-primary:hover {
+    background-color: var(--color-medium);
+}
+
+button.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 4px var(--color-medium);
+}
+
+.alert {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    margin-bottom: 20px; /* Espacio entre alertas */
+}
+
+.alert-danger {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #d9534f;
+    border: 1px solid #d9534f;
+}
+
+.text-center a {
+    color: var(--color-darker);
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.text-center a:hover {
+    color: var(--color-medium);
+}
+
+/* Ajustes específicos para el formulario de registro */
+.col-md-6 {
+    max-width: 800px; /* Más ancho */
+    margin: 0 auto;   /* Centrar horizontalmente */
+}
+
+.form-group {
+    margin-bottom: 25px; /* Mayor separación vertical entre los campos */
+}
+
+input[type="date"] {
+    max-width: 60%; /* Limitar ancho del campo de fecha */
+}
+
+button[type="submit"] {
+    width: 100%; /* Botón de registro ocupa todo el ancho */
+}
+
+p.text-center {
+    margin-top: 25px; /* Mayor separación respecto al botón */
+}
+
+form .form-group:last-child {
+    margin-bottom: 0; /* Evita separación extra debajo del último campo */
+}

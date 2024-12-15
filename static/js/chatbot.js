@@ -1,57 +1,54 @@
-$(document).ready(function () {
-    // Detectar si estamos en la landing page (raíz del dominio)
-    const isLandingPage = window.location.pathname === '/';
-
-    if (isLandingPage) {
-        // Si estamos en la landing, permitir que la animación se ejecute siempre
-        localStorage.removeItem('chatAnimationPlayed'); // Borra cualquier estado previo para reiniciar la animación
-    }
-
-    // Comprobar si la animación ya se ejecutó
-    if (localStorage.getItem('chatAnimationPlayed') === 'true') {
-        // Añadir clase para desactivar animaciones
-        $('body').addClass('no-animation');
-    } else {
-        // Marcar que la animación ya se ejecutó
-        localStorage.setItem('chatAnimationPlayed', 'true');
-    }
-
-    // Resto del código para el chatbot
+$(document).ready(function() {
+    // Obtener el token CSRF desde el campo oculto dentro del modal
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
-    $('#chat-icon').click(function () {
+    
+    // Abre el modal al hacer clic en el icono de chat
+    $('#chat-icon').click(function() {
         $('#chatModal').modal('show');
     });
 
-    $('#sendMessageButton').click(function () {
+    // Función para enviar el mensaje del usuario
+    $('#sendMessageButton').click(function() {
         var message = $('#user_input').val();
-        if (message.trim() === '') return;
+        if (message.trim() === '') return; // No enviar si está vacío
 
+        // Mostrar el mensaje del usuario en el chatbox
         $('#chatbox').append('<div><b>Usuario:</b> ' + message + '</div>');
+        
+        // Limpiar el campo de entrada
         $('#user_input').val('');
 
+        // Enviar el mensaje al servidor usando jQuery AJAX
         $.ajax({
-            url: '/chat/',
+            url: '/chat/',  // La URL a la que se hace la solicitud
             method: 'POST',
             data: {
-                'message': message,
-                'csrfmiddlewaretoken': csrfToken,
+                'message': message,  // El mensaje que el usuario escribió
+                'csrfmiddlewaretoken': csrfToken  // Usar el token CSRF desde el campo oculto
             },
-            success: function (data) {
+            success: function(data) {
+                // Mostrar la respuesta del chatbot en el chatbox
                 $('#chatbox').append('<div><b>ChatBot:</b> ' + data.response + '</div>');
+                
+                // Desplazar el chatbox hacia abajo para mostrar el mensaje más reciente
                 $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
             },
-            error: function () {
+            error: function() {
+                // Si ocurre un error, mostrar un mensaje en el chatbox
                 $('#chatbox').append('<div><b>Error:</b> No se pudo obtener respuesta del chatbot.</div>');
-            },
+            }
         });
     });
 
-    $('#user_input').on('keypress', function (e) {
-        if (e.which === 13) {
+    // También asociar la función al presionar "Enter"
+    $('#user_input').on('keypress', function(e) {
+        if (e.which === 13) {  // 13 es la tecla Enter
             $('#sendMessageButton').click();
         }
     });
 });
+
+
+
 
 

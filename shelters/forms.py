@@ -61,36 +61,34 @@ class AnimalFilterForm(forms.Form):
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):
     user = forms.CharField(max_length=255, label='Nombre completo')
-    application_date = forms.DateField(initial=date.today)
+    shelter = forms.ModelChoiceField(queryset=Shelter.objects.all(), label="Refugio", required=True)
+    animal = forms.ModelChoiceField(queryset=Animal.objects.filter(adoption_status='disponible'), label="Animal", required=True)
+    application_date = forms.DateField(initial=date.today, label='Fecha de solicitud')
+
     class Meta:
         model = AdoptionApplication
-        fields = ('user', 'animal') #AÑADIR SHELTER!!!!!
-        
-    def clean_user(self):
-    # Obtener el valor del campo 'user' (nombre completo)
-        user_name = self.cleaned_data['user']
+        fields = ('user', 'animal', 'shelter', 'application_date')
 
-        # Intentar obtener un usuario que coincida con el nombre completo ingresado
+    def clean_user(self):
+        user_name = self.cleaned_data['user']
         try:
             user = CustomUser.objects.get(full_name=user_name)
         except CustomUser.DoesNotExist:
             raise ValidationError("El nombre ingresado no corresponde a un usuario registrado.")
-        
-        return user  # Devolvemos el usuario encontrado
+        return user
 
     def save(self, commit=True):
-        # Guardamos la solicitud de adopción con el usuario encontrado
         instance = super().save(commit=False)
-        instance.user = self.cleaned_data['user']  # Asociamos el usuario al modelo
+        instance.user = self.cleaned_data['user']
+        instance.shelter = self.cleaned_data['shelter']
         if 'application_date' in self.cleaned_data:
             instance.application_date = self.cleaned_data['application_date']
         else:
-            instance.application_date = date.today()  # Asignamos la fecha actual si no se especificó
+            instance.application_date = date.today()
 
         if commit:
             instance.save()
         return instance
-
 # class EncuestaForm(forms.ModelForm):
 #     class Meta:
 #         model = RespuestaEncuesta
@@ -104,12 +102,12 @@ class AdoptionApplicationCreationForm(forms.ModelForm):
 class RegisterShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter
-        fields = ['name', 'address', 'email', 'telephone', 'accreditation_file']
+        fields = ['name', 'address', 'postal_code', 'email', 'telephone', 'accreditation_file']
 
         def clean(self):
             cleaned_data = super().clean()
             name = cleaned_data.get('name')
-            telephone = cleaned_data.get('telephone')
+            telephone = cleaned_data.get('telephone')   
 
             if telephone and len(str(telephone)) < 9:
                 raise forms.ValidationError('El teléfono debe tener una longitud mínima de 9 dígitos.')

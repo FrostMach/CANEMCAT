@@ -27,3 +27,11 @@ padding: 10px;
 .carousel-control-next {
 display: none;
 }
+
+.carousel-animal .carousel-item img,
+.carousel-news .carousel-item img {
+  height: 500px; /* Define una altura fija */
+  width: 100%; /* Asegúrate de que las imágenes ocupen todo el ancho */
+  object-fit: cover; /* Mantén el recorte para evitar deformaciones */
+}
+

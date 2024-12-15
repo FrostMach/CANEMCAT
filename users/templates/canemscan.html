@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     CanemSCAN
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/canemscan.css' %}">
 <div class="container my-5 text-center" style="max-width: 600px; animation: fadeIn 1s;">
     <div class="p-4 rounded shadow" style="background-color: white;">
         <h1 class="mb-4" style="color: #004d40; font-weight: bold;">CanemSCAN</h1>
@@ -170,7 +171,7 @@ function getCsrfToken() {
 
         const formData = new FormData(this);
 
-        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simula los 4 segundos de carga.
 
         const response = await fetch('/canemscan/upload/', {
             method: 'POST',
@@ -212,8 +213,6 @@ function getCsrfToken() {
 
         document.getElementById('loading-compare').style.display = 'block';
         document.getElementById('compare-container').style.display = 'none';
-
-        await new Promise(resolve => setTimeout(resolve, 4000)); // Simula los 4 segundos de carga.
 
         const response = await fetch(compareUrl);
 
