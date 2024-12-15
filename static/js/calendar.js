@@ -1,108 +1,154 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const prevButton = document.getElementById("prev-month");
-    const nextButton = document.getElementById("next-month");
-    const calendarBody = document.getElementById("calendar-body");
-    const monthYearLabel = document.getElementById("month-year");
+$(document).ready(function () {
+    // Obtener el CSRF token desde el formulario oculto
+    var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
 
-    let currentDate = new Date();
-    let currentMonth = currentDate.getMonth();
-    let currentYear = currentDate.getFullYear();
-    let events = {};
+    var calendar = $('#calendar').fullCalendar({
+        locale: 'es',
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
 
-    // Lógica para actualizar el calendario
-    function updateCalendar() {
-        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        monthYearLabel.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+        events: '/get_events/',  // Ruta para obtener los eventos desde Django
+        selectable: true,
+        selectHelper: true,
+        editable: true,
+        eventLimit: true,
+        eventResizableFromStart: true,
 
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        select: function (start, end, allDay) {
+            var title = prompt("Ingrese el título del evento");
+            if (title) {
+                var start_time = $.fullCalendar.formatDate(start, "YYYY-MM-DD HH:mm:ss");
+                var end_time = $.fullCalendar.formatDate(end, "YYYY-MM-DD HH:mm:ss");
+                console.log('Fecha de inicio:', start_time);
+                console.log('Fecha de fin:', end_time);
 
-        calendarBody.innerHTML = "";
-
-        let row = document.createElement("tr");
-        for (let i = 0; i < firstDay; i++) {
-            row.appendChild(document.createElement("td"));
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            if ((firstDay + day - 1) % 7 === 0 && day !== 1) {
-                calendarBody.appendChild(row);
-                row = document.createElement("tr");
-            }
-
-            const cell = document.createElement("td");
-            const date = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-            const dayNumber = document.createElement("span");
-            dayNumber.innerText = day;
-            dayNumber.classList.add("day-number");
-            cell.appendChild(dayNumber);
-
-            if (events[date]) {
-                events[date].forEach(event => {
-                    const eventElement = document.createElement("div");
-                    eventElement.classList.add("event");
-                    eventElement.style.backgroundColor = event.color;
-                    eventElement.innerText = event.description;
-
-                    // Añadir un evento de clic a cada evento dentro de la celda
-                    eventElement.addEventListener("click", () => {
-                        window.openEditModal(event); // Llamar al modal de edición
-                    });
-
-                    cell.appendChild(eventElement);
-                });
-            }
-
-            cell.addEventListener("click", () => {
-                window.openNewEventModal(date); // Si no hay evento, abre el modal para un nuevo evento
-            });
-
-            row.appendChild(cell);
-        }
-        calendarBody.appendChild(row);
-    }
-
-
-    // Cargar eventos
-    function loadEvents() {
-        fetch(`/events/${currentYear}/${currentMonth + 1}/`)
-            .then(response => response.json())
-            .then(data => {
-                events = {};
-                data.events.forEach(event => {
-                    if (!events[event.date]) {
-                        events[event.date] = [];
+                $.ajax({
+                    type: "POST",  // Usamos POST para enviar datos de manera segura
+                    url: '/add_event/',  // Ruta para agregar el evento
+                    data: {
+                        'title': title,
+                        'start': start_time,
+                        'end': end_time,
+                        'csrfmiddlewaretoken': csrf_token  // CSRF Token
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        calendar.fullCalendar('refetchEvents');  // Recargar eventos después de añadir
+                        // alert("Evento agregado correctamente");
+                    },
+                    error: function () {
+                        alert('¡Hubo un problema al agregar el evento!');
                     }
-
-                    events[event.date].push(event);
                 });
-                updateCalendar();
-            })
-            .catch(error => {
-                console.error("Error al cargar eventos:", error);
+            }
+        },
+
+        eventResize: function (event, delta, revertFunc) {
+            // Formatear las fechas de inicio y fin para enviarlas al servidor
+            var start_time = $.fullCalendar.formatDate(event.start, "YYYY-MM-DD HH:mm:ss");
+            var end_time = $.fullCalendar.formatDate(event.end, "YYYY-MM-DD HH:mm:ss");
+            var title = event.title;
+            var id = event.id;
+
+            // Realizar una solicitud AJAX para actualizar el evento
+            $.ajax({
+                type: "POST",
+                url: '/update/', // Ruta para actualizar el evento
+                data: {
+                    'id': id,
+                    'title': title,
+                    'start': start_time,
+                    'end': end_time,
+                    'csrfmiddlewaretoken': csrf_token // CSRF Token
+                },
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        // alert('Evento actualizado correctamente.');
+                    } else {
+                        alert('Error al actualizar el evento: ' + response.message);
+                        revertFunc(); // Revertir los cambios si el servidor indica un error
+                    }
+                },
+                error: function () {
+                    alert('Hubo un problema al intentar actualizar el evento.');
+                    revertFunc(); // Revertir los cambios si ocurre un error en la solicitud
+                }
             });
+        },
+
+
+        eventDrop: function (event) {
+            var start_time = $.fullCalendar.formatDate(event.start, "YYYY-MM-DD HH:mm:ss");
+            var end_time = $.fullCalendar.formatDate(event.end, "YYYY-MM-DD HH:mm:ss");
+            var title = event.title;
+            var id = event.id;
+
+            $.ajax({
+                type: "POST",  // Usamos POST para actualizar el evento
+                url: '/update/',  // Ruta para actualizar el evento
+                data: {
+                    'title': title,
+                    'start': start_time,
+                    'end': end_time,
+                    'id': id,
+                    'csrfmiddlewaretoken': csrf_token  // CSRF Token
+                },
+                dataType: "json",
+                success: function () {
+                    calendar.fullCalendar('refetchEvents');  // Recargar eventos después de mover
+                    // alert('Evento actualizado correctamente');
+                },
+                error: function () {
+                    alert('¡Hubo un problema al actualizar el evento!');
+                }
+            });
+        },
+
+        eventClick: function (event) {
+            if (confirm("¿Estás seguro de que deseas eliminar este evento?")) {
+                var id = event.id;  // Asegúrate de que esto sea el id correcto
+                $.ajax({
+                    type: "POST",  // Cambié a POST para evitar posibles problemas con la manipulación de datos
+                    url: '/remove/',  // Ruta para eliminar el evento
+                    data: {
+                        'id': id,
+                        'csrfmiddlewaretoken': csrf_token  // CSRF Token
+                    },
+                    dataType: "json",
+                    success: function () {
+                        calendar.fullCalendar('refetchEvents');  // Recargar eventos después de eliminar
+                        // alert('Evento eliminado correctamente');
+                    },
+                    error: function () {
+                        alert('¡Hubo un problema al eliminar el evento!');
+                    }
+                });
+            }
+        }
+
+    });
+    
+    // Rellenar el selector de años dinámicamente
+    var currentYear = new Date().getFullYear();
+    for (var i = currentYear - 5; i <= currentYear + 5; i++) {
+        $('#year-select').append($('<option>', {
+            value: i,
+            text: i
+        }));
     }
+    $('#year-select').val(currentYear); // Seleccionar el año actual por defecto
 
-    prevButton.addEventListener("click", () => {
-        if (currentMonth === 0) {
-            currentMonth = 11;
-            currentYear--;
-        } else {
-            currentMonth--;
-        }
-        loadEvents();
+    // Manejar el cambio de mes/año
+    $('#month-select, #year-select').change(function () {
+        var selectedMonth = $('#month-select').val(); // Obtener el mes seleccionado
+        var selectedYear = $('#year-select').val();   // Obtener el año seleccionado
+
+        // Cambiar la vista del calendario al mes y año seleccionados
+        var newDate = moment([selectedYear, selectedMonth]); // Crear una fecha con Moment.js
+        calendar.fullCalendar('gotoDate', newDate); // Navegar a la fecha
     });
-
-    nextButton.addEventListener("click", () => {
-        if (currentMonth === 11) {
-            currentMonth = 0;
-            currentYear++;
-        } else {
-            currentMonth++;
-        }
-        loadEvents();
-    });
-
-    loadEvents();
 });

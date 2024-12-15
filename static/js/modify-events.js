@@ -5,130 +5,94 @@ document.addEventListener("DOMContentLoaded", () => {
     const startTimeInput = document.getElementById("start-time");
     const endTimeInput = document.getElementById("end-time");
     const eventColorInput = document.getElementById("event-color");
-    const saveEventButton = document.getElementById("save-event");
     const editEventButton = document.getElementById("edit-event");
+    console.log(document.getElementById("edit-event"));
 
-    let currentEditingEvent = null;
+    if (editButton) {
+        editButton.addEventListener("click", () => {
+            console.log("Botón de editar evento presionado");
+            console.log(document.getElementById("edit-event"));
 
-    // Cerrar modal
-    document.querySelector('.btn-close').addEventListener('click', () => {
-        eventModal.hide();
-    });
+            function openEditModal(event) {
+                eventDateInput.value = event.date;
+                eventDescriptionInput.value = event.description;
+                startTimeInput.value = event.start_time;
+                endTimeInput.value = event.end_time;
+                eventColorInput.value = event.color;
 
-    // Función para cargar la información de un evento en el modal para editarlo
-    function openEditModal(event) {
-        // Asegúrate de que el evento se pase correctamente y los campos se actualicen
-        eventDateInput.value = event.date;
-        eventDescriptionInput.value = event.description;
-        startTimeInput.value = event.start_time;
-        endTimeInput.value = event.end_time;
-        eventColorInput.value = event.color;
+                currentEditingEvent = event;
+                eventModal.show();
+            }
 
-        // Mostrar el botón de editar solo si estamos editando
-        editEventButton.style.display = "inline-block";
-        saveEventButton.style.display = "none"; // Ocultar el botón de guardar
+            // Editar un evento existente
+            editEventButton.addEventListener("click", () => {
+                const updatedEvent = {
+                    id: currentEditingEvent.id,
+                    date: eventDateInput.value,
+                    description: eventDescriptionInput.value,
+                    start_time: startTimeInput.value,
+                    end_time: endTimeInput.value,
+                    color: eventColorInput.value,
+                };
 
-        // Guardamos el evento que estamos editando
-        currentEditingEvent = event;
-
-        // Abrir el modal para editar el evento
-        setTimeout(() => {
-            eventModal.show();
-        }, 100);
-    }
-
-    function openNewEventModal(date) {
-        // Asigna la fecha seleccionada
-        eventDateInput.value = date;
-
-        // Limpia todos los campos para un nuevo evento
-        eventDescriptionInput.value = "";
-        startTimeInput.value = "";
-        endTimeInput.value = "";
-        eventColorInput.value = "#007bff"; // Color predeterminado
-
-        // Restablece el estado de edición
-        currentEditingEvent = null;
-
-        // Oculta el botón de editar y muestra el botón de guardar
-        editEventButton.style.display = "none";
-        saveEventButton.style.display = "inline-block";
-
-        // Asegúrate de que los campos son editables
-        eventDateInput.disabled = false;
-        eventDescriptionInput.disabled = false;
-        startTimeInput.disabled = false;
-        endTimeInput.disabled = false;
-        eventColorInput.disabled = false;
-
-        // Abre el modal
-        eventModal.show();
-    }
-
-    saveEventButton.addEventListener('click', () => {
-        // Obtén los datos del formulario
-        const date = eventDateInput.value;
-        const description = eventDescriptionInput.value;
-        const startTime = startTimeInput.value;
-        const endTime = endTimeInput.value;
-        const color = eventColorInput.value;
-        console.log(eventDateInput); // ¿Es null?
-        console.log(eventDescriptionInput);
-        console.log(startTimeInput);
-        console.log(endTimeInput);
-        console.log(eventColorInput);
-
-        console.log({ date, description, startTime, endTime, color }); // Debug para confirmar valores
-
-        // Valida que los campos no estén vacíos
-        if (!description || !startTime || !endTime) {
-            alert("Por favor, completa todos los campos del evento.");
-            return;
-        }
-
-        // Prepara los datos del evento
-        const newEvent = {
-            date: date,
-            description: description,
-            start_time: startTime,
-            end_time: endTime,
-            color: color,
-        };
-
-        // Lógica para guardar el evento en el backend
-        fetch('/save-event/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify(newEvent),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    alert("Evento creado exitosamente.");
-                    eventModal.hide(); // Cierra el modal
-
-                    // Aquí actualiza tu calendario con los nuevos eventos
-                    if (!events[date]) {
-                        events[date] = [];
-                    }
-                    events[date].push(data.event);
-                    updateCalendar(); // Suponiendo que tienes esta función
-                } else {
-                    alert("Error al guardar el evento.");
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("Hubo un error al guardar el evento.");
+                fetch(`/update-event/${updatedEvent.id}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                    body: JSON.stringify(updatedEvent),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Evento actualizado correctamente.");
+                            eventModal.hide();
+                            location.reload(); // Recarga la página para reflejar cambios
+                        } else {
+                            alert("Error al actualizar el evento.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al actualizar el evento:", error);
+                        alert("Hubo un error al actualizar el evento.");
+                    });
             });
+        });
+    } else {
+        console.error("Elemento 'edit-event' no encontrado en el DOM.");
+    }
+const deleteEventButton = document.getElementById("delete-event");
 
-    });
+let currentEditingEvent = null;
+
+// Abre el modal para editar un evento
 
 
-    // Exponer funciones para que el archivo de calendario.js pueda llamarlas
-    window.openNewEventModal = openNewEventModal;
-    window.openEditModal = openEditModal;
+// Borrar un evento
+deleteEventButton.addEventListener("click", () => {
+    fetch(`/delete-event/${currentEditingEvent.id}/`, {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Evento eliminado correctamente.");
+                eventModal.hide();
+                location.reload(); // Recarga la página para reflejar cambios
+            } else {
+                alert("Error al eliminar el evento.");
+            }
+        })
+        .catch(error => {
+            console.error("Error al eliminar el evento:", error);
+            alert("Hubo un error al eliminar el evento.");
+        });
+});
+
+// Exponer funciones globalmente
+window.openEditModal = openEditModal;
 });

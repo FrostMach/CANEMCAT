@@ -4,18 +4,6 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-class Event(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events")    
-    description = models.TextField(default='')
-    date = models.DateField(auto_now_add=True, null=True, blank=True)
-    start_time = models.TimeField(null=True, blank=True)
-    end_time = models.TimeField(null=True, blank=True)
-    color = models.CharField(max_length=7, default='#FFFFFF')  # El color en formato #hex
-
-    def __str__(self):
-        return f"{self.description} ({self.date})"
-
-
 class Shelter(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nombre')
     address = models.CharField(max_length=100, verbose_name='Dirección')
@@ -31,7 +19,18 @@ class Shelter(models.Model):
 
     def __str__(self):
         return f'{self.name}'       
-    
+
+class Event(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="events", null=True)    
+    description = models.TextField(default='')
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    color = models.CharField(max_length=7, default='#FFFFFF')  # El color en formato #hex
+
+    def __str__(self):
+        return f"{self.description} ({self.date})"
+
+
 class StatusEnum(Enum):
     PENDING = 'P', 'Pendiente'
     APPROVED = 'A', 'Aprobada'

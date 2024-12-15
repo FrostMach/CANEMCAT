@@ -79,6 +79,28 @@
       ]
     },
     {
+      "tag": "funcionalidades_pagina",
+      "patterns": [
+        "¿Qué hace esta página?",
+        "¿Cuál es la función de esta plataforma?",
+        "¿Qué puedo hacer aquí?",
+        "¿Qué características tiene esta página?",
+        "¿Para qué sirve esta página?",
+        "¿Qué opciones ofrece esta plataforma?",
+        "¿Cómo funciona esta página?",
+        "¿Qué servicios brinda esta plataforma?",
+        "¿Qué herramientas tiene esta página?",
+        "¿Qué puedo encontrar en esta plataforma?",
+        "¿Qué módulos tiene esta página?",
+        "¿Para qué sirve esta web?",
+        "Quiero saber qué ofrece esta página"
+      ],
+      "responses": [
+        "Esta página tiene dos módulos principales: uno para trabajadores y otro para usuarios. En el módulo de usuarios, puedes ver las protectoras registradas junto con sus animales disponibles para adopción, usar la herramienta CanemScan para escanear fotografías y encontrar animales similares, y realizar un test de compatibilidad para descubrir qué raza de perro o gato es más adecuada para ti. El módulo de trabajadores incluye acceso al apartado CanemLab, que ofrece funcionalidades como un calendario para organizar tareas, un inventario para gestionar recursos, solicitudes de adopción, y herramientas para la gestión de animales. Además, todos los usuarios pueden explorar las protectoras y sus animales, mientras que los trabajadores tienen acceso exclusivo a CanemLab con funciones avanzadas de gestión."
+      ]
+    },
+    
+    {
       "tag": "ayuda_general",
       "patterns": [
         "¿Cómo puedo ayudarme?",
@@ -104,11 +126,11 @@
         "¿Dónde puedo ver los animales disponibles?"
       ],
       "responses": [
-        "Para ver los animales disponibles, te recomendamos usar los filtros en la sección 'Animales'. Ahí podrás seleccionar por especie, sexo, tamaño, estado de adopción y más. ¿Te gustaría que te guíe para encontrar los animales disponibles?",
-        "Puedes consultar los animales disponibles en la sección 'Animales', usando los filtros de búsqueda. Allí podrás ver perros y gatos disponibles según tus preferencias. ¿Te gustaría obtener más detalles sobre algún filtro en particular?",
-        "En la sección 'Animales' encontrarás todos los animales disponibles. Usa los filtros para seleccionar lo que más te interese, como especie, tamaño o estado de adopción. ¿Quieres que te ayude a aplicar un filtro?",
-        "Para ver los animales disponibles para adopción, ve a la opción 'Animales' en el navegador y utiliza los filtros. Ahí podrás encontrar los animales que se ajusten a tus preferencias. ¿Te gustaría saber más sobre cómo usar los filtros?",
-        "Si deseas ver los animales disponibles, dirígete a la sección 'Animales' y usa los filtros para encontrar perros o gatos según tus necesidades. ¿Te gustaría ayuda para filtrar la búsqueda?"
+        "Para ver los animales disponibles, te recomendamos usar los filtros en la sección 'Animales'. Ahí podrás seleccionar por especie, sexo, tamaño, estado de adopción y más.",
+        "Puedes consultar los animales disponibles en la sección 'Animales', usando los filtros de búsqueda. Allí podrás ver perros y gatos disponibles según tus preferencias.",
+        "En la sección 'Animales' encontrarás todos los animales disponibles. Usa los filtros para seleccionar lo que más te interese, como especie, tamaño o estado de adopción. ",
+        "Para ver los animales disponibles para adopción, ve a la opción 'Animales' en el navegador y utiliza los filtros. Ahí podrás encontrar los animales que se ajusten a tus preferencias.",
+        "Si deseas ver los animales disponibles, dirígete a la sección 'Animales' y usa los filtros para encontrar perros o gatos según tus necesidades."
       ]
     },
     {
@@ -167,7 +189,10 @@
         "¿Cómo iniciar el proceso de adopción de un perro o un gato?",
         "¿Qué necesito para adoptar un perro o un gato?",
         "¿Qué pasos debo seguir para adoptar un perro o un gato en su página?",
-        "¿Cómo puedo ver los perros y gatos disponibles para adopción?"
+        "¿Cómo puedo ver los perros y gatos disponibles para adopción?",
+        "Quiero adoptar un perro o gato",
+        "Quiero adoptar"
+
       ],
       "responses": [
         "Para adoptar un perro o un gato, primero necesitas registrarte en nuestra plataforma. Después, tienes tres opciones: 1) Acceder al menú de animales donde podrás ver la lista de animales disponibles y elegir el que más te guste. 2) Utilizar el módulo CanemScan, donde podrás buscar animales similares a tus preferencias. 3) Completar el CanemTest, que te recomendará varios animales según tus respuestas.",
@@ -182,8 +207,6 @@
         "El proceso para adoptar un perro o un gato en nuestra plataforma es muy fácil. Primero, regístrate en el sitio, luego puedes acceder al menú de animales, usar CanemScan o realizar el CanemTest para encontrar el animal que se adapte a tus necesidades."
       ]
     },
-    
-    
     {
       "tag": "canemscan",
       "patterns": [
@@ -497,13 +520,20 @@
         "Quiero crear una cuenta de trabajador.",
         "¿Qué debo hacer para registrarme como trabajador?",
         "Quiero registrarme como personal de la protectora.",
-        "¿Cómo me convierto en trabajador de una protectora?"
+        "¿Cómo me convierto en trabajador de una protectora?",
+        "¿Cómo me registro como trabajador?",
+        "¿Cómo puedo registrarme para trabajar en una protectora?",
+        "¿Qué pasos debo seguir para registrarme como trabajador de una protectora?"
       ],
       "responses": [
-        "Para registrarte como trabajador, debes acceder a la sección de registro para trabajadores y usar el correo de tu protectora junto con los datos requeridos. ¿Te gustaría saber cómo acceder a esa sección?",
-        "Puedes registrarte como trabajador desde la opción de 'Registro para trabajadores' en la página. Solo necesitas el correo de tu protectora. ¿Te gustaría que te guíe sobre el proceso?"
+        "Para registrarte como trabajador, primero debes hacer clic en la opción 'Iniciar sesión'. Una vez allí, en la parte inferior verás la opción '¿No tienes una cuenta? Regístrate aquí'. Haz clic en ella y completa los campos requeridos. En el campo 'Tipo de Usuario', selecciona 'worker'. Luego, ingresa tu correo de la protectora, nombre completo, número de teléfono, fecha de nacimiento, foto de perfil (opcional), contraseña y confirma la contraseña. ¿Te gustaría que te ayude con los pasos específicos?",
+        "Primero, haz clic en 'Iniciar sesión'. Luego, en la parte inferior encontrarás la opción 'Regístrate aquí'. Al hacer clic, completa la información solicitada, incluyendo tu correo electrónico de la protectora y selecciona 'worker' en el tipo de usuario. Asegúrate de ingresar todos los datos correctamente. ¿Te gustaría más detalles sobre este proceso?",
+        "Para registrarte como trabajador de una protectora, ve a 'Iniciar sesión'. Después, haz clic en 'Regístrate aquí' en la parte inferior de la página. Completa los campos con tu correo de la protectora, nombre completo, número de teléfono, fecha de nacimiento, foto de perfil (opcional) y contraseña. En el campo 'Tipo de Usuario', selecciona 'worker'. ¿Te gustaría más ayuda?",
+        "Para registrarte como trabajador, primero debes iniciar sesión. Luego, encontrarás la opción 'Regístrate aquí' en la parte inferior. Haz clic en ella, completa los campos con tu correo de la protectora, nombre, teléfono, fecha de nacimiento y foto de perfil (opcional). En el campo de tipo de usuario, selecciona 'worker'. ¿Te gustaría saber más sobre cómo completar el registro?",
+        "Para convertirte en trabajador de una protectora, inicia sesión y haz clic en '¿No tienes cuenta? Regístrate aquí'. Rellena los campos solicitados, incluyendo el correo de la protectora. Cuando llegues al campo 'Tipo de Usuario', selecciona 'worker'. Después de completar los datos, haz clic en 'Registrarse'. ¿Te gustaría que te guíe paso a paso?"
       ]
     },
+    
     {
       "tag": "registro_trabajador_pasos",
       "patterns": [
@@ -789,14 +819,24 @@
         "Agregar una nueva protectora.",
         "¿Cómo registro una nueva protectora?",
         "Añadir una protectora a la base de datos.",
-        "¿Cómo me registro como trabajador en una nueva protectora?"
+        "¿Cómo me registro como trabajador en una nueva protectora?",
+        "¿Cómo puedo agregar una protectora a la plataforma?",
+        "¿Cómo se añade una protectora?",
+        "¿Quién puede añadir nuevas protectoras?",
+        "Quiero dar de alta una protectora.",
+        "¿Cómo doy de alta una protectora?",
+        "Dar de alta una nueva protectora.",
+        "¿Cómo registrar una protectora en la plataforma?",
+        "¿Cómo hacer el alta de una protectora?"
       ],
       "responses": [
-        "Para agregar una protectora, necesitarás acceder a tu panel de trabajador. ¿Te gustaría saber más sobre cómo hacerlo?",
-        "Desde el panel de trabajador, podrás registrar nuevas protectoras y gestionar su información.",
-        "Recuerda que solo los trabajadores de la protectora pueden registrar nuevas. ¿Te gustaría proceder con el registro?",
-        "Para registrar una protectora, asegúrate de tener acceso a la sección 'Gestión de protectoras' en tu cuenta de trabajador. ¿Te gustaría saber cómo encontrarla?"
+        "Solo los trabajadores pueden agregar protectoras a la plataforma. Para hacerlo, deben acceder al menú 'Protectoras' en el navegador y seleccionar la opción 'Añadir Protectora'.",
+        "Si eres trabajadores, puedes añadir una protectora desde el menú 'Protectoras' en el navegador. Allí encontrarás la opción 'Añadir Protectora'.",
+        "Recuerda que solo los trabajadores tienen la capacidad de añadir nuevas protectoras. Debes ir al menú 'Protectoras' en la plataforma y seleccionar la opción 'Añadir Protectora'.",
+        "Para añadir una protectora, accede al menú 'Protectoras' y selecciona la opción 'Añadir Protectora'. Allí podrás registrar todos los detalles de la nueva protectora.",
+        "El proceso para agregar una protectora está reservado para los trabajadores. Desde el menú 'Protectoras' en el navegador, selecciona 'Añadir Protectora' para completar el registro."
       ]
     }
+    
   ]
 }
