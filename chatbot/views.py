@@ -33,7 +33,7 @@ with open(label_encoder_path, 'rb') as handle:
 
 # Cargar los datos del chatbot (intents y respuestas)
 try:
-    with open(chatbot_data_path, 'r') as file:
+    with open(chatbot_data_path, 'r', encoding='utf-8') as file:
         chatbot_data = json.load(file)
         print("Datos cargados correctamente.")
 except FileNotFoundError:

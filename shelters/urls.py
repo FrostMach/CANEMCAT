@@ -4,7 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-
 urlpatterns = [   
     path('crear/', views.AnimalCreateView.as_view(), name='animals-create'),
     path('editar/<int:pk>/', views.AnimalUpdateView.as_view(), name='animals-update'),
@@ -22,7 +21,6 @@ urlpatterns = [
     path('api/shelter-postal-code/', views.shelters_by_postal_code, name='shelter_postal_center'),
     path('shelter/nearby/', views.map_view, name='map'),
     path('lab/', views.landing_page2, name='lab'),
-    path('lista_animales/', views.AnimalShelterListView.as_view(), name='animal_list'),
-    path('shelter/animal/<int:animal_id>/adoptar/', views.adoption_application_view, name='adoption_application_create'),
+    path('lista_animales/', views.AnimalShelterListView.as_view(), name='animal_list'),    
 
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

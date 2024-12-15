@@ -5,7 +5,7 @@
 {% block content %}
 
 <!-- Contenido principal -->
-<div class="jumbotron text-center mt-4" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div class="container jumbotron text-center mt-4" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <h1 class="display-4" style="color: #333;">Bienvenido/a a CANEMCAT</h1>
     <p class="lead" style="color: #555;">La plataforma que utiliza inteligencia artificial para facilitar la adopción de perros y gatos.</p>
 </div>
@@ -127,6 +127,44 @@
         </div>
     {% else %}
         <p>No hay animales disponibles para mostrar en el slider.</p>
+    {% endif %}
+</div>
+
+<div class="container my-4">
+    {% if news %}
+    <div id="carouselNews" class="carousel slide" data-bs-ride="carousel">
+        <!-- Indicadores del Carousel -->
+        <ol class="carousel-indicators">
+            {% for new in news %}
+            <li data-bs-target="#carouselNews" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+            {% endfor %}
+        </ol>
+
+        <!-- Contenido del Carousel -->
+        <div class="carousel-inner">
+            {% for new in news %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ new.title }}</h5>
+                    <p>{{ new.content|truncatewords:20 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Controles del Carousel -->
+        <a class="carousel-control-prev" href="#carouselNews" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselNews" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+    {% else %}
+    <p>No hay noticias disponibles para mostrar.</p>
     {% endif %}
 </div>
 

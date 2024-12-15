@@ -13,9 +13,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
 from .models import Animal
-from users.models import AdopterProfile
-from users.models import Wishlist
-
+from users.models import AdopterProfile, Wishlist
 # Create your views here.
 
 #ANIMALES
@@ -68,6 +66,8 @@ class AnimalListView(generic.ListView):
                 queryset = queryset.filter(adoption_status=adoption_status)
             if shelter:
                 queryset = queryset.filter(shelter=shelter)
+
+        queryset = queryset.order_by('id')  # O usa otro campo para ordenar según tus necesidades
 
         return queryset
 
@@ -135,33 +135,7 @@ class AnimalDetailView(generic.DetailView):
     
 #SOLICITUD DE ADOPCIÓN    
     
-@login_required
-def adoption_application_view(request, animal_id):
-    animal = get_object_or_404(Animal, pk=animal_id)
 
-    # Verificar si el usuario es un adoptante
-    if request.user.user_type != 'adopter':
-        # Si el usuario no es un adoptante, redirigir o mostrar un mensaje de error
-        return redirect('some_error_page')  # Puedes personalizar este redireccionamiento
-
-    # Obtener el perfil de AdopterProfile asociado al usuario
-    user_profile = AdopterProfile.objects.get(user=request.user)
-
-    # Si el método es POST, creamos la solicitud de adopción
-    if request.method == 'POST':
-        # Crear la solicitud de adopción
-        adoption_application = AdoptionApplication(
-            user=user_profile,  # Usar el perfil de adoptante
-            animal=animal,
-            shelter=animal.shelter,  # La protectora del animal
-            status='P',  # Por defecto, la solicitud está pendiente
-        )
-        adoption_application.save()
-
-        # Redirigir al usuario a la lista de solicitudes o una página de confirmación
-        return redirect('adoption_application_list')  # Personaliza esta URL según tu caso
-
-    return render(request, 'adoption_application_request.html', {'animal': animal})
 
 class AdoptionApplicationConfirmationView(generic.ListView):
     model = AdoptionApplication
