@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <h2>Trabajadores de {{ shelter.name }}</h2>
+
+    <a href="{% url 'add-shelter-worker' shelter_id=shelter.id %}" class="btn btn-success mb-3">Asignar trabajador</a>
+
+    <table class="table table-responsive-sm table-bordered bg-white">
+        <thead>
+            <tr>
+                <th scope="col" class="table-success">Nombre</th>
+                <th scope="col" class="table-success">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for worker in workers %}
+                <tr>
+                    <td>{{ worker.user.full_name }}</td>
+                    <td>
+                        <a href="{% url 'remove-worker' worker_id=worker.id shelter_id=shelter.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No hay trabajadores asignados a esta protectora.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-secondary">Volver a la protectora</a>
+</div>
+{% endblock %}

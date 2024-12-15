@@ -1,13 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
-from django.contrib.auth.models import User
-from .models import CustomUser
-from django.contrib.auth.forms import AuthenticationForm
-
-# Este formulario ya está incluido en Django, solo necesitas importarlo.
-from django import forms
+from .models import CustomUser, ShelterWorkerProfile
 from django.contrib.auth import authenticate
-
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(max_length=255, required=True)
@@ -19,10 +13,26 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ('email', 'full_name', 'phone_number', 'birth_date', 'profile_picture', 'user_type')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Filtramos las opciones para ocultar 'admin'
+        self.fields['user_type'].choices = [
+            (value, label) for value, label in CustomUser.USER_TYPES if value != 'admin'
+        ]
+
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ('email', 'full_name', 'phone_number', 'birth_date', 'profile_picture', 'user_type')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Filtramos las opciones para ocultar 'admin'
+        self.fields['user_type'].choices = [
+            (value, label) for value, label in CustomUser.USER_TYPES if value != 'admin'
+        ]
         
 
 class LoginForm(forms.Form):
@@ -197,3 +207,36 @@ class TestGatoForm(forms.Form):
         ('Moderada', 'Moderada (puede estar solo por un rato)'),
         ('Baja', 'Baja (puede estar solo por períodos largos)'),
     ])
+
+class WorkerRegistrationForm(forms.ModelForm):
+    # Campos para el CustomUser
+    user = forms.CharField(max_length=255, label="Nombre de usuario")
+    email = forms.EmailField(label="Correo electrónico")
+    full_name = forms.CharField(max_length=255, label="Nombre completo")
+
+    class Meta:
+        model = ShelterWorkerProfile
+        fields = ['user', 'email', 'full_name', 'shelter', 'position']
+    
+    def clean_user(self):
+        # Validar si el nombre de usuario ya existe en el sistema
+        username = self.cleaned_data.get('user')
+        if CustomUser.objects.filter(username=username).exists():
+            raise forms.ValidationError("Este nombre de usuario ya está en uso.")
+        return username
+
+    def save(self, commit=True):
+        # Crear un nuevo CustomUser
+        user = CustomUser.objects.create_user(
+            username=self.cleaned_data['user'],
+            email=self.cleaned_data['email'],
+            full_name=self.cleaned_data['full_name'],
+            password="contraseña_temporal",  # Asegúrate de enviar un correo para cambiar la contraseña.
+        )
+        
+        # Crear el perfil de trabajador
+        worker_profile = super().save(commit=False)
+        worker_profile.user = user
+        if commit:
+            worker_profile.save()
+        return worker_profile 

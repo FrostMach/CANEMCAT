@@ -7,8 +7,8 @@
     <p/>
     <table class="table table-responsive-sm table-responsive-md table-responsive-lg table-bordered bg-white">
         <tr>
-            <th scope="col">Nombre</th><th scope="col">Dirección</th><th scope="col">Correo</th>
-            {% if user.is_authenticated %}<th scope="col">Acreditación</th>{% endif %}<th scope="col">Acciones</th>
+            <th scope="col" class="table-success">Nombre</th><th scope="col" class="table-success">Dirección</th><th scope="col" class="table-success">Correo</th>
+            {% if user.is_authenticated %}<th scope="col" class="table-success">Acreditación</th>{% endif %}<th scope="col" class="table-success">Acciones</th>
         </tr>
         {% for shelter in shelters %}
             <tr>
@@ -18,16 +18,20 @@
                 {% if user.is_authenticated %}
                 <td>
                     {% if not shelter.status %}
-                        <a href="{% url 'shelter_approval' shelter.id %}">Aprobar Acreditación</a>
+                        <a href="{% url 'shelter_approval' shelter.id %}" class="btn btn-outline-warning">Aprobar Acreditación</a>
                     {% else %}
                         Acreditación Aprobada
                     {% endif %}
                 </td>
                 {% endif %}
                 <td><a href="{% url 'view_shelter' pk=shelter.id %}" class="btn btn-info">Ver</a>
-                {% if user.is_authenticated %}
+
+                {% if user.is_authenticated and user.user_type == 'worker' or user.user_type == 'admin' %}
+                    <a href="{% url 'animals-shelter-list' shelter.id %}" class="btn btn-light">Ver animales</a>
                     <a href="{% url 'edit_shelter' pk=shelter.id %}" class="btn btn-primary">Editar</a>
                     <a href="{% url 'delete_shelter' pk=shelter.id %}" class="btn btn-danger">Eliminar</a></td>
+                {% else %}
+                    <a href="{% url 'animals-shelter-list' shelter.id %}" class="btn btn-primary">Ver animales</a>
                 {% endif %}
             </tr>
         {% endfor %}

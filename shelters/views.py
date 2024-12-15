@@ -1,21 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from shelters.models import Animal, AdoptionApplication, Shelter
-from django.urls import reverse_lazy, reverse
-from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, CompleteShelterForm, RegisterShelterForm, UpdateShelterForm
 from django.views import generic
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
-from django.views import View, generic
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required, user_passes_test
-from math import atan2, cos, radians, sin, sqrt
-from django.http import JsonResponse
-from .models import Animal
+from django.urls import reverse_lazy, reverse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 
+from shelters.models import Animal, AdoptionApplication, Shelter
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, CompleteShelterForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
+from .models import Animal
 from users.models import Wishlist
 
 # Create your views here.
@@ -102,7 +97,47 @@ class AnimalShelterListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
         return context
+
+def animals_list(request, shelter_id):
+    # Obtener la protectora actual
+    shelter = get_object_or_404(Shelter, id=shelter_id)
     
+    # Obtener animales de esa protectora
+    animals = Animal.objects.filter(shelter=shelter)
+    
+    # Aplicar filtros si se usan
+    filter_form = AnimalFilterForm(
+        request.GET,
+        shelter_queryset=Shelter.objects.filter(id=shelter_id)  # Solo la protectora actual
+    )
+    
+    if filter_form.is_valid():
+        if filter_form.cleaned_data.get('species'):
+            animals = animals.filter(species=filter_form.cleaned_data['species'])
+        if filter_form.cleaned_data.get('sex'):
+            animals = animals.filter(sex=filter_form.cleaned_data['sex'])
+        if filter_form.cleaned_data.get('size'):
+            animals = animals.filter(size=filter_form.cleaned_data['size'])
+        if filter_form.cleaned_data.get('adoption_status'):
+            animals = animals.filter(adoption_status=filter_form.cleaned_data['adoption_status'])
+
+    # Paginación
+    paginated_animals = paginate(request, animals, per_page=9)
+
+    return render(request, 'animals/list_animal_shelter.html', {
+        'object_list': paginated_animals,  # Animales filtrados y paginados
+        'filter_form': filter_form,        # Formulario de filtros
+        'shelter': shelter,                # Protectora actual
+        'is_paginated': paginated_animals.has_other_pages(),
+        'page_obj': paginated_animals,
+    })
+
+
+def paginate(request, queryset, per_page=10):
+    paginator = Paginator(queryset, per_page)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
 class AnimalDetailView(generic.DetailView):
     model = Animal
     template_name = 'animals/details.html' 
@@ -175,26 +210,19 @@ def shelter_approval(request, shelter_id):
 def admin_only(user):
     return user.is_authenticated and user.is_staff
 
-
-# def register_shelter(request):
-#     if request.method == 'POST':
-#         form = RegisterShelterForm(request.POST, request.FILES)
-        
-#         if form.is_valid():
-#             form.save()
-#             return redirect('shelter_list')
-#     else:
-#         form = RegisterShelterForm()
-
-#     return render(request, 'shelter/register.html', {'form': form})
-
 class ShelterRegistrationView(LoginRequiredMixin, CreateView):
     model = Shelter
     form_class = RegisterShelterForm
     template_name = 'shelter/register.html'
     
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.user_type not in ['worker', 'admin']:
+            return HttpResponseForbidden('No tienes permisos para registrar una protectora')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_success_url(self):
-        return reverse('view_shelter', kwargs={'pk':self.object.pk})
+        return reverse('shelter_list')
 
 @staff_member_required
 def complete_shelter_registration(request, shelter_id):
@@ -220,6 +248,12 @@ class ShelterList(generic.ListView):
 class ShelterView(generic.DetailView):
     model = Shelter
     template_name = 'shelter/profile.html'
+
+    def get_context_data(self, **kwargs):
+        # Este método agrega información adicional al contexto de la vista.
+        context = super().get_context_data(**kwargs)
+        # Puedes agregar información adicional aquí si es necesario.
+        return context
 
 class UpdateShelterView(generic.UpdateView):
     model = Shelter
@@ -278,14 +312,15 @@ def shelters_by_postal_code(request):
     )
 
     return JsonResponse(list(shelters),safe=False)
-# def calculate_distance(lat1, lon1, lat2, lon2):
-#     R = 6371.0
-#     dlat = radians(lat2 - lat1)
-#     dlon = radians(lon2 - lon1)
-#     a = sin(dlat/2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
-#     c = 2 * atan2(sqrt(a), sqrt(1-a))
-    
-#     return R * c
 
 def landing_page2(request):
-    return render(request, 'shelter/landing_page2.html')
+    if hasattr(request.user, 'worker_profile'):
+        shelter = request.user.worker_profile.shelter
+    else:
+        shelter = None
+
+    context = {
+        'shelter': shelter,
+    }
+    
+    return render(request, 'shelter/landing_page2.html', context)

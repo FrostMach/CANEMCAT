@@ -1,38 +1,35 @@
 import json
+import smtplib
+import requests
+
 from django.dispatch import receiver
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views import View, generic
 from django.contrib.auth import views as auth_views
-from shelters.models import Animal
-from users.sys_recommend.csv_util import export_data_to_csv, export_wishlist_to_csv, generate_animal_data
-from users.sys_recommend.recommendations import recommend_from_csv
-from .forms import CustomUserCreationForm, CustomUserChangeForm
-from django.contrib.auth.forms import PasswordResetForm
-from .models import CustomUser, Wishlist, Test, AdopterProfile
-from django.contrib.auth import login, authenticate, logout, get_user_model
-from .forms import LoginForm
-from django.shortcuts import render
+from django.contrib.auth import login, logout, get_user_model
 from django.core.files.storage import default_storage
-import tensorflow as tf
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm, UserCreationForm
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
-import smtplib
-import requests
 from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
-from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
-from .forms import TestPerroForm, TestGatoForm
-from shelters.models import Animal
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save, post_delete
+
+from shelters.models import Animal, Shelter
+from users.sys_recommend.csv_util import export_wishlist_to_csv, generate_animal_data
+from users.sys_recommend.recommendations import recommend_from_csv
+from .forms import CustomUserCreationForm, CustomUserChangeForm, LoginForm, TestPerroForm, TestGatoForm
+from .models import CustomUser, ShelterWorkerProfile, Wishlist, Test, AdopterProfile
+
+import tensorflow as tf
 
 @never_cache
 
@@ -198,6 +195,17 @@ class SignUpView(generic.CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
+
+    def form_valid(self, form):
+        user = form.save()
+
+        if form.cleaned_data.get('user_type') == 'worker':
+            return redirect('assign_worker', kwargs={'worker_id': user.id})
+        
+        return redirect(self.get_success_url())
+    
+    def get_success_url(self):
+        return reverse('login')
 
 class ProfileView(generic.DetailView):
     model = CustomUser
@@ -547,9 +555,6 @@ def resultado_test(request):
         'especie': especie,
     })
 
-def admin_only(user):
-    return user.is_authenticated and user.is_staff
-
 class RecommendationView(View):
        def get(self, request):
         try:
@@ -594,3 +599,52 @@ class RecommendationView(View):
 @receiver(post_delete, sender=Wishlist)
 def update_wishlist_csv(sender, instance, **kwargs):
     export_wishlist_to_csv()
+
+def add_shelter_worker(request, shelter_id):
+    # Obtener la protectora
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+
+    # Verificar que el usuario pertenece al shelter
+    if not ShelterWorkerProfile.objects.filter(user=request.user, shelter=shelter).exists() and not request.user.is_superuser:
+        messages.error(request, "No tienes permiso para añadir trabajadores a esta protectora.")
+        return redirect('view_shelter', pk=shelter_id)
+
+    # Obtener usuarios disponibles (usuarios sin shelter)
+    available_users = CustomUser.objects.filter(user_type='worker' ,worker_profile__isnull=True)
+
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+
+        # Validar que se seleccionó un usuario
+        if not user_id:
+            messages.error(request, "Debes seleccionar un usuario.")
+            return redirect('add-shelter-worker', shelter_id=shelter_id)
+
+        # Verificar que el usuario existe y está disponible
+        user_to_add = get_object_or_404(available_users, id=user_id)
+
+        # Crear el perfil de trabajador
+        ShelterWorkerProfile.objects.create(user=user_to_add, shelter=shelter)
+        messages.success(request, f"El usuario {user_to_add.full_name} ha sido añadido a la protectora {shelter.name}.")
+        return redirect('shelter_workers', shelter_id=shelter_id)
+
+    return render(request, "worker/assign_worker.html", {
+        "shelter": shelter,
+        "available_users": available_users
+    })
+
+def shelter_workers(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+    workers = ShelterWorkerProfile.objects.filter(shelter=shelter)
+
+    return render(request, 'worker/shelter_workers_list.html', {
+        'shelter': shelter,
+        'workers': workers
+    })
+
+def remove_worker(request, worker_id, shelter_id):
+    worker = get_object_or_404(ShelterWorkerProfile, id=worker_id, shelter_id=shelter_id)
+    worker.delete()
+    messages.success(request, "El trabajador ha sido eliminado.")
+
+    return redirect('shelter_workers', shelter_id=shelter_id)

@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models
-from shelters.models import Animal
+from shelters.models import Animal, Shelter
 import re
 from django.core.exceptions import ValidationError
 
@@ -35,6 +34,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USER_TYPES = (
         ('adopter', 'Adopter'),  # Persona que adopta
         ('worker', 'Shelter Worker'),  # Trabajador de protectora
+        ('admin', 'Administrador'),
     )
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
@@ -54,11 +54,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
 class ShelterWorkerProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='worker_profile')
-    shelter_name = models.CharField(max_length=255)
+    shelter = models.ForeignKey(Shelter, on_delete=models.SET_NULL, null=True, blank=True, related_name='workers')
     position = models.CharField(max_length=100, blank=True, null=True, default='Empleado')
 
     def __str__(self):
-        return f"{self.user.full_name} - {self.shelter_name}"
+        return f"{self.user.full_name} - {self.shelter.name if self.shelter else 'Sin protectora'}"
     
 class AdopterProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='adopter_profile')

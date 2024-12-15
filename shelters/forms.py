@@ -5,8 +5,6 @@ from users.models import CustomUser
 from datetime import date
 from django import forms
 
-
-
 #FORM DE ANIMALES
 class AnimalForm(forms.ModelForm):
     class Meta:
@@ -58,6 +56,12 @@ class AnimalFilterForm(forms.Form):
         label="Protectora",
         empty_label="---"
     )
+
+    def __init__(self, *args, **kwargs):
+        # Permitir que se pase un queryset personalizado para el campo 'shelter'
+        shelter_queryset = kwargs.pop('shelter_queryset', Shelter.objects.all())
+        super().__init__(*args, **kwargs)
+        self.fields['shelter'].queryset = shelter_queryset
  
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):

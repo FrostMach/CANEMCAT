@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import RecommendationView, landing_page,email_confirmation,canem_test
 from django.contrib.auth import views as auth_views
+
 urlpatterns = [
     path('', landing_page, name='landing_page'),
     path('signup/', views.signup, name='signup'),
@@ -21,13 +22,16 @@ urlpatterns = [
     path('wishlist/add/', views.wishlist_add, name='wishlist_add'),
     path('<int:wishlist_id>/remove_wishlist/', views.wishlist_remove, name='wishlist_remove'),
     path('canem_test/', views.canem_test, name='canem_test'),  # Vista para seleccionar la especie
-    path('dog_test/', views.DogTestView.as_view(), name='dog_test'),    
-    path('cat_test/', views.CatTestView.as_view(), name='cat_test'),   
+    path('dog_test/', views.DogTestView.as_view(), name='dog_test'),
+    path('cat_test/', views.CatTestView.as_view(), name='cat_test'),
     path('resultado/', views.resultado_test, name='resultado_test'),
     path('canemscan/', views.canem_scan, name='canemscan'),
     path('canemscan/upload/', views.upload_image, name='upload_image'),
-    path('canemscan/compare/', views.compare_images, name='compare_images'),   
-    path('animals/recommendations/', RecommendationView.as_view(), name='recommendations')
+    path('canemscan/compare/', views.compare_images, name='compare_images'),
+    path('animals/recommendations/', RecommendationView.as_view(), name='recommendations'),
+    path('shelter/<int:shelter_id>/add_worker/', views.add_shelter_worker, name='add-shelter-worker'),
+    path('shelter/<int:shelter_id>/workers/', views.shelter_workers, name='shelter_workers'),
+    path('worker/<int:worker_id>/remove/<int:shelter_id>/', views.remove_worker, name='remove-worker'),
 ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

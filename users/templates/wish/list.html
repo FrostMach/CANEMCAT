@@ -48,7 +48,7 @@
                     <div class="card" style="width: 100%;">
                         <img src="{{ item.animal.image.url }}" alt="{{ item.animal.name }}" class="card-img-top">
                         <div class="card-body">
-                            <h5 class="card-title">Nombre:</h5> {{ item.animal.name }}
+                            <h4 class="card-title">{{ item.animal.name }}</h4>
                             <p><strong>Especie: </strong>{{item.animal.species}}</p>
                             <p><strong>Edad: </strong>{{item.animal.age}}</p>
             
@@ -61,7 +61,7 @@
                 </div>
             {% endif %}
         {% empty %}
-            <li>No hay mascotas favoritas en la lista</li>
+            <p>No hay mascotas favoritas en la lista</p>
         {% endfor %}
     </div>
 </div>
