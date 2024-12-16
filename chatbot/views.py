@@ -1,71 +1,81 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+import os
 import numpy as np
-import tensorflow as tf
+import nltk
+from nltk.stem import WordNetLemmatizer
 import pickle
 import json
-from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
-from tensorflow.keras.models import load_model # type: ignore
-import os
 
-# Ruta relativa del proyecto (usando __file__ para obtener la ubicación del archivo actual)
-project_dir = os.path.dirname(os.path.abspath(__file__))  # Obtiene la ruta del archivo Python actual
+# Inicializar el lematizador
+lemmatizer = WordNetLemmatizer()
 
-# Construcción de las rutas para los archivos
-tokenizer_path = os.path.join(project_dir, 'models', 'tokenizer.pickle')
-label_encoder_path = os.path.join(project_dir, 'models', 'label_encoder.pickle')
-model_path = os.path.join(project_dir, 'models', 'chat_model.keras')
-chatbot_data_path = os.path.join(project_dir, 'models', 'chatbot_data.json')
+# Ruta del proyecto
+project_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Verificar si el archivo del modelo existe antes de cargarlo
-if os.path.exists(model_path):
-    model = load_model(model_path)
-    print("Modelo cargado con éxito.")
+# Rutas de los modelos y datos
+words_path = os.path.join(project_dir, 'models', 'words.npy')
+classes_path = os.path.join(project_dir, 'models', 'classes.npy')
+model_path = os.path.join(project_dir, 'models', 'chatbot_model.pkl')
+intents_path = os.path.join(project_dir, 'models', 'chatbot_data.json')
+
+# Cargar los datos preprocesados y el modelo
+if os.path.exists(words_path) and os.path.exists(classes_path) and os.path.exists(model_path) and os.path.exists(intents_path):
+    with open(words_path, 'rb') as f:
+        words = np.load(f)
+
+    with open(classes_path, 'rb') as f:
+        classes = np.load(f)
+
+    with open(model_path, 'rb') as model_file:
+        model = pickle.load(model_file)
+
+    with open(intents_path, 'r', encoding='utf-8') as f:
+        intents = json.load(f)
 else:
-    print("El archivo de modelo no se encuentra en la ruta especificada.")
+    raise FileNotFoundError("Uno o más archivos necesarios no se encontraron en las rutas especificadas.")
 
-# Cargar el tokenizer y el label encoder
-with open(tokenizer_path, 'rb') as handle:
-    tokenizer = pickle.load(handle)
+# Función para procesar la entrada del usuario
+def clean_up_sentence(sentence):
+    sentence_words = nltk.word_tokenize(sentence)
+    sentence_words = [lemmatizer.lemmatize(w.lower()) for w in sentence_words]
+    return sentence_words
 
-with open(label_encoder_path, 'rb') as handle:
-    lbl_encoder = pickle.load(handle)
+# Función para crear el "bag of words"
+def bow(sentence, words):
+    sentence_words = clean_up_sentence(sentence)
+    bag = [1 if w in sentence_words else 0 for w in words]
+    return np.array(bag)
 
-# Cargar los datos del chatbot (intents y respuestas)
-try:
-    with open(chatbot_data_path, 'r', encoding='utf-8') as file:
-        chatbot_data = json.load(file)
-        print("Datos cargados correctamente.")
-except FileNotFoundError:
-    print(f"El archivo no se encuentra en la ruta: {chatbot_data_path}")
-max_len = 25  # Usar el mismo valor que en el entrenamiento
 
 # Vista para interactuar con el chatbot
 def chatbot_view(request):
-    if model is None:
-        return JsonResponse({'response': "El chatbot no está disponible en este momento. Inténtalo más tarde."})
     if request.method == "POST":
-        user_input = request.POST.get("message")  # Obtener el mensaje del usuario desde el formulario
+        user_input = request.POST.get("message", "").strip()
+        if not user_input:
+            return JsonResponse({'response': "Por favor, escribe algo para poder responder."})
         
-        if user_input:
-            # Preprocesar el mensaje del usuario
-            input_seq = tokenizer.texts_to_sequences([user_input])
-            padded_input = pad_sequences(input_seq, truncating='post', maxlen=max_len)
+        try:
+            # Convertir la entrada del usuario a un "bag of words"
+            bow_input = bow(user_input, words)
             
-            # Predecir la respuesta del modelo
-            result = model.predict(padded_input)
-            tag = lbl_encoder.inverse_transform([np.argmax(result)])  # Obtener la etiqueta predecida
-            
-            # Obtener la respuesta basada en la etiqueta
+            # Predecir la clase/intención
+            prediction = model.predict([bow_input])
+            predicted_class = prediction[0]
+
+            # Buscar la respuesta correspondiente en las intenciones
             response = None
-            for intent in chatbot_data['intents']:  # Aquí accedes a los datos del JSON
-                if intent['tag'] == tag[0]:
+            for intent in intents['intents']:
+                if intent['tag'] == classes[predicted_class]:
                     response = np.random.choice(intent['responses'])
                     break
-             # Si no se encuentra ninguna respuesta, devolver una respuesta predeterminada
+            
             if not response:
                 response = "Lo siento, no entiendo esa pregunta."
-                
+            
             return JsonResponse({'response': response})
         
+        except Exception as e:
+            return JsonResponse({'response': f"Se produjo un error: {str(e)}"})
+
     return render(request, 'chatbot/chat.html')

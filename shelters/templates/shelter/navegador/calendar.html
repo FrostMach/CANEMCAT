@@ -1,0 +1,41 @@
+{% extends "shelter/base2.html" %}
+{% load static %}
+
+{% block title %}Calendario{% endblock title %}
+
+{% block content %}
+<div class="col-md-12">
+    <div class="calendar-container">
+        <div class="calendar-controls">
+            <label for="month-select" class="control-label">Mes:</label>
+            <select id="month-select" class="control-select">
+                <option value="0">Enero</option>
+                <option value="1">Febrero</option>
+                <option value="2">Marzo</option>
+                <option value="3">Abril</option>
+                <option value="4">Mayo</option>
+                <option value="5">Junio</option>
+                <option value="6">Julio</option>
+                <option value="7">Agosto</option>
+                <option value="8">Septiembre</option>
+                <option value="9">Octubre</option>
+                <option value="10">Noviembre</option>
+                <option value="11">Diciembre</option>
+            </select>
+
+            <label for="year-select" class="control-label">Año:</label>
+            <select id="year-select" class="control-select">
+                <!-- Los años se generan dinámicamente -->
+            </select>
+        </div>
+
+        <div id="calendar"></div>
+    </div>
+
+</div>
+
+<!-- CSRF token: Asegúrate de que el token esté disponible para las solicitudes AJAX -->
+<form id="csrf-form" style="display: none;">
+    {% csrf_token %}
+</form>
+{% endblock %}

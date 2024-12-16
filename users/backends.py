@@ -11,3 +11,4 @@ class EmailBackend(ModelBackend):
                 return user
         except get_user_model().DoesNotExist:
             return None
+        
