@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %} Alta Protectora {% endblock %}
+{% block title %} Completar datos de Centro de Adopción {% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-center align-items-center bg-light">
     <div class="w-100" style="max-width: 600px;">
-        <h1 class="text-center mb-4">Alta Centro de Adopción</h1>
+        <h1 class="text-center mb-4">Completar datos de Centro de Adopción</h1>
 
-        <form method="post" enctype="multipart/form-data" class="p-4 bg-white shadow-sm rounded">
+        <form method="post" enctype="multipart/form-data" class="p-4 bg-white shadow-sm rounded" action="{% url 'register_complete' shelter.id %}">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
@@ -39,7 +40,8 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            <button class="btn btn-success w-100 py-2" type="submit">Registrar</button>
+
+            <button class="btn btn-success w-100 py-2" type="submit">Guardar</button>
         </form>
     </div>
 </div>

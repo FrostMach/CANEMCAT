@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4 p-4 bg-white shadow-sm rounded">
+    <h1>Aprobar Acreditación para {{ shelter.name }}</h1>
+
+    {% if shelter.accreditation_file %}
+        <p><strong>Documento de Acreditación: </strong></p>
+        <a href="{{ shelter.accreditation_file.url }}" target="_blank" class="link-info">Ver documento</a>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'shelter_approval' shelter.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve" class="btn btn-success">Aprobar</button>
+            <button type="submit" name="action" value="reject" class=" btn btn-danger">Rechazar</button>
+            <p/>
+        </form>
+        
+    {% else %}
+        <p>No hay documento de acreditación disponible</p>
+    {% endif %}
+    
+    <a href="{% url 'shelter_list' %}" class="btn btn-secondary">Retroceder</a>
+</div>
+{% endblock %}

@@ -1,14 +1,49 @@
 {% extends 'base.html'%}
 {% block title %} Low Shelter {% endblock %}
 {% block content %}
-    <h2>Baja protectora</h2>
+<style>
+    .center-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 50vh; /* Ocupa toda la altura de la pantalla */
+        text-align: center;
+    }
 
-    <div class="mt-4 p-4 bg-white shadow-sm rounded">
-    <p>¿Seguro qué deseas dar de baja esta protectora <b>"{{ object }}"?</b></p>
-    <form method="post">
-        {% csrf_token %}
-        <button class="btn btn-danger" type="submit">Confirmar</button>
-        <a class="btn btn-secondary" href="{% url 'register_shelter' %}">Cancelar</a>
-    </form>
+    .confirmation-box {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .confirmation-box h2 {
+        margin-bottom: 20px;
+    }
+
+    .confirmation-box p {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .confirmation-box .btn {
+        margin: 5px;
+    }
+</style>
+
+<div class="center-container">
+    <div class="confirmation-box">
+        <h2>Baja Protectora</h2>
+        <p>¿Seguro que deseas dar de baja esta protectora <b>"{{ object }}"?</b></p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit">Confirmar</button>
+            <a class="btn btn-secondary" href="{% url 'view_shelter' pk=shelter.id %}">Cancelar</a>
+        </form>
     </div>
+</div>
 {% endblock %}

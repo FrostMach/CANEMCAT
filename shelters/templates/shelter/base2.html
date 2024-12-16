@@ -176,7 +176,64 @@
                         </li>
                         {% endif %}
 
-                        <!-- Planificación -->
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Gestión de protectoras
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
+                                    <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de protectoras</a></li>
+                                    {% with user.worker_profile as profile %}
+                                        {% if profile and profile.shelter %}
+                                            <!-- Opción para asignar un nuevo trabajador (solo si es admin o worker) -->
+                                            {% if user.user_type == 'admin' or user.user_type == 'worker' %}
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'add-shelter-worker' shelter_id=profile.shelter.id %}">
+                                                        Asignar nuevo trabajador
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            <!-- Mensaje cuando el trabajador no tiene una protectora asignada -->
+                                            <li class="dropdown-item text-muted">
+                                                No tienes una protectora asignada.
+                                            </li>
+                                        {% endif %}
+                                    {% endwith %}
+                                </ul>
+                            </li>
+                        {% endif %}
+
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAnimals" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Gestión de protectoras
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownAnimals">
+                                    <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de protectoras</a></li>
+                                    {% with user.worker_profile as profile %}
+                                        {% if profile and profile.shelter %}
+                                            <!-- Opción para asignar un nuevo trabajador (solo si es admin o worker) -->
+                                            {% if user.user_type == 'admin' or user.user_type == 'worker' %}
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'add-shelter-worker' shelter_id=profile.shelter.id %}">
+                                                        Asignar nuevo trabajador
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            <!-- Mensaje cuando el trabajador no tiene una protectora asignada -->
+                                            <li class="dropdown-item text-muted">
+                                                No tienes una protectora asignada.
+                                            </li>
+                                        {% endif %}
+                                    {% endwith %}
+                                </ul>
+                            </li>
+                        {% endif %}
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">Planificación</a>
@@ -193,6 +250,16 @@
                             <a class="nav-link" href="{% url 'adoption_application_list_shelterworker' %}">Solicitudes</a>
                         </li>
                     </ul>
+                    
+                    {% with user.worker_profile as profile %}
+                            {% if profile and profile.shelter %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'shelter_workers' shelter_id=profile.shelter.id %}">
+                                        {{ profile.shelter.name }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endwith %}
 
                     <!-- Alineación a la derecha -->
                     <ul class="navbar-nav ms-auto d-flex">
@@ -205,24 +272,27 @@
                             </a>
                         </li>
                         {% endif %}
+                    
                         {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
+                        <!-- Icono de usuario y logout -->
+                        <li class="nav-item dropdown d-flex align-items-center"">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if user.profile_picture %}
                                 <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" class="rounded-circle"
                                     width="30">
                                 {% else %}
-                                <i class="bi bi-person-circle"></i>
+                                <i class="bi bi-person-circle"></i> <!-- Icono de usuario -->
                                 {% endif %}
                                 {{ user.full_name }}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                                <li><a class="dropdown-item" href="{% url 'profile_worker' user.pk %}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="">Perfil</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
                             </ul>
                         </li>
                         {% else %}
+                        <!-- Enlace de registro -->
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'signup' %}">Registrar</a>
                         </li>

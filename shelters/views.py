@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from shelters.models import Animal, AdoptionApplication, Shelter
-from django.urls import reverse_lazy, reverse
-from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm
 from django.views import generic
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
 from django.views import View, generic
@@ -12,8 +8,18 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from math import atan2, cos, radians, sin, sqrt
 from django.http import JsonResponse
-from .models import Animal, Event
+from .models import Animal
+from django.urls import reverse_lazy, reverse
+from django.http import JsonResponse, HttpResponseForbidden
+from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+
+from shelters.models import Animal, AdoptionApplication, Shelter
+from shelters.forms import AdoptionApplicationCreationForm, AnimalForm, CompleteShelterForm, RegisterShelterForm, UpdateShelterForm, AnimalFilterForm
+from .models import Animal
+from users.models import Wishlist
+
 from users.models import Wishlist
 import json
 from django.utils.dateparse import parse_date, parse_time, parse_datetime
@@ -217,26 +223,67 @@ class AnimalShelterListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = AnimalFilterForm(self.request.GET)  # Pasa el formulario al contexto
         return context
+
+def animals_list(request, shelter_id):
+    # Obtener la protectora actual
+    shelter = get_object_or_404(Shelter, id=shelter_id)
     
+    # Obtener animales de esa protectora
+    animals = Animal.objects.filter(shelter=shelter)
+    
+    # Aplicar filtros si se usan
+    filter_form = AnimalFilterForm(
+        request.GET,
+        shelter_queryset=Shelter.objects.filter(id=shelter_id)  # Solo la protectora actual
+    )
+    
+    if filter_form.is_valid():
+        if filter_form.cleaned_data.get('species'):
+            animals = animals.filter(species=filter_form.cleaned_data['species'])
+        if filter_form.cleaned_data.get('sex'):
+            animals = animals.filter(sex=filter_form.cleaned_data['sex'])
+        if filter_form.cleaned_data.get('size'):
+            animals = animals.filter(size=filter_form.cleaned_data['size'])
+        if filter_form.cleaned_data.get('adoption_status'):
+            animals = animals.filter(adoption_status=filter_form.cleaned_data['adoption_status'])
+
+    # Paginación
+    paginated_animals = paginate(request, animals, per_page=9)
+
+    return render(request, 'animals/list_animal_shelter.html', {
+        'object_list': paginated_animals,  # Animales filtrados y paginados
+        'filter_form': filter_form,        # Formulario de filtros
+        'shelter': shelter,                # Protectora actual
+        'is_paginated': paginated_animals.has_other_pages(),
+        'page_obj': paginated_animals,
+    })
+
+
+def paginate(request, queryset, per_page=10):
+    paginator = Paginator(queryset, per_page)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
 class AnimalDetailView(generic.DetailView):
     model = Animal
     template_name = 'animals/details.html' 
     context_object_name = 'animal'  
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         user = self.request.user
-#         animal = self.object
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        animal = self.object
 
-#         is_in_wishlist = False
+        if self.request.user.is_authenticated:
+            if not Wishlist.objects.filter(user=self.request.user, animal=animal,
+                interaction_type='view').exists():
+                Wishlist.objects.create(user=self.request.user, animal=animal, interaction_type='view')
 
-#         if user.is_authenticated:
-#             is_in_wishlist = Wishlist.objects.filter(user=user, animal=animal).exists()
-#             Wishlist.objects.create(user=user, animal=animal, interaction_type='view')
-        
-#         context['is_in_wishlist'] = is_in_wishlist
+        context['is_in_wishlist'] = Wishlist.objects.filter(
+            user = self.request.user,
+            animal = animal,
+            interaction_type='favorite').exists()
 
-#         return context
+        return context
     
 #SOLICITUD DE ADOPCIÓN    
     
@@ -298,22 +345,42 @@ def shelter_approval(request, shelter_id):
             shelter.status = False
         
         shelter.save()
-        return redirect('shelter_list')
+        return redirect('register_complete', shelter_id=shelter_id)
     
-    return render(request, 'shelter/list_pending.html', {'shelter': shelter})
+    return render(request, 'shelter/approve.html', {'shelter': shelter})
 
-@login_required
-def register_shelter(request):
+def admin_only(user):
+    return user.is_authenticated and user.is_staff
+
+class ShelterRegistrationView(LoginRequiredMixin, CreateView):
+    model = Shelter
+    form_class = RegisterShelterForm
+    template_name = 'shelter/register.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.user_type not in ['worker', 'admin']:
+            return HttpResponseForbidden('No tienes permisos para registrar una protectora')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return reverse('shelter_list')
+
+@staff_member_required
+def complete_shelter_registration(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+
     if request.method == 'POST':
-        form = RegisterShelterForm(request.POST, request.FILES)
+        form = CompleteShelterForm(request.POST, instance=shelter)
         
         if form.is_valid():
             form.save()
             return redirect('shelter_list')
+    
     else:
-        form = RegisterShelterForm()
+        form = CompleteShelterForm(instance=shelter)
 
-    return render(request, 'shelter/register.html', {'form': form})
+    return render(request, 'shelter/complete_registration.html', {'form': form, 'shelter': shelter})
 
 class ShelterList(generic.ListView):
     model = Shelter
@@ -324,6 +391,12 @@ class ShelterView(generic.DetailView):
     model = Shelter
     template_name = 'shelter/profile.html'
 
+    def get_context_data(self, **kwargs):
+        # Este método agrega información adicional al contexto de la vista.
+        context = super().get_context_data(**kwargs)
+        # Puedes agregar información adicional aquí si es necesario.
+        return context
+
 class UpdateShelterView(generic.UpdateView):
     model = Shelter
     form_class = UpdateShelterForm
@@ -331,6 +404,16 @@ class UpdateShelterView(generic.UpdateView):
     
     def get_success_url(self):
         return reverse('view_shelter', kwargs={'pk':self.object.pk})
+    
+    def get_form(self, form_class=None):
+        # Sobrescribimos el método `get_form` para agregar las clases 'form-control' a todos los campos
+        form = super().get_form(form_class)
+        
+        # Añadir la clase 'form-control' a cada campo del formulario
+        for field in form:
+            field.field.widget.attrs.update({'class': 'form-control'})
+        
+        return form
 
 class DeleteShelterView(generic.DeleteView):
     model = Shelter
@@ -371,63 +454,15 @@ def shelters_by_postal_code(request):
     )
 
     return JsonResponse(list(shelters),safe=False)
-# def calculate_distance(lat1, lon1, lat2, lon2):
-#     R = 6371.0
-#     dlat = radians(lat2 - lat1)
-#     dlon = radians(lon2 - lon1)
-#     a = sin(dlat/2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
-#     c = 2 * atan2(sqrt(a), sqrt(1-a))
-    
-#     return R * c
 
 def landing_page2(request):
-    return render(request, 'shelter/landing_page2.html')
+    if hasattr(request.user, 'worker_profile'):
+        shelter = request.user.worker_profile.shelter
+    else:
+        shelter = None
 
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Item
-from .forms import ItemForm  # Crearemos este formulario más adelante
-from django.contrib import messages
-
-def inventory_management(request):
-    food_items = Item.objects.filter(category='alimentos')
-    medication_items = Item.objects.filter(category='medicamentos_vacunas')
-    other_items = Item.objects.filter(category='otros')
+    context = {
+        'shelter': shelter,
+    }
     
-    return render(request, 'shelter/inventory_management.html', {
-        'food_items': food_items,
-        'medication_items': medication_items,
-        'other_items': other_items,
-    })
-
-
-def add_item(request):
-    if request.method == 'POST':
-        form = ItemForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '¡Ítem añadido correctamente!')
-            return redirect('inventory_management')
-    else:
-        form = ItemForm()
-    return render(request, 'shelter/add_item.html', {'form': form})
-
-def edit_item(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    if request.method == 'POST':
-        form = ItemForm(request.POST, instance=item)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '¡Ítem actualizado correctamente!')
-            return redirect('inventory_management')
-    else:
-        form = ItemForm(instance=item)
-    return render(request, 'shelter/edit_item.html', {'form': form, 'item': item})
-
-def delete_item(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    if request.method == 'POST':
-        item.delete()
-        messages.success(request, '¡Ítem eliminado correctamente!')
-        return redirect('inventory_management')
-    return render(request, 'shelter/delete_item.html', {'item': item})
-
+    return render(request, 'shelter/landing_page2.html', context)

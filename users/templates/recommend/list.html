@@ -1,56 +1,163 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1>Recomendaciones de Animales</h1>
 
-<div class="container mt-5">
-    <h2>Bienvenido, {{ user.full_name }}</h2>
+{% block content %}
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap; /* Permitir que las tarjetas se ajusten si no caben */
+        justify-content: center; /* Centrar las tarjetas horizontalmente */
+        gap: 10px; /* Añadir un espacio entre las tarjetas */
+    }
+
+    .card {
+        flex: 1 1 calc(25% - 10px); /* Cada tarjeta ocupa 25% del ancho menos el espacio */
+        max-width: calc(25% - 10px);
+        min-width: 200px; /* Ancho mínimo para las tarjetas */
+        opacity: 0;  /* Inicialmente invisible */
+        transform: translateX(-100%);
+        transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        position: relative;
+        overflow: visible;
+        margin: 10px;
+    }
+
+    .card.visible {
+        opacity: 1;  /* Se vuelve visible */
+        transform: translateX(0);
+    }
+
+    .card-img-top {
+        display: block;
+        width: 100%; /* Asegurar que la imagen ocupe el ancho de la tarjeta */
+        height: 150px; /* Altura fija */
+        object-fit: cover; /* Asegurar que la imagen mantenga proporción */
+        transition: transform 0.3s ease, filter 1s ease-in-out;
+        filter: blur(10px);
+    }
+
+    .card-img-top.visible {
+        filter: blur(0);
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex: 1 1 calc(50% - 10px); /* Cambiar a 2 columnas en pantallas medianas */
+        }
+    }
+
+    @media (max-width: 576px) {
+        .card {
+            flex: 1 1 calc(100% - 10px); /* Cambiar a 1 columna en pantallas pequeñas */
+        }
+    }
+
+    .confirmation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .confirmation-buttons.hidden {
+        display: none;
+    }
+
+    .question-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .question-container.hidden {
+        display: none;
+    }
+
+    .question-container p {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+</style>
+
+<h3>Bienvenido a la CanemWISH, {{ user.full_name }}</h3>
+
+<div class="container">
+    <div class="question-container" id="questionContainer">
+        <p>¿Quieres conocer las mascotas que mejor se ajustan a tus preferencias?</p>
+
+        <div class="confirmation-buttons" id="confirmationButtons">
+            <button id="confirmYes" class="btn btn-success">Recomendarme</button>
+        </div>
+    </div>
     
-    <h3>Tus Recomendaciones</h3>
-    <button id="refresh-recommendations" class="btn btn-secondary">Actualizar Recomendaciones</button>
-    {% if recommended_animals %}
-        <ul id='recommendations-list' class="list-group">
+    <div id="recommendedAnimals" class="row justify-content-center" style="display: none;">
+        {% if recommended_animals %}
             {% for animal in recommended_animals %}
-                <li class="list-group-item">
-                    <h4>{{ animal.name }}</h4>
-                    <p><strong>Descripción:</strong> {{ animal.description }}</p>
-                    {% if animal.image %}
-                        <p><strong>Imagen: </strong> <img src="{{ animal.image.url }}" alt="{{ animal.name }}" style="width: 150px; height: auto;"></td></p>
-                    {% endif %}
-                    <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary btn-sm">Ver más</a>
-                </li>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card" style="width: 100%;">
+                        <img src="{{ animal.image }}" class="card-img-top small-img" alt="{{ animal.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ animal.name }}</h5>
+                            <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary btn-sm">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No se encontraron animales con los filtros seleccionados.</p>
             {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay recomendaciones para mostrar. ¡Explora y agrega favoritos para obtener sugerencias!</p>
-    {% endif %}
+        {% else %}
+            <p>No hay recomendaciones para mostrar. ¡Explora y agrega favoritos para obtener sugerencias!</p>
+        {% endif %}
+    </div>
 </div>
 
-<a href="{% url 'animals-list' %}">Acceder a listado de animales</a>
+{% block extra_js %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Obtener los elementos del DOM
+            const confirmYes = document.getElementById('confirmYes');
+            const questionContainer = document.getElementById('questionContainer');
+            const recommendedAnimals = document.getElementById('recommendedAnimals');
+            const confirmationButtons = document.getElementById('confirmationButtons');
+            const cards = document.querySelectorAll('.card');
+            const images = document.querySelectorAll('.card-img-top'); // Seleccionar todas las imágenes
 
-<script>
-    document.getElementById('refresh-recommendations')
-        .addEventListener('click', function() {
-            fetch('/dashboard/recommendations/')
-                .then(response =>  response.json())
-                .then(data => {
-                    const recommendationsList = document.getElementById('recommendations-list');
-                    recommendationsList.innerHTML = '';
+            // Mostrar las recomendaciones y hacer visibles las imágenes si el usuario hace clic en "Sí"
+            confirmYes.addEventListener('click', function() {
+                recommendedAnimals.style.display = 'flex';  // Mostrar las recomendaciones
+                questionContainer.classList.add('hidden');
 
-                    data.recommendations.forEach(animal => {
-                        const listItem = document.createElement('li');
-                        listItem.className = 'list-group-item';
+                // Hacer las imágenes visibles con un pequeño retraso para la animación
+                setTimeout(() => {
+                    images.forEach((image, index) => {
+                        // Añadir la clase 'visible' para las animaciones
+                        setTimeout(() => {
+                            image.classList.add('visible');  // La imagen se deja de difuminar
+                        }, index * 500);  // Agregar un retraso de 500ms entre cada imagen
 
-                        listItem.innerHTML = `
-                            <h4>${animal.name}</h4>
-                            <p><strong>Descripción:</strong> ${animal.description}</p>
-                            ${animal.image ? `<img src="${animal.image}" class="img-thumbnail small-img" alt="${animal.name}">` : ''}
-                            <p><strong>Estado de Adopción:</strong> ${animal.adoption_status}</p>
-                            <a href="/animals/${animal.id}/" class="btn btn-primary btn-sm">Ver más</a>`;
-                        
-                        recommendationsList.appendChild(listItem);
+                        // Animación de las tarjetas con retraso
+                        const card = image.closest('.card');
+                        setTimeout(() => {
+                            card.classList.add('visible');  // La tarjeta se vuelve visible
+                        }, index * 1000);  // El retraso aumenta con cada tarjeta (1 segundo de diferencia)
                     });
-            })
-            .catch(error => console.error('Error: ', error));
-    });
-</script>
+                }, 500); 
+            });
+
+            images.forEach(image => {
+                image.addEventListener('mouseenter', () => {
+                    image.classList.add('zoom');  // Añadir la clase 'zoom' cuando el cursor entra
+                });
+
+                image.addEventListener('mouseleave', () => {
+                    image.classList.remove('zoom');  // Eliminar la clase 'zoom' cuando el cursor sale
+                });
+            });
+        });
+    </script>
+{% endblock %}
 {% endblock %}

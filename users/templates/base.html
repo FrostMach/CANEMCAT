@@ -93,7 +93,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <!-- Animales - Dropdown -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
+                        {% if user.is_authenticated and user.user_type == 'adopter' or user.user_type == 'admin' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'animals-list' %}">Animales</a>
                         </li>
@@ -106,36 +106,46 @@
                         </li>
 
                         <!-- Protectoras - Dropdown para usuarios no autenticados -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
-                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
-                                </li>
-                            </ul>
-                        </li>
+                        <a class="nav-link" href="{% url 'shelter_list' %}">Protectoras</a>
                         {% endif %}
 
                         <!-- Protectoras - Dropdown, visible solo para adoptantes -->
                         {% if user.is_authenticated and user.user_type == 'adopter' %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
-                                <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
-                                </li>
-                                <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
-                                        Protectoras</a></li>
-                            </ul>
-                        </li>
+                            <a class="nav-link" href="{% url 'shelter_list' %}">Protectoras</a>
+
+                        {% elif user.is_authenticated and user.user_type == 'admin' %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
+                                    <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
+                                            Protectoras</a></li>
+                                </ul>
+                            </li>
+                        {% elif user.is_authenticated and user.user_type == 'worker' %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
+                                    <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
+                                            Protectoras</a></li>
+                                </ul>
+                            </li>
                         {% endif %}
                         <!-- CanemScan y CanemTest solo para adoptantes -->
-                        {% if user.is_authenticated and user.user_type == 'adopter' %}
+                        {% if user.is_authenticated and user.user_type == 'adopter' or user.user_type ==  'admin' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'canemscan' %}">CanemSCAN</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'canem_test' %}">CanemTEST</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'recommendations' %}" class="nav-link">CanemWISH</a>
                         </li>
                         {% endif %}
                         {% if not user.is_authenticated %}
@@ -170,6 +180,12 @@
                         </li>
                         
 
+                        {% endif %}
+
+                        {% if user.user_type == 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'landing_page2' %}">CanemLAB</a>
+                            </li>
                         {% endif %}
                     </ul>
 
@@ -219,10 +235,7 @@
                         </li>
                     
                         {% endif %}
-
-
                     </ul>
-
                 </div>
             </div>
         </nav>

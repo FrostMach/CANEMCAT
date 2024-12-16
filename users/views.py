@@ -1,7 +1,11 @@
 import json
+import smtplib
+import requests
+
+from django.dispatch import receiver
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views import generic
+from django.views import View, generic
 from django.contrib.auth import views as auth_views
 from shelters.models import AdoptionApplication, Animal, StatusEnum
 from users.sys_recommend.sys_recommend import get_user_recommendations
@@ -12,25 +16,27 @@ from django.contrib.auth import login, authenticate, logout, get_user_model
 from .forms import LoginForm
 from django.shortcuts import render
 from django.core.files.storage import default_storage
-import tensorflow as tf
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm, UserCreationForm
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
-import smtplib
-import requests
 from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
-from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
-from .forms import TestPerroForm, TestGatoForm
-from shelters.models import Animal
-from django.contrib.auth.decorators import user_passes_test, login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-import csv
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.signals import post_save, post_delete
+
+from shelters.models import Animal, Shelter
+from users.sys_recommend.csv_util import export_wishlist_to_csv, generate_animal_data
+from users.sys_recommend.recommendations import recommend_from_csv
+from .forms import CustomUserCreationForm, CustomUserChangeForm, LoginForm, TestPerroForm, TestGatoForm
+from .models import CustomUser, ShelterWorkerProfile, Wishlist, Test, AdopterProfile
+
+import tensorflow as tf
 import os
 
 @never_cache
@@ -255,6 +261,17 @@ class SignUpView(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
+    def form_valid(self, form):
+        user = form.save()
+
+        if form.cleaned_data.get('user_type') == 'worker':
+            return redirect('assign_worker', kwargs={'worker_id': user.id})
+        
+        return redirect(self.get_success_url())
+    
+    def get_success_url(self):
+        return reverse('login')
+
 class ProfileView(generic.DetailView):
     model = CustomUser
     template_name = 'profile.html'
@@ -451,8 +468,6 @@ def activate(request, uidb64, token):
     
     return render(request, 'registration/activation_failed.html')
 
-
-
 def logout_view(request):
     logout(request)
     return redirect('landing_page') 
@@ -479,13 +494,6 @@ def wishlist_add(request):
 
     return JsonResponse({"status": "error", "message": "Método no permitido."})
 
-    # animal = get_object_or_404(Animal, id=animal_id)
-    # if request.method == 'POST':
-    #     interaction_type = request.POST.get('interaction_type')
-    #     Wishlist.objects.get_or_create(user=request.user, animal=animal, interaction_type=interaction_type)
-    #     return redirect('wishlist_list')
-    # return render(request, 'add_to_wishlist.html', {'animal': animal})
-
 @login_required
 def wishlist_remove(request, wishlist_id):
     wishlist_item = get_object_or_404(Wishlist, id=wishlist_id, user=request.user)
@@ -496,7 +504,6 @@ def wishlist_remove(request, wishlist_id):
 def wishlist_list(request):
     wishlist_items = Wishlist.objects.filter(user=request.user)
     return render(request, 'wish/list.html', {'wishlist_items': wishlist_items})
-
 
     
 class DogTestView(generic.ListView):
@@ -632,67 +639,6 @@ def resultado_test(request):
         'animales_adecuados': animales_adecuados,
         'especie': especie,
     })
-def admin_only(user):
-    return user.is_authenticated and user.is_staff
-
-# @user_passes_test(admin_only)
-# def export_animals_csv(request):
-#     animals = Animal.objects.all()
-
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="animals.csv"'
-
-#     writer = csv.writer(response)
-#     writer.writerow(['ID', 'Name', 'Age', 'Species', 'Description', 'Image', 'Adoption_status'])
-
-#     for animal in animals:
-#         writer.writerow([animal.id, animal.name, animal.age, animal.species, animal.description, animal.image, animal.adoption_status])
-
-#     return response
-
-# @user_passes_test(admin_only)
-# def export_interactions_csv(request):
-#     interactions = Wishlist.objects.all()
-
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="interactions.csv"'
-
-#     writer = csv.writer(response)
-#     writer.writerow(['ID', 'User', 'Animals', 'Interaction_type'])
-
-#     for interaction in interactions:
-#         writer.writerow([interaction.id, interaction.user, interaction.animals, interaction.interaction_type])
-    
-#     return response
-
-@login_required
-def user_dashboard(request):
-    user = request.user
-
-    recommendations = get_user_recommendations(user)
-
-    return render(request, 'recommend/list.html', {'recommended_animals':recommendations})
-
-# @login_required
-# def get_recommendations(request):
-#     recommended_animals = user_dashboard(request.user)
-
-#     return render(request, 'recommend/list.html', {'recommendations':recommendations_list})
-
-# def record_interaction(request, animal_id, interaction_type):
-#     if request.method == 'POST':
-#         user = request.user
-#         animal = get_object_or_404(Animal, id=animal_id)
-
-#         interaction = Wishlist.object.create(user=user, animal=animal, interaction_type=interaction_type)
-
-#         return JsonResponse({
-#             'message': 'Interacción registrada exitosamente'
-#         })
-    
-#     return JsonResponse({
-#         'error': 'Método no permitido'
-#     }, status=405)
 
 
 @login_required
@@ -785,4 +731,98 @@ def update_adoption_application(request, application_id):
         # Redirigir después de actualizar
         return redirect('adoption_application_list_shelterworker')
 
-    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})    
+    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})
+
+class RecommendationView(View):
+       def get(self, request):
+        try:
+            # Generar o cargar los datos solo si es necesario
+            generate_animal_data()
+
+            user_id = request.user.id
+            
+            # Obtener las recomendaciones (asegúrate de que esta función retorne datos válidos)
+            recommendations = recommend_from_csv(user_id)
+            
+            if recommendations.empty:  # Si no hay recomendaciones
+                return render(request, 'recommend/list.html', {
+                    'message': "No se encontraron recomendaciones basadas en tus preferencias."
+                })
+            
+            # Convierte las recomendaciones a un formato de lista de diccionarios
+            data = recommendations.to_dict('records')
+
+            # Asegúrate de que las imágenes tengan el prefijo adecuado
+            for animal in data:
+                if 'image' in animal and animal['image']:
+                    if not animal['image'].startswith('/media/'):
+                        animal['image'] = f"/{animal['image']}"
+
+            return render(request, 'recommend/list.html', {
+                'recommended_animals': data
+            })
+
+        except FileNotFoundError as e:
+            # Manejar errores específicos, por ejemplo, si no se encuentra el archivo CSV
+            return render(request, 'recommend/list.html', {
+                'error': f"Error al cargar los datos de animales: {str(e)}"
+            })
+        except Exception as e:
+            # Manejo genérico de otros errores
+            return render(request, 'recommend/list.html', {
+                'error': f"Ha ocurrido un error inesperado: {str(e)}"
+            })
+
+@receiver(post_save, sender=Wishlist)
+@receiver(post_delete, sender=Wishlist)
+def update_wishlist_csv(sender, instance, **kwargs):
+    export_wishlist_to_csv()
+
+def add_shelter_worker(request, shelter_id):
+    # Obtener la protectora
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+
+    # Verificar que el usuario pertenece al shelter
+    if not ShelterWorkerProfile.objects.filter(user=request.user, shelter=shelter).exists() and not request.user.is_superuser:
+        messages.error(request, "No tienes permiso para añadir trabajadores a esta protectora.")
+        return redirect('view_shelter', pk=shelter_id)
+
+    # Obtener usuarios disponibles (usuarios sin shelter)
+    available_users = CustomUser.objects.filter(user_type='worker' ,worker_profile__isnull=True)
+
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+
+        # Validar que se seleccionó un usuario
+        if not user_id:
+            messages.error(request, "Debes seleccionar un usuario.")
+            return redirect('add-shelter-worker', shelter_id=shelter_id)
+
+        # Verificar que el usuario existe y está disponible
+        user_to_add = get_object_or_404(available_users, id=user_id)
+
+        # Crear el perfil de trabajador
+        ShelterWorkerProfile.objects.create(user=user_to_add, shelter=shelter)
+        messages.success(request, f"El usuario {user_to_add.full_name} ha sido añadido a la protectora {shelter.name}.")
+        return redirect('shelter_workers', shelter_id=shelter_id)
+
+    return render(request, "worker/assign_worker.html", {
+        "shelter": shelter,
+        "available_users": available_users
+    })
+
+def shelter_workers(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+    workers = ShelterWorkerProfile.objects.filter(shelter=shelter)
+
+    return render(request, 'worker/shelter_workers_list.html', {
+        'shelter': shelter,
+        'workers': workers
+    })
+
+def remove_worker(request, worker_id, shelter_id):
+    worker = get_object_or_404(ShelterWorkerProfile, id=worker_id, shelter_id=shelter_id)
+    worker.delete()
+    messages.success(request, "El trabajador ha sido eliminado.")
+
+    return redirect('shelter_workers', shelter_id=shelter_id)

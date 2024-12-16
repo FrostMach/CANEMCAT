@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center bg-light">
+    <div class="w-100" style="max-width: 600px;">
+        <h1 class="text-center mb-4">Asignar Trabajador a {{ shelter.name }}</h1>
+
+        <form method="post" class="p-4 bg-white shadow-sm rounded">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="user_id" class="form-label">Selecciona un trabajador</label>
+                <div class="d-flex flex-column">
+                    <select name="user_id" id="user_id" class="form-select" required>
+                        <option value="">-- Seleccionar usuario --</option>
+                        {% for user in available_users %}
+                            <option value="{{ user.id }}">{{ user.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if form.user_id.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.user_id.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button class="btn btn-success w-100 py-2" type="submit">Asignar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,9 @@
+import re
 from shelters.models import Animal, AdoptionApplication, Shelter
 from django.core.exceptions import ValidationError
 from users.models import CustomUser
 from datetime import date
 from django import forms
-
-
 
 #FORM DE ANIMALES
 class AnimalForm(forms.ModelForm):
@@ -57,6 +56,12 @@ class AnimalFilterForm(forms.Form):
         label="Protectora",
         empty_label="---"
     )
+
+    def __init__(self, *args, **kwargs):
+        # Permitir que se pase un queryset personalizado para el campo 'shelter'
+        shelter_queryset = kwargs.pop('shelter_queryset', Shelter.objects.all())
+        super().__init__(*args, **kwargs)
+        self.fields['shelter'].queryset = shelter_queryset
  
 #FORM DE LA SOLICITUD DE ADOPCIÓN       
 class AdoptionApplicationCreationForm(forms.ModelForm):
@@ -107,56 +112,104 @@ class RegisterShelterForm(forms.ModelForm):
         def clean(self):
             cleaned_data = super().clean()
             name = cleaned_data.get('name')
-            telephone = cleaned_data.get('telephone')   
+            telephone = cleaned_data.get('telephone')
+            email = cleaned_data.get('email')
 
-            if telephone and len(str(telephone)) < 9:
-                raise forms.ValidationError('El teléfono debe tener una longitud mínima de 9 dígitos.')
-            
+            # Validación del teléfono: Asegurarse de que tenga al menos 9 dígitos
+            if telephone:
+                if not telephone.isdigit():
+                    self.add_error('telephone', 'El teléfono solo debe contener números.')
+                elif len(str(telephone)) < 9:
+                    self.add_error('telephone', 'El teléfono debe tener una longitud mínima de 9 dígitos.')
+
+            # Validación del nombre: No permitir que contenga la palabra "admin"
             if name and 'admin' in name.lower():
-                raise forms.ValidationError('El nombre no puede contener "admin".')
+                self.add_error('name', 'El nombre no puede contener "admin".')
+
+            # Validación de correo electrónico: Verificar si ya está registrado
+            if email and Shelter.objects.filter(email=email).exists():
+                self.add_error('email', 'Este correo electrónico ya está registrado.')
 
             return cleaned_data
-        
-        def clean_email(self):
-            email = self.cleaned_data.get('email')
-            
-            if Shelter.objects.filter(email=email).exists():
-                raise forms.ValidationError("Este correo electrónico ya está registrado.")
-            return email
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        # Validación del formato del correo electrónico
+        if email and not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValidationError("El correo electrónico no tiene un formato válido.")
+        return email
+
+    def clean_accreditation_file(self):
+        accreditation_file = self.cleaned_data.get('accreditation_file')
+
+        # Validar que se haya subido un archivo si es necesario
+        if not accreditation_file:
+            raise ValidationError("Debe subir un archivo de acreditación.")
+        return accreditation_file
+        
+class CompleteShelterForm(forms.ModelForm):
+    class Meta:
+        model = Shelter
+        fields = ['latitude', 'longitude', 'postal_code']
+
+        def clean_latitude(self):
+            latitude = self.cleaned_data.get('latitude')
+            
+            if latitude and not (-90 <= latitude <= 90):
+                raise ValidationError('La latitud debe estar entre -90 y 90.')
+            return latitude
+
+        def clean_longitude(self):
+            longitude = self.cleaned_data.get('longitude')
+
+            if longitude and not (-180 <= longitude <= 180):
+                raise ValidationError('La longitud debe estar entre -180 y 180.')
+            return longitude
+        
+        def clean(self):
+            cleaned_data = super().clean()
+            
+            # Revisamos si alguno de los campos requeridos está vacío
+            required_fields = ['latitude', 'longitude', 'postal_code']
+            
+            for field in required_fields:
+                value = cleaned_data.get(field)
+                if not value:
+                    raise ValidationError(f"El campo {field} es obligatorio.")
+            
+            return cleaned_data
+        
 class UpdateShelterForm(forms.ModelForm):
     class Meta:
         model = Shelter
-        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'accreditation_status', 'status',
+        fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'status',
                    'latitude', 'longitude', 'postal_code']
         
-from .models import Item
-
-from django import forms
-from .models import Item
-
-class ItemForm(forms.ModelForm):
-    class Meta:
-        model = Item
-        fields = ['name', 'category', 'quantity', 'description', 'expiration_date', 'no_expiration']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'}),
-            'category': forms.Select(attrs={'class': 'form-select'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción'}),
-            'expiration_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'no_expiration': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
-
+    def clean_latitude(self):
+        latitude = self.cleaned_data.get('latitude')
+        if latitude is not None:
+            if latitude < -90 or latitude > 90:
+                raise ValidationError("La latitud debe estar entre -90 y 90 grados.")
+        return latitude
+    
+    # Validación personalizada para longitud
+    def clean_longitude(self):
+        longitude = self.cleaned_data.get('longitude')
+        if longitude is not None:
+            if longitude < -180 or longitude > 180:
+                raise ValidationError("La longitud debe estar entre -180 y 180 grados.")
+        return longitude
+    
     def clean(self):
         cleaned_data = super().clean()
-        expiration_date = cleaned_data.get('expiration_date')
-        no_expiration = cleaned_data.get('no_expiration')
-
-        if no_expiration and expiration_date:
-            raise forms.ValidationError("No puedes seleccionar una fecha de caducidad si marcas 'Sin fecha de caducidad'.")
         
-        if not no_expiration and not expiration_date:
-            raise forms.ValidationError("Debes proporcionar una fecha de caducidad o marcar 'Sin fecha de caducidad'.")
-
+        # Revisamos si alguno de los campos requeridos está vacío
+        required_fields = ['name', 'address', 'telephone', 'email', 'accreditation_file', 'status', 'latitude', 'longitude', 'postal_code']
+        
+        for field in required_fields:
+            value = cleaned_data.get(field)
+            if not value:
+                raise ValidationError(f"El campo {field} es obligatorio.")
+        
         return cleaned_data
