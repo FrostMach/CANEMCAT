@@ -1,3 +1,4 @@
+from django.core.mail import EmailMessage
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -5,7 +6,7 @@ from django.views import generic
 from django.contrib.auth import views as auth_views
 from shelters.models import AdoptionApplication, Animal, StatusEnum
 from users.sys_recommend.sys_recommend import get_user_recommendations
-from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm, TestPerroShortForm, TestGatoShortForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist, Test, AdopterProfile, ShelterWorkerProfile, News
 from django.contrib.auth import login, authenticate, logout, get_user_model
@@ -342,12 +343,8 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
             print(f"Tipo de `email`: {type(email)}")
 
             # Enviar el correo
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],  # Asegúrate de que esto sea una lista de un solo correo
-            )
+            send_mail(email,subject, message)
+            
         return super().form_valid(form)
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -734,4 +731,68 @@ def update_adoption_application(request, application_id):
         # Redirigir después de actualizar
         return redirect('adoption_application_list_shelterworker')
 
-    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})    
+    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})
+
+def test_short_form(request, test_type, animal_id):
+    # Establecemos el template predeterminado
+    template = 'test/short_test_error.html'
+    form = None
+
+    # Selección de formulario y template según el tipo de test
+    if test_type == 'gato':
+        form = TestGatoShortForm(request.POST or None)
+        template = 'test/cat_test_short.html'
+    elif test_type == 'perro':
+        form = TestPerroShortForm(request.POST or None)
+        template = 'test/dog_test_short.html'
+
+    try:
+        # Obtener el animal por su ID
+        animal = Animal.objects.get(id=animal_id)
+        # Obtener el correo de la protectora
+        protectora_email = animal.shelter.email
+        
+    except Animal.DoesNotExist:
+        # Redirigir a una página de error si el animal no existe
+        return redirect('error')
+                # Asegurarse de que `protectora_email` sea una lista
+    # Obtener el perfil del usuario
+    user_profile = None
+    if hasattr(request.user, 'adopter_profile'):
+        user_profile = request.user.adopter_profile
+    elif hasattr(request.user, 'worker_profile'):
+        user_profile = request.user.worker_profile
+    
+    # Si no se encuentra perfil, redirigir o manejar el error
+    if not user_profile:
+        return render(request,'error_perfil_no_creado.html')  # O alguna otra acción en caso de que el perfil no exista
+
+    # Si el formulario es enviado y es válido
+    if request.method == 'POST':
+        if form.is_valid():
+            # Procesar las respuestas del formulario
+            responses = form.cleaned_data  # Aquí recoges todas las respuestas
+
+            # Crear la solicitud de adopción
+            adoption_application = AdoptionApplication(
+                user=user_profile,  # Asegúrate de que el usuario está autenticado y tiene un perfil
+                animal=animal,
+                shelter=animal.shelter,
+                status=StatusEnum.PENDING.value[0],  # Estado inicial 'Pendiente'
+            )
+            adoption_application.save()
+
+            # Construir el asunto y el mensaje del correo
+            subject = f"Resultado Test de {test_type.capitalize()} - Solicitud de Adopción"
+            message = "\n".join([f"{key}: {value}" for key, value in responses.items()])
+
+            send_mail(protectora_email,subject, message)
+
+            # Redirigir a una página de éxito (puedes cambiar la URL si prefieres otra página de confirmación)
+            return redirect('adoption_application_list')  # O puedes redirigir a una página específica
+
+    # Si el formulario no es válido o no se ha enviado, se renderiza el formulario nuevamente
+    return render(request, template, {
+        'form': form,
+        'animal_id': animal_id,  # Pasar el ID del animal al contexto
+    })

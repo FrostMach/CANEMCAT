@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Especie no válida{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div class="container bg-light my-5 py-5 text-center">
+    <p>Ha habido un error al procesar la solicitud del animal</p>
+    <a class="btn btn-success" type="button" href="{% url 'animals-list'%}">Volver</a>
+</div>
+
+{% endblock %}

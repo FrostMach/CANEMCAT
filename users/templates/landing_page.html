@@ -108,7 +108,7 @@
                   <div class="carousel-inner">
                     {% for animal in animals %}
                       <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}">
+                        <a href="{% url 'animals-detail' animal.pk %}"><img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}"></a>
                       </div>
                     {% endfor %}
                   </div>
@@ -144,11 +144,21 @@
         <div class="carousel-inner">
             {% for new in news %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                {% if new.original_url %}
+                    <a href="{{ new.original_url }}" target="_blank">
+                        <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ new.title }}</h5>
+                            <p>{{ new.content|truncatewords:20 }}</p>
+                        </div>
+                    </a>
+                {% else %}
                 <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>{{ new.title }}</h5>
                     <p>{{ new.content|truncatewords:20 }}</p>
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>

@@ -3,10 +3,11 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Authenti
 from django.contrib.auth.models import User
 from .models import CustomUser
 from django.contrib.auth.forms import AuthenticationForm
-
+from datetime import date
 # Este formulario ya está incluido en Django, solo necesitas importarlo.
 from django import forms
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -18,6 +19,15 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ('email', 'full_name', 'phone_number', 'birth_date', 'profile_picture', 'user_type')
+        
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data.get('birth_date')
+        if birth_date:
+            today = date.today()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            if age < 18:
+                raise ValidationError('Tienes que ser mayor de edad para poder darte de alta')
+        return birth_date
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -195,3 +205,268 @@ class TestGatoForm(forms.Form):
         ('Moderada', 'Moderada (puede estar solo por un rato)'),
         ('Baja', 'Baja (puede estar solo por períodos largos)'),
     ])
+    
+    
+class TestPerroShortForm(forms.Form):
+    paseo = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Menos de 1 hora", "Menos de 1 hora"), ("Entre 1 y 3 horas", "Entre 1 y 3 horas"), ("Más de 3 horas", "Más de 3 horas")],
+        label="1. ¿Cuánto tiempo al día estarás disponible para interactuar con el perro?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(1)"})
+    )
+
+    independiente = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Muy importante", "Muy importante"), ("Moderadamente importante", "Moderadamente importante"), ("No es importante", "No es importante")],
+        label="2. ¿Qué tan importante es para ti que el perro sea independiente cuando no estás en casa?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(2)"})
+    )
+
+    familia = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Sí, niños pequeños (menos de 12 años)", "Sí, niños pequeños (menos de 12 años)"), ("Sí, personas mayores", "Sí, personas mayores"), ("No", "No")],
+        label="3. ¿Hay niños o personas mayores en el hogar?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(3)"})
+    )
+
+    costos = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Muy dispuesto", "Muy dispuesto"), ("Moderadamente dispuesto", "Moderadamente dispuesto"), ("Prefiero evitarlo", "Prefiero evitarlo")],
+        label="4. ¿Qué tan dispuesto estás a asumir los costos de cuidados específicos como alimento especializado o tratamientos médicos frecuentes?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(4)"})
+    )
+
+    tolerante = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Muy tolerante", "Muy tolerante"), ("Moderadamente tolerante", "Moderadamente tolerante"), ("Poco tolerante", "Poco tolerante")],
+        label="5. ¿Qué tan tolerante eres con comportamientos como arañar muebles o ladrar frecuentemente?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(5)"})
+    )
+
+    vivienda = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Casa con jardín o terraza", "Casa con jardín o terraza"), ("Apartamento pequeño", "Apartamento pequeño"), ("Apartamento grande", "Apartamento grande")],
+        label="6. ¿Dónde vives actualmente?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(6)"})
+    )
+
+    espacio_especifico = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Sí, totalmente dispuesto", "Sí, totalmente dispuesto"), ("Sí, pero con limitaciones", "Sí, pero con limitaciones"), ("No", "No")],
+        label="7. ¿Estás dispuesto a crear espacios específicos para el perro, como camas o áreas de juego?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(7)"})
+    )
+
+    exterior_interior = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Exterior", "Exterior"), ("Interior", "Interior"), ("Ambos", "Ambos")],
+        label="8. ¿Prefieres un perro que pueda salir al exterior o que sea exclusivamente de interior?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(8)"})
+    )
+
+    adaptacion = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Sí, completamente dispuesto", "Sí, completamente dispuesto"), ("Moderadamente dispuesto", "Moderadamente dispuesto"), ("No estoy seguro", "No estoy seguro")],
+        label="9. ¿Estás dispuesto a lidiar con periodos de adaptación si el perro es tímido o reservado al principio?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(9)"})
+    )
+
+    porque_adoptar = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Compañía emocional", "Compañía emocional"), ("Ayudar a un animal que lo necesita", "Ayudar a un animal que lo necesita"), ("Tener una presencia tranquila en casa", "Tener una presencia tranquila en casa"), ("Otros", "Otros")],
+        label="10. ¿Por qué quieres adoptar un perro?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(10)"})
+    )
+
+    situaciones_imprevistas = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Me adapto fácilmente", "Me adapto fácilmente"), ("Me cuesta pero intento resolverlo", "Me cuesta pero intento resolverlo"), ("Prefiero evitar complicaciones", "Prefiero evitar complicaciones")],
+        label="11. ¿Cómo manejas situaciones estresantes o imprevistas con una mascota?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(11)"})
+    )
+
+    carinoso = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Muy importante", "Muy importante"), ("Moderadamente importante", "Moderadamente importante"), ("Poco importante", "Poco importante")],
+        label="12. ¿Qué tan importante es para ti que el perro sea cariñoso contigo?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(12)"})
+    )
+
+    enriquecer = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Reduciendo el estrés", "Reduciendo el estrés"), ("Proporcionando compañía", "Proporcionando compañía"), ("Como un nuevo pasatiempo o responsabilidad", "Como un nuevo pasatiempo o responsabilidad")],
+        label="13. ¿Cómo crees que un perro puede enriquecer tu vida?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(13)"})
+    )
+
+    conexion_emocional = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Un vínculo cercano y constante", "Un vínculo cercano y constante"), ("Una relación tranquila pero no muy intensa", "Una relación tranquila pero no muy intensa"), ("Independencia mutua", "Independencia mutua")],
+        label="14. ¿Qué tipo de conexión emocional esperas tener con el perro?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(14)"})
+    )
+
+    que_valoras = forms.ChoiceField(
+        choices=[("", "Selecciona una opción"), ("Su carácter y personalidad", "Su carácter y personalidad"), ("Su apariencia física", "Su apariencia física"), ("Su capacidad de adaptarse a mi estilo de vida", "Su capacidad de adaptarse a mi estilo de vida")],
+        label="15. ¿Qué valoras más en una mascota?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(15)"})
+    )
+
+
+class TestGatoShortForm(forms.Form):
+    # Pregunta 1: ¿Cuánto tiempo al día estarás disponible para interactuar con el gato?
+    interactuar = forms.ChoiceField(
+        choices=[
+            ('Menos de 1 hora', 'Menos de 1 hora'),
+            ('Entre 1 y 3 horas', 'Entre 1 y 3 horas'),
+            ('Más de 3 horas', 'Más de 3 horas'),
+        ],
+        label="1. ¿Cuánto tiempo al día estarás disponible para interactuar con el gato?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(1)"})
+
+    )
+
+    # Pregunta 2: ¿Qué tan importante es para ti que el gato sea independiente cuando no estás en casa?
+    independiente = forms.ChoiceField(
+        choices=[
+            ('Muy importante', 'Muy importante'),
+            ('Moderadamente importante', 'Moderadamente importante'),
+            ('No es importante', 'No es importante'),
+        ],
+        label="2. ¿Qué tan importante es para ti que el gato sea independiente cuando no estás en casa?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(2)"})
+
+    )
+
+    # Pregunta 3: ¿Hay niños o personas mayores en el hogar?
+    familia = forms.ChoiceField(
+        choices=[
+            ('Sí, niños pequeños (menos de 12 años)', 'Sí, niños pequeños (menos de 12 años)'),
+            ('Sí, personas mayores', 'Sí, personas mayores'),
+            ('No', 'No'),
+        ],
+        label="3. ¿Hay niños o personas mayores en el hogar?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(3)"})
+
+    )
+
+    # Pregunta 4: ¿Qué tan dispuesto estás a asumir los costos de cuidados específicos como alimento especializado o tratamientos médicos frecuentes?
+    costos = forms.ChoiceField(
+        choices=[
+            ('Muy dispuesto', 'Muy dispuesto'),
+            ('Moderadamente dispuesto', 'Moderadamente dispuesto'),
+            ('Prefiero evitarlo', 'Prefiero evitarlo'),
+        ],
+        label="4. ¿Qué tan dispuesto estás a asumir los costos de cuidados específicos como alimento especializado o tratamientos médicos frecuentes?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(4)"})
+
+    )
+
+    # Pregunta 5: ¿Qué tan tolerante eres con comportamientos como arañar muebles o maullar frecuentemente?
+    tolerante = forms.ChoiceField(
+        choices=[
+            ('Muy tolerante', 'Muy tolerante'),
+            ('Moderadamente tolerante', 'Moderadamente tolerante'),
+            ('Poco tolerante', 'Poco tolerante'),
+        ],
+        label="5. ¿Qué tan tolerante eres con comportamientos como arañar muebles o maullar frecuentemente?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(5)"})
+
+    )
+
+    # Continuar de manera similar con las demás preguntas...
+    vivienda = forms.ChoiceField(
+        choices=[
+            ('Casa con jardín o terraza', 'Casa con jardín o terraza'),
+            ('Apartamento pequeño', 'Apartamento pequeño'),
+            ('Apartamento grande', 'Apartamento grande'),
+        ],
+        label="6. ¿Dónde vives actualmente?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(6)"})
+
+    )
+
+    espacio_especifico = forms.ChoiceField(
+        choices=[
+            ('Sí, totalmente dispuesto', 'Sí, totalmente dispuesto'),
+            ('Sí, pero con limitaciones', 'Sí, pero con limitaciones'),
+            ('No', 'No'),
+        ],
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(7)"})
+
+    )
+
+    exterior_interior = forms.ChoiceField(
+        choices=[
+            ('Exterior', 'Exterior'),
+            ('Interior', 'Interior'),
+            ('Ambos', 'Ambos'),
+        ],
+        label="8. ¿Prefieres un gato que pueda salir al exterior o que sea exclusivamente de interior?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(8)"})
+
+    )
+
+    adaptacion = forms.ChoiceField(
+        choices=[
+            ('Sí, completamente dispuesto', 'Sí, completamente dispuesto'),
+            ('Moderadamente dispuesto', 'Moderadamente dispuesto'),
+            ('No estoy seguro', 'No estoy seguro'),
+            ('Subjetivas o psicológicas', 'Subjetivas o psicológicas'),
+        ],
+        label="9. ¿Estás dispuesto a lidiar con periodos de adaptación si el gato es tímido o reservado al principio?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(9)"})
+    )
+
+    porque_adoptar = forms.ChoiceField(
+        choices=[
+            ('Compañía emocional', 'Compañía emocional'),
+            ('Ayudar a un animal que lo necesita', 'Ayudar a un animal que lo necesita'),
+            ('Tener una presencia tranquila en casa', 'Tener una presencia tranquila en casa'),
+            ('Otros', 'Otros'),
+        ],
+        label="10. ¿Por qué quieres adoptar un gato?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(10)"})
+
+    )
+
+    situacionesImprevistas = forms.ChoiceField(
+        choices=[
+            ('Me adapto fácilmente', 'Me adapto fácilmente'),
+            ('Me cuesta pero intento resolverlo', 'Me cuesta pero intento resolverlo'),
+            ('Prefiero evitar complicaciones', 'Prefiero evitar complicaciones'),
+        ],
+        label="11. ¿Cómo manejas situaciones estresantes o imprevistas con una mascota?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(11)"})
+
+    )
+
+    cariñoso = forms.ChoiceField(
+        choices=[
+            ('Muy importante', 'Muy importante'),
+            ('Moderadamente importante', 'Moderadamente importante'),
+            ('Poco importante', 'Poco importante'),
+        ],
+        label="12. ¿Qué tan importante es para ti que el gato sea cariñoso contigo?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(12)"})
+
+    )
+
+    enriquecer = forms.ChoiceField(
+        choices=[
+            ('Reduciendo el estrés', 'Reduciendo el estrés'),
+            ('Proporcionando compañía', 'Proporcionando compañía'),
+            ('Como un nuevo pasatiempo o responsabilidad', 'Como un nuevo pasatiempo o responsabilidad'),
+        ],
+        label="13. ¿Cómo crees que un gato puede enriquecer tu vida?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(13)"})
+
+    )
+
+    conexion_emocional = forms.ChoiceField(
+        choices=[
+            ('Un vínculo cercano y constante', 'Un vínculo cercano y constante'),
+            ('Una relación tranquila pero no muy intensa', 'Una relación tranquila pero no muy intensa'),
+            ('Independencia mutua', 'Independencia mutua'),
+        ],
+        label="14. ¿Qué tipo de conexión emocional esperas tener con el gato?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(14)"})
+
+    )
+
+    que_valoras = forms.ChoiceField(
+        choices=[
+            ('Su carácter y personalidad', 'Su carácter y personalidad'),
+            ('Su apariencia física', 'Su apariencia física'),
+            ('Su capacidad de adaptarse a mi estilo de vida', 'Su capacidad de adaptarse a mi estilo de vida'),
+        ],
+        label="15. ¿Qué valoras más en una mascota?",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "handleChange(15)"})
+
+    )

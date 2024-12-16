@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cat Test{% endblock %}
+
+{% block content %}
+
+<div class="bg-light container my-5 py-1">
+    <a class="btn btn-success" href="{% url 'animals-list' %}">Volver la lista de animales</a>
+    <h2 class="text-center text-success">Preferencias personales sobre el gato</h2>
+    <h5 class="text-center text-success">(15 preguntas)</h5>
+    <form method="POST" action="{% url 'test_short_form' test_type='perro' animal_id=animal_id %}">
+        {% csrf_token %}
+        <!-- Pregunta 6 -->
+        <div class="pb-3 question" id="q1" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="interactuar" class="form-label">1. ¿Cuánto tiempo al día estarás disponible para interactuar con el gato?</label>
+            <select class="form-select" id="interactuar" name="interactuar" onchange="nextQuestion(2)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Menos de 1 hora">Menos de 1 hora</option>
+                <option value="Entre 1 y 3 horas">Entre 1 y 3 horas</option>
+                <option value="Más de 3 horas">Más de 3 horas</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 7 -->
+        <div class="pb-3 question" id="q2" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="independiente" class="form-label">2. ¿Qué tan importante es para ti que el gato sea independiente cuando no estás en casa?</label>
+            <select class="form-select" id="independiente" name="independiente" onchange="nextQuestion(3)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Muy importante">Muy importante</option>
+                <option value="Moderadamente importante">Moderadamente importante</option>
+                <option value="No es importante">No es importante</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 8 -->
+        <div class="pb-3 question" id="q3" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="familia" class="form-label">3. ¿Hay niños o personas mayores en el hogar?</label>
+            <select class="form-select" id="familia" name="familia" onchange="nextQuestion(4)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Sí, niños pequeños (menos de 12 años)">Sí, niños pequeños (menos de 12 años)</option>
+                <option value="Sí, personas mayores">Sí, personas mayores</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 9 -->
+        <div class="pb-3 question" id="q4" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="costos" class="form-label">4. ¿Qué tan dispuesto estás a asumir los costos de cuidados específicos como alimento especializado o tratamientos médicos frecuentes?</label>
+            <select class="form-select" id="costos" name="costos" onchange="nextQuestion(5)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Muy dispuesto">Muy dispuesto</option>
+                <option value="Moderadamente dispuesto">Moderadamente dispuesto</option>
+                <option value="Prefiero evitarlo">Prefiero evitarlo</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 10 -->
+        <div class="pb-3 question" id="q5" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="tolerante" class="form-label">5. ¿Qué tan tolerante eres con comportamientos como arañar muebles o maullar frecuentemente?</label>
+            <select class="form-select" id="tolerante" name="tolerante" onchange="nextQuestion(6)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Muy tolerante">Muy tolerante</option>
+                <option value="Moderadamente tolerante">Moderadamente tolerante</option>
+                <option value="Poco tolerante">Poco tolerante</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 11 -->
+        <div class="pb-3 question" id="q6" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="vivienda" class="form-label">6. ¿Dónde vives actualmente?</label>
+            <select class="form-select" id="vivienda" name="vivienda" onchange="nextQuestion(7)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Casa con jardín o terraza">Casa con jardín o terraza</option>
+                <option value="Apartamento pequeño">Apartamento pequeño</option>
+                <option value="Apartamento grande">Apartamento grande</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 12 -->
+        <div class="pb-3 question" id="q7" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="espacio_especifico" class="form-label">7. ¿Estás dispuesto a crear espacios específicos para el gato, como rascadores, camas o áreas de juego?</label>
+            <select class="form-select" id="espacio_especifico" name="espacio_especifico" onchange="nextQuestion(8)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Sí, totalmente dispuesto">Sí, totalmente dispuesto</option>
+                <option value="Sí, pero con limitaciones">Sí, pero con limitaciones</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 13 -->
+        <div class="pb-3 question" id="q8" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="exterior_interior" class="form-label">8. ¿Prefieres un gato que pueda salir al exterior o que sea exclusivamente de interior?</label>
+            <select class="form-select" id="exterior_interior" name="exterior_interior" onchange="nextQuestion(9)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Exterior">Exterior</option>
+                <option value="Interior">Interior</option>
+                <option value="Ambos">Ambos</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 14 -->
+        <div class="pb-3 question" id="q9" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="adaptación" class="form-label">9. ¿Estás dispuesto a lidiar con periodos de adaptación si el gato es tímido o reservado al principio?</label>
+            <select class="form-select" id="adaptación" name="adaptación" onchange="nextQuestion(10)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Sí, completamente dispuesto">Sí, completamente dispuesto</option>
+                <option value="Moderadamente dispuesto">Moderadamente dispuesto</option>
+                <option value="No estoy seguro">No estoy seguro</option>
+                <option value="Subjetivas o psicológicas">Subjetivas o psicológicas</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 15 -->
+        <div class="pb-3 question" id="q10" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="porque_adoptar" class="form-label">10. ¿Por qué quieres adoptar un gato?</label>
+            <select class="form-select" id="porque_adoptar" name="porque_adoptar" onchange="nextQuestion(11)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Compañía emocional">Compañía emocional</option>
+                <option value="Ayudar a un animal que lo necesita">Ayudar a un animal que lo necesita</option>
+                <option value="Tener una presencia tranquila en casa">Tener una presencia tranquila en casa</option>
+                <option value="Otros">Otros</option>
+
+            </select>
+        </div>
+
+        <!-- Pregunta 16 -->
+        <div class="pb-3 question" id="q11" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="situacionesImprevistas" class="form-label">11. ¿Cómo manejas situaciones estresantes o imprevistas con una mascota?</label>
+            <select class="form-select" id="situacionesImprevistas" name="situacionesImprevistas" onchange="nextQuestion(12)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Me adapto fácilmente">Me adapto fácilmente</option>
+                <option value="Me cuesta pero intento resolverlo">Me cuesta pero intento resolverlo</option>
+                <option value="Prefiero evitar complicaciones">Prefiero evitar complicaciones</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 17 -->
+        <div class="pb-3 question" id="q12" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="cariñoso" class="form-label">12. ¿Qué tan importante es para ti que el gato sea cariñoso contigo?</label>
+            <select class="form-select" id="cariñoso" name="cariñoso" onchange="nextQuestion(13)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Muy importante">Muy importante</option>
+                <option value="Moderadamente importante">Moderadamente importante</option>
+                <option value="Poco importante">Poco importante</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 18 -->
+        <div class="pb-3 question" id="q13" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="enriquecer" class="form-label">13. ¿Cómo crees que un gato puede enriquecer tu vida?</label>
+            <select class="form-select" id="enriquecer" name="enriquecer" onchange="nextQuestion(14)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Reduciendo el estrés">Reduciendo el estrés</option>
+                <option value="Proporcionando compañía">Proporcionando compañía</option>
+                <option value="Como un nuevo pasatiempo o responsabilidad">Como un nuevo pasatiempo o responsabilidad</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 19 -->
+        <div class="pb-3 question" id="q14" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="conexión_emocional" class="form-label">14. ¿Qué tipo de conexión emocional esperas tener con el gato?</label>
+            <select class="form-select" id="conexión_emocional" name="conexión_emocional" onchange="nextQuestion(15)" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Un vínculo cercano y constante">Un vínculo cercano y constante</option>
+                <option value="Una relación tranquila pero no muy intensa">Una relación tranquila pero no muy intensa</option>
+                <option value="Independencia mutua">Independencia mutua</option>
+            </select>
+        </div>
+
+        <!-- Pregunta 20 -->
+        <div class="pb-3 question" id="q15" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+            <label for="que_valoras" class="form-label">15. ¿Qué valoras más en una mascota?</label>
+            <select class="form-select" id="que_valoras" name="que_valoras" onchange="showSubmitButton()" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Su carácter y personalidad">Su carácter y personalidad</option>
+                <option value="Su apariencia física">Su apariencia física</option>
+                <option value="Su capacidad de adaptarse a mi estilo de vida">Su capacidad de adaptarse a mi estilo de vida</option>
+            </select>
+        </div>
+
+        <!-- Botón de Enviar (se muestra cuando llega a la última pregunta) -->
+        <div class="mb-3" id="submitButton" style="display:none;">
+            <button type="submit" class="btn btn-success w-100">Enviar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    window.onload = function() {
+        nextQuestion(1);
+    };
+    // Función para mostrar la siguiente pregunta con una transición suave
+    function nextQuestion(questionNumber) {
+        const question = document.getElementById('q' + questionNumber);
+        // Mostrar la siguiente pregunta
+        question.style.display = 'block';
+        // Agregar un retraso en la opacidad para que se vea el efecto
+        setTimeout(function() {
+            question.style.opacity = 1;
+        }, 10); // Necesitamos un pequeño retraso para que la transición de opacidad funcione
+    }
+
+    // Función para mostrar el botón de Enviar cuando se llega a la última pregunta
+    function showSubmitButton() {
+        document.getElementById('submitButton').style.display = 'block';
+    }
+</script>
+
+{% endblock %}

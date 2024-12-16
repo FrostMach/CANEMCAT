@@ -132,6 +132,7 @@ class News(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='news_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    original_url = models.URLField(blank=True, null=True)  # Campo para el enlace
 
     def __str__(self):
         return self.title

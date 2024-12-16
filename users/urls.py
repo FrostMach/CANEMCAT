@@ -40,4 +40,5 @@ urlpatterns = [
     path('shelters/error_de_tipo_usuario/', views.error_user_type, name='error_user_type'),
     path('adoption-applications-shelterworker/', views.adoption_application_list_shelterworker, name='adoption_application_list_shelterworker'),
     path('adoption-application/update/<int:application_id>/', views.update_adoption_application, name='update_adoption_application'),
+    path('test/<str:test_type>/<int:animal_id>/', views.test_short_form, name='test_short_form'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

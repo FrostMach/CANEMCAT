@@ -73,7 +73,7 @@
                     <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
                     <div class="btn-group" role="group" aria-label="Acciones">
                         <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
-                        <a href="{% url 'confirm_adoption' animal.id %}" class="btn btn-primary">Solicitar Adopción</a>
+                        <a href="{% url 'test_short_form' animal.species animal.id %}" class="btn btn-primary">Solicitar Adopción</a>
                     </div>
                 </div>
             </div>
