@@ -1,11 +1,11 @@
 id,name,species,sex,age,size,personality,energy,fur,description,adoption_status,image
-1,Bom,perro,macho,5,mediano,protector,moderado,largo,dddd,Disponible,animals/terranova_eCB6ysJ.jpg
-2,Hang,perro,macho,6,grande,independiente,tranquilo,corto,dddd,Disponible,animals/bobtail_17aMPkz.jpg
-3,Landy,perro,macho,3,mediano,sociable,tranquilo,corto,hhyht,Reservado,animals/dachsund_xv5E2X3.jpg
-4,Katy,perro,hembra,6,mediano,sociable,moderado,corto,gghbuhbj,Reservado,animals/border_collie_I9XHWlA.jpg
-5,Magna,perro,hembra,4,grande,independiente,tranquilo,corto,uyjhr,Reservado,animals/boyero_berna.jpg
-6,Bonoloto,perro,macho,3,grande,sociable,activo,largo,jtyjtyhj,Disponible,animals/gran_Danes_8OQpEwK.jpg
-7,Van,perro,macho,7,pequeño,protector,tranquilo,largo,jyjth,Disponible,animals/yorkshire_terrier_Kp6q1kp.jpg
-8,King,perro,macho,9,grande,independiente,tranquilo,largo,jtyjytjy,Disponible,animals/pastor_aleman_CprXfYg.jpg
-9,Kong,perro,macho,5,pequeño,protector,moderado,corto,ktj,Reservado,animals/beagle.jpg
-10,Loli,perro,hembra,8,mediano,independiente,tranquilo,largo,grhrt,Reservado,animals/labrador_retriever.jpg
+1,Kratos,perro,macho,7,grande,protector,activo,largo,Enérgico y cariñoso,disponible,animals/tib1_Q0BxQ5B.jpg
+2,Little John,perro,macho,2,pequeño,sociable,tranquilo,corto,Pequeño y tranquilo,disponible,animals/chi2_BzOF4p4.jpg
+4,Big John,perro,macho,2,pequeño,independiente,tranquilo,corto,Se llama Big John pero es pequeño como Little John,disponible,animals/chi1_q7VuF5v.jpg
+5,Furia,perro,hembra,1,pequeño,independiente,activo,corto,Pequeña pero rabiosa,disponible,animals/chi4.webp
+6,Sr. Abrazos,perro,macho,5,grande,sociable,tranquilo,largo,Le gusta abrazar,disponible,animals/cho1_RRKTcHZ.jpg
+7,Sleepy,gato,hembra,4,mediano,sociable,activo,corto,Fan de las siestas,disponible,animals/fol2_dUMcle3.jpg
+8,Boxer,gato,macho,3,mediano,protector,activo,corto,Boxer porque le gusta dar guantazos. Pero no duelen,disponible,animals/mau3_iaxelMB.jpg
+9,Miguel,gato,macho,8,mediano,sociable,moderado,largo,Nombre completo: José Antonio Miguel De La Fuente Rodríguez,disponible,animals/per1.jpg
+10,Megatron,gato,macho,4,grande,protector,tranquilo,largo,Grandote. A veces le confunden con un tigre,disponible,animals/mai1.jpg
+11,Michifidem,gato,macho,3,mediano,independiente,tranquilo,corto,Gato valiente que puede con todo,disponible,animals/sia1.jpg

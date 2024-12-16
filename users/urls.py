@@ -31,7 +31,6 @@ urlpatterns = [
     path('canemscan/upload/', views.upload_image, name='upload_image'),
     path('canemscan/compare/', views.compare_images, name='compare_images'),
     path('guardar_animal/', views.guardar_animal, name='guardar_animal'),   
-    path('dashboard/', views.user_dashboard, name='dashboard'),
     path('shelters/confirmar_adopcion/<int:animal_id>/', views.adoption_application_view, name='confirm_adoption'),
     path('adoption/applications/', views.adoption_application_list, name='adoption_application_list'),
     path('shelters/error_de_tipo_usuario/', views.error_user_type, name='error_user_type'),

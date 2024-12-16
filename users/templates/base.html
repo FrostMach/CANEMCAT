@@ -124,17 +124,6 @@
                                             Protectoras</a></li>
                                 </ul>
                             </li>
-                        {% elif user.is_authenticated and user.user_type == 'worker' %}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShelters" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">Protectoras</a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownShelters">
-                                    <li><a class="dropdown-item" href="{% url 'shelter_list' %}">Lista de Protectoras</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{% url 'register_shelter' %}">Registrar
-                                            Protectoras</a></li>
-                                </ul>
-                            </li>
                         {% endif %}
                         <!-- CanemScan y CanemTest solo para adoptantes -->
                         {% if user.is_authenticated and user.user_type == 'adopter' or user.user_type ==  'admin' %}

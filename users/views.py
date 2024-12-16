@@ -8,7 +8,6 @@ from django.urls import reverse_lazy, reverse
 from django.views import View, generic
 from django.contrib.auth import views as auth_views
 from shelters.models import AdoptionApplication, Animal, StatusEnum
-from users.sys_recommend.sys_recommend import get_user_recommendations
 from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist, Test, AdopterProfile, ShelterWorkerProfile, News

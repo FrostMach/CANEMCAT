@@ -1,14 +1,2 @@
 user_id,animal_id,interaction_type
-1,10,view
-1,2,view
-1,2,favorite
-1,5,view
-1,5,favorite
-1,8,view
-1,9,view
-1,3,view
-1,3,favorite
-1,10,favorite
-1,8,favorite
-1,1,view
-1,1,favorite
+2,11,view
