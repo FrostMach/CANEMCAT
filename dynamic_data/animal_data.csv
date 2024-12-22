@@ -1,11 +1,7 @@
 id,name,species,sex,age,size,personality,energy,fur,description,adoption_status,image
-1,Kratos,perro,macho,7,grande,protector,activo,largo,Enérgico y cariñoso,disponible,animals/tib1_Q0BxQ5B.jpg
-2,Little John,perro,macho,2,pequeño,sociable,tranquilo,corto,Pequeño y tranquilo,disponible,animals/chi2_BzOF4p4.jpg
-4,Big John,perro,macho,2,pequeño,independiente,tranquilo,corto,Se llama Big John pero es pequeño como Little John,disponible,animals/chi1_q7VuF5v.jpg
-5,Furia,perro,hembra,1,pequeño,independiente,activo,corto,Pequeña pero rabiosa,disponible,animals/chi4.webp
-6,Sr. Abrazos,perro,macho,5,grande,sociable,tranquilo,largo,Le gusta abrazar,disponible,animals/cho1_RRKTcHZ.jpg
-7,Sleepy,gato,hembra,4,mediano,sociable,activo,corto,Fan de las siestas,disponible,animals/fol2_dUMcle3.jpg
-8,Boxer,gato,macho,3,mediano,protector,activo,corto,Boxer porque le gusta dar guantazos. Pero no duelen,disponible,animals/mau3_iaxelMB.jpg
-9,Miguel,gato,macho,8,mediano,sociable,moderado,largo,Nombre completo: José Antonio Miguel De La Fuente Rodríguez,disponible,animals/per1.jpg
-10,Megatron,gato,macho,4,grande,protector,tranquilo,largo,Grandote. A veces le confunden con un tigre,disponible,animals/mai1.jpg
-11,Michifidem,gato,macho,3,mediano,independiente,tranquilo,corto,Gato valiente que puede con todo,disponible,animals/sia1.jpg
+1,Little John,perro,macho,2,pequeño,sociable,tranquilo,corto,Pequeño y dormilón,disponible,animals/chi2_6VfaEa4.jpg
+2,Big John,perro,macho,5,pequeño,independiente,activo,corto,"Se llama Big John, pero es pequeño como Little John.",disponible,animals/chi1_RHR3ytb.jpg
+3,Kratos,perro,macho,8,grande,protector,activo,largo,Valiente y enérgico,disponible,animals/tib1_dPW1oBd.jpg
+4,Brownie,perro,hembra,6,grande,protector,activo,largo,Muy cariñosa,disponible,animals/cho1_qmG3L4I.jpg
+5,Shadow,gato,hembra,4,pequeño,independiente,tranquilo,corto,Sutil,disponible,animals/fol2_NXAgF2Y.jpg
+7,Michifidem,gato,macho,5,mediano,sociable,activo,corto,Maestro del resto de gatos,disponible,animals/sia1_w2hNGpL.jpg

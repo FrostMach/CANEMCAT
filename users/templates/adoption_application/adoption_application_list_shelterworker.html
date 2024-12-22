@@ -1,0 +1,45 @@
+{% extends 'shelter/base2.html' %}
+
+{% block content %}
+<div class="container bg-light py-2 my-5 text-center">
+    <h1 class="mb-3 mt-3">Solicitudes de adopción</h1>
+    <table class="table table-bordered table-striped w-50 mx-auto">
+        <thead>
+            <tr>
+                <th>Adoptante</th>
+                <th>Animal</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in adoption_applications %}
+            <tr>
+                <td>{{ application.user }}</td>
+                <td>{{ application.animal.name }}</td>
+                <td>
+                    {% if application.status == 'A' %}
+                        <span class="text-success">{{ application.get_status_display }}</span>
+                    {% elif application.status == 'D' %}
+                        <span class="text-danger">{{ application.get_status_display }}</span>
+                    {% else %}
+                        {{ application.get_status_display }}
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Contenedor de botones con Bootstrap, centrados a la derecha -->
+                    <div class="d-flex justify-content-center gap-4">  <!-- Cambié justify-content-end a justify-content-center para centrar -->
+                        <!-- Formulario para Aprobar/Denegar -->
+                        <form method="POST" action="{% url 'update_adoption_application' application.id %}">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Aprobar</button>
+                            <button type="submit" name="action" value="deny" class="btn btn-danger btn-sm">Denegar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

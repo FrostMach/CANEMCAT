@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Perfil de la Protectora{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/shelter_detail.css' %}">
 <div class="container mt-5 p-4 bg-white shadow-sm rounded">
     <h2>Centro de Adopción</h2>
     <a href="{% url 'shelter_list' %}" class="btn btn-secondary">Volver al listado</a>

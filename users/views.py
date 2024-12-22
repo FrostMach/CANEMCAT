@@ -1,3 +1,4 @@
+from django.core.mail import EmailMessage
 import json
 import smtplib
 import requests
@@ -8,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 from django.views import View, generic
 from django.contrib.auth import views as auth_views
 from shelters.models import AdoptionApplication, Animal, StatusEnum
-from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm,AuthenticationForm, TestGatoShortForm, TestPerroShortForm
 from django.contrib.auth.forms import PasswordResetForm
 from .models import CustomUser, Wishlist, Test, AdopterProfile, ShelterWorkerProfile, News
 from django.contrib.auth import login, authenticate, logout, get_user_model
@@ -409,12 +410,8 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
             print(f"Tipo de `email`: {type(email)}")
 
             # Enviar el correo
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],  # Asegúrate de que esto sea una lista de un solo correo
-            )
+            send_mail(email,subject, message)
+            
         return super().form_valid(form)
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -681,57 +678,6 @@ def adoption_application_list(request):
 
     return render(request, 'adoption_application/adoption_application_list.html', {'adoption_applications': adoption_applications})
 
-@login_required
-def adoption_application_list_shelterworker(request):
-    # Verificar que el usuario es un "Shelter Worker"
-    if request.user.user_type != 'worker':
-        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
-    
-    # Obtener el perfil del trabajador de la protectora
-    shelter_worker_profile = get_object_or_404(ShelterWorkerProfile, user=request.user)
-
-    # Verificar si el perfil tiene un "shelter" válido
-    if not shelter_worker_profile.shelter_name:
-        return render(request,'adoption_application/error_shelter_missing.html')  # Redirigir o mostrar error si no tiene un shelter
-
-    # Obtener todas las solicitudes de adopción de los animales de la protectora del trabajador
-    adoption_applications = AdoptionApplication.objects.filter(shelter=shelter_worker_profile.shelter_name)
-
-    # Pasar las solicitudes a la plantilla
-    return render(request, 'adoption_application/adoption_application_list_shelterworker.html', {
-        'adoption_applications': adoption_applications
-    })
-
-@login_required
-def update_adoption_application(request, application_id):
-    # Verificar que el usuario es un "Shelter Worker"
-    if request.user.user_type != 'worker':
-        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
-
-    # Obtener la solicitud de adopción
-    application = get_object_or_404(AdoptionApplication, pk=application_id)
-
-    # Verificar que la solicitud pertenezca a la misma protectora del trabajador
-    shelter_worker_profile = ShelterWorkerProfile.objects.get(user=request.user)
-    if application.shelter != shelter_worker_profile.shelter_name:
-        return redirect('error_user_type')  # Si el trabajador no pertenece a la protectora, redirigir
-
-    if request.method == 'POST':
-        # Verificar si se ha aprobado o denegado la solicitud
-        action = request.POST.get('action')
-
-        if action == 'approve':
-            application.status = StatusEnum.APPROVED.value[0]
-        elif action == 'deny':
-            application.status = StatusEnum.DENIED.value[0]
-        
-        application.save()  # Guardar los cambios
-
-        # Redirigir después de actualizar
-        return redirect('adoption_application_list_shelterworker')
-
-    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})
-
 class RecommendationView(View):
        def get(self, request):
         try:
@@ -825,3 +771,108 @@ def remove_worker(request, worker_id, shelter_id):
     messages.success(request, "El trabajador ha sido eliminado.")
 
     return redirect('shelter_workers', shelter_id=shelter_id)
+
+def test_short_form(request, test_type, animal_id):
+    # Establecemos el template predeterminado
+    template = 'test/short_test_error.html'
+    form = None
+
+    # Selección de formulario y template según el tipo de test
+    if test_type == 'gato':
+        form = TestGatoShortForm(request.POST or None)
+        template = 'test/cat_test_short.html'
+    elif test_type == 'perro':
+        form = TestPerroShortForm(request.POST or None)
+        template = 'test/dog_test_short.html'
+
+    try:
+        # Obtener el animal por su ID
+        animal = Animal.objects.get(id=animal_id)
+        # Obtener el correo de la protectora
+        protectora_email = animal.shelter.email
+        
+    except Animal.DoesNotExist:
+        # Redirigir a una página de error si el animal no existe
+        return redirect('error')
+                # Asegurarse de que `protectora_email` sea una lista
+    # Obtener el perfil del usuario
+    user_profile = None
+    if hasattr(request.user, 'adopter_profile'):
+        user_profile = request.user.adopter_profile
+    elif hasattr(request.user, 'worker_profile'):
+        user_profile = request.user.worker_profile
+    
+    # Si no se encuentra perfil, redirigir o manejar el error
+    if not user_profile:
+        return render(request,'error_perfil_no_creado.html')  # O alguna otra acción en caso de que el perfil no exista
+
+    # Si el formulario es enviado y es válido
+    if request.method == 'POST':
+        if form.is_valid():
+            # Procesar las respuestas del formulario
+            responses = form.cleaned_data  # Aquí recoges todas las respuestas
+
+            # Crear la solicitud de adopción
+            adoption_application = AdoptionApplication(
+                user=user_profile,  # Asegúrate de que el usuario está autenticado y tiene un perfil
+                animal=animal,
+                shelter=animal.shelter,
+                status=StatusEnum.PENDING.value[0],  # Estado inicial 'Pendiente'
+            )
+            adoption_application.save()
+            user_email=request.user
+
+            # Construir el asunto y el mensaje del correo
+            subject = f"Resultado Test de {test_type.capitalize()} - Solicitud de Adopción"
+            message = "Usuario que ha solicitado la adopción: "+"\n"+str(user_email)+"\n"+"\n".join([f"{key}: {value}" for key, value in responses.items()])
+
+            send_mail(protectora_email,subject, message)
+
+            # Redirigir a una página de éxito (puedes cambiar la URL si prefieres otra página de confirmación)
+            return redirect('adoption_application_list')  # O puedes redirigir a una página específica
+
+    # Si el formulario no es válido o no se ha enviado, se renderiza el formulario nuevamente
+    return render(request, template, {
+        'form': form,
+        'animal_id': animal_id,  # Pasar el ID del animal al contexto
+    })
+    
+
+@login_required
+def adoption_application_list_shelterworker(request):
+    # Verificar que el usuario es un "Shelter Worker"
+    if request.user.user_type != 'worker':
+        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
+
+    # Obtener todas las solicitudes de adopción (sin filtrar por el refugio del trabajador)
+    adoption_applications = AdoptionApplication.objects.all()
+
+    # Pasar las solicitudes a la plantilla
+    return render(request, 'adoption_application/adoption_application_list_shelterworker.html', {
+        'adoption_applications': adoption_applications
+    })
+    
+@login_required
+def update_adoption_application(request, application_id):
+    # Verificar que el usuario es un "Shelter Worker"
+    if request.user.user_type != 'worker':
+        return redirect('error_user_type')  # Redirigir a un error si no es un "Shelter Worker"
+
+    # Obtener la solicitud de adopción
+    application = get_object_or_404(AdoptionApplication, pk=application_id)
+    
+    if request.method == 'POST':
+        # Verificar si se ha aprobado o denegado la solicitud
+        action = request.POST.get('action')
+
+        if action == 'approve':
+            application.status = StatusEnum.APPROVED.value[0]
+        elif action == 'deny':
+            application.status = StatusEnum.DENIED.value[0]
+        
+        application.save()  # Guardar los cambios
+
+        # Redirigir después de actualizar
+        return redirect('adoption_application_list_shelterworker')
+
+    return render(request, 'adoption_application/adoption_application_update.html', {'application': application})

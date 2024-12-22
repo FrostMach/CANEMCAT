@@ -34,13 +34,13 @@ urlpatterns = [
     path('shelters/confirmar_adopcion/<int:animal_id>/', views.adoption_application_view, name='confirm_adoption'),
     path('adoption/applications/', views.adoption_application_list, name='adoption_application_list'),
     path('shelters/error_de_tipo_usuario/', views.error_user_type, name='error_user_type'),
-    path('adoption-applications-shelterworker/', views.adoption_application_list_shelterworker, name='adoption_application_list_shelterworker'),
-    path('adoption-application/update/<int:application_id>/', views.update_adoption_application, name='update_adoption_application'),
+    path('adoption_applications/',views.adoption_application_list_shelterworker, name='adoption_application_list_shelterworker'),
+    path('adoption_application/<int:application_id>/update/', views.update_adoption_application, name='update_adoption_application'),
+    path('test/<str:test_type>/<int:animal_id>/', views.test_short_form, name='test_short_form'),
     path('animals/recommendations/', RecommendationView.as_view(), name='recommendations'),
     path('shelter/<int:shelter_id>/add_worker/', views.add_shelter_worker, name='add-shelter-worker'),
     path('shelter/<int:shelter_id>/workers/', views.shelter_workers, name='shelter_workers'),
     path('worker/<int:worker_id>/remove/<int:shelter_id>/', views.remove_worker, name='remove-worker'),
-        
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

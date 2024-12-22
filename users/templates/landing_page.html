@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <!-- Contenido principal -->
 <div class="container jumbotron text-center mt-4" style="background-color: #ffffff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <h1 class="display-4" style="color: #333;">Bienvenido/a a CANEMCAT</h1>
@@ -137,7 +136,7 @@ function rotateCard(element) {
             <div class="carousel-inner">
                 {% for animal in animals %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}">
+                    <a href="{% url 'animals-detail' animal.pk %}"><img src="{{ animal.image.url }}" class="d-block w-100" alt="{{ animal.name }}"></a>
                     <div class="carousel-caption d-none d-md-block">
                         <h5>{{ animal.name }}</h5>
                     </div>
@@ -180,11 +179,21 @@ function rotateCard(element) {
         <div class="carousel-inner">
             {% for new in news %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                {% if new.original_url %}
+                    <a href="{{ new.original_url }}" target="_blank">
+                        <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ new.title }}</h5>
+                            <p>{{ new.content|truncatewords:20 }}</p>
+                        </div>
+                    </a>
+                {% else %}
                 <img src="{{ new.image.url }}" class="d-block w-100" alt="{{ new.title }}">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>{{ new.title }}</h5>
                     <p>{{ new.content|truncatewords:20 }}</p>
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -204,8 +213,8 @@ function rotateCard(element) {
     {% endif %}
 </div>
 
-
 {% endblock %}
+
 
 
 

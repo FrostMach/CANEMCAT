@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cat Test{% endblock %}
+
+{% block content %}
+
+<div class="bg-light container my-5 py-1">
+    <a class="btn btn-success" href="{% url 'animals-list' %}">Volver a la lista de animales</a>
+    <h2 class="text-center text-success">Preferencias para la Adopción de un Gato</h2>
+    <h5 class="text-center text-success">(15 preguntas)</h5>
+    <form method="POST" action="{% url 'test_short_form' test_type='gato' animal_id=animal_id %}">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="pb-3 question" id="q{{ forloop.counter }}" style="opacity: 0; display: none; transition: opacity 0.5s ease-in-out;">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <!-- Botón de Enviar (se muestra cuando llega a la última pregunta) -->
+        <div class="mb-3 pb-3" id="submitButton" style="display:none;">
+            <button type="submit" class="btn btn-success w-100">Enviar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Inicializamos con la primera pregunta visible
+    window.onload = function() {
+        nextQuestion(1);
+    };
+
+    // Función para mostrar la siguiente pregunta con una transición suave
+    function nextQuestion(questionNumber) {
+        const question = document.getElementById('q' + questionNumber);
+        if (question) {
+            // Mostrar la siguiente pregunta
+            question.style.display = 'block';
+            // Agregar un retraso en la opacidad para que se vea el efecto
+            setTimeout(function() {
+                question.style.opacity = 1;
+            }, 10); // Necesitamos un pequeño retraso para que la transición de opacidad funcione
+        }
+    }
+
+    // Función para manejar el evento "onchange" de cada pregunta y mostrar la siguiente pregunta
+    function handleChange(currentQuestionNumber) {
+        // Llamar a nextQuestion para mostrar la siguiente pregunta
+        const nextQuestionNumber = currentQuestionNumber + 1;
+        nextQuestion(nextQuestionNumber);
+
+        // Si es la última pregunta, mostrar el botón de enviar
+        if (nextQuestionNumber > 15) {
+            showSubmitButton();
+        }
+    }
+
+    // Función para mostrar el botón de Enviar cuando se llega a la última pregunta
+    function showSubmitButton() {
+        document.getElementById('submitButton').style.display = 'block';
+    }
+</script>
+
+{% endblock %}

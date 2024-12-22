@@ -42,7 +42,7 @@
                 {% if not is_in_wishlist %}
                     <form id="add-to-wishlist-form" method="post">
                         {% csrf_token %}
-                        <button type="button" id="add-to-wishlist-btn" class="btn btn-success">Añadir a Favoritos</button>
+                        <button type="button" id="add-to-wishlist-btn" class="btn btn-primary mt-3">Añadir a Favoritos</button>
                     </form>
                 {% else %}
                     <p class="text-success">Este animal ya está en tus favoritos.</p>
@@ -50,14 +50,6 @@
             {% else %}
                 <p class="text-warning">Debes iniciar sesión para agregar este animal a favoritos.</p>
             {% endif %}
-            </div>
-        </div>
-        
-        <!-- Descripción -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3>Descripción</h3>
-                <p>{{ animal.description }}</p>
             </div>
         </div>
     </div>

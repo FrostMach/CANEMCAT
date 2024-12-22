@@ -10,6 +10,7 @@
     
     <!-- Formulario de filtros -->
     <form method="get" class="filter-form mb-4">
+        <!-- Fila de campos de filtros -->
         <div class="form-row justify-content-between">
             <div class="col-md-2 form-group">
                 <label>{{ filter_form.species.label_tag }}</label>
@@ -31,8 +32,16 @@
                 {{ filter_form.adoption_status }}
             </div>
 
-            <div class="col-md-2 form-group d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            <div class="col-md-2 form-group">
+                <label>{{ filter_form.shelter.label_tag }}</label>
+                {{ filter_form.shelter }}
+            </div>
+        </div>
+
+        <!-- Fila para el botón de filtrar -->
+        <div class="form-row mt-3">
+            <div class="col-md-12 text-right">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </div>
     </form>
@@ -52,7 +61,7 @@
                     <p class="card-text"><strong>Protectora:</strong> {{ animal.shelter.name }}</p>
                     <div class="btn-group" role="group" aria-label="Acciones">
                         <a href="{% url 'animals-detail' animal.id %}" class="btn btn-primary">Más información</a>
-                        <a href="{% url 'confirm_adoption' animal.id %}" class="btn btn-primary">Solicitar Adopción</a>
+                        <a href="{% url 'test_short_form' animal.species animal.id %}" class="btn btn-primary">Solicitar Adopción</a>
                     </div>
                 </div>
             </div>
